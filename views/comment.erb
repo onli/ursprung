@@ -1,0 +1,9 @@
+<div class="comment">
+    <%= comment.body %>
+    <div>From
+    <% if comment.author.url != "" %>
+        <a href="<%= comment.author.url %>"><%= comment.author.name %></a>
+    <% else %>
+        !<%= comment.author.name %></div>
+    <% end %>
+</div>

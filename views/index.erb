@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+
+        <link rel="stylesheet" href="/css/main.css">
+        <link rel="alternate"  type="application/rss+xml" href="/feed" />
+    </head>
+
+    <body>
+        <% if isAdmin? %>
+            Welcome, <%= authorized_email %>
+            <form action="/addEntry" method="POST">
+                <label>Title<input name="title"></input></label>
+                <label><textarea name="body"></textarea></label>
+                <button type="submit">Publish</button>
+            </form>
+        <% else %>
+            <%= render_login_button %>
+        <% end %>
+
+        <div id="friendWidget">
+            <%= erb :friends, :locals => {:friends => friends} %>
+        </div>
+        
+            
+        
+
+        <h2>Entries</h2>
+        <% entries.each do |entry| %>
+            <div class="entry">
+                <%= erb :entry, :locals => {:entry => entry} %>
+            </div>
+        <% end %>
+
+        <div id="browser">
+            <% if page.to_i != 1 %>
+                <a href="/archive/<%= (page.to_i - 1) %>">prior</a>
+            <% end %>
+            <% if page.to_i != totalPages %>
+                <a href="/archive/<%= (page.to_i + 1) %>">next</a>
+            <% end %>  
+        </div>
+
+    </body>
+</html>

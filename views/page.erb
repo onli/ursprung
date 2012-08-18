@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+
+        <link rel="trackback" type="application/x-www-form-urlencoded" href="http://<%= request.host_with_port %>/<%= entry.id %>/addTrackback" />
+           
+        <link rel="stylesheet" href="/css/main.css">
+        <link rel="alternate"  type="application/rss+xml" href="/feed" />
+    </head>
+
+    <body>
+
+        <div class="entry">
+            <%= erb :entry, :locals => {:entry => entry} %>
+        </div>
+
+        <!--
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+                 xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/"
+                 xmlns:dc="http://purl.org/dc/elements/1.1/">
+        <rdf:Description
+                 trackback:ping="http://<%= request.host_with_port %>/<%= entry.id %>/addTrackback"
+                 dc:title="<%= entry.title %>"
+                 dc:identifier="http://<%= request.host_with_port %>/<%= entry.id %>/<%= entry.title %>" />
+        </rdf:RDF>
+        -->
+
+
+        <ol id="comments">
+             <% comments.each do |comment| %>
+                <li class="comment"
+                    <%= erb :comment, :locals => {:comment => comment} %>
+                </li>
+            <% end %>
+        </ol>
+
+        <form action="addComment" method="POST">
+            <input type="hidden" name="replyToComment" value=""/>
+            <label>Name<input name="name"></input></label>
+            <label>Email<input name="mail"></input></label>
+            <label>Homepage<input name="url"></input></label>
+            <label><textarea name="body"></textarea></label>
+            <button type="submit">Comment</button>
+        </form>
+
+    </body>
+</html>

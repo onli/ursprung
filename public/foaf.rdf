@@ -1,0 +1,43 @@
+<rdf:RDF
+      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+      xmlns:foaf="http://xmlns.com/foaf/0.1/"
+      xmlns:admin="http://webns.net/mvcb/"
+      xmlns:cert="http://www.w3.org/ns/auth/cert#"
+      xmlns:admin="http://webns.net/mvcb/">
+<foaf:PersonalProfileDocument rdf:about="">
+  <foaf:maker rdf:resource="#me"/>
+  <foaf:primaryTopic rdf:resource="#me"/>
+  <admin:generatorAgent rdf:resource="http://www.ldodds.com/foaf/foaf-a-matic"/>
+  <admin:errorReportsTo rdf:resource="mailto:leigh@ldodds.com"/>
+</foaf:PersonalProfileDocument>
+<foaf:Person rdf:ID="me">
+    <foaf:name>Malte Paskuda</foaf:name>
+    <foaf:givenname>Malte</foaf:givenname>
+    <foaf:family_name>Paskuda</foaf:family_name>
+    <foaf:nick>onli</foaf:nick>
+    <foaf:mbox>onli89@gmail.com</foaf>
+    <foaf:homepage rdf:resource="http://www.onli-blogging.de"/>
+
+
+
+    <cert:key>
+        <cert:RSAPublicKey> 
+            <cert:exponent rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">
+                65537
+            </cert:exponent>
+            <cert:modulus rdf:datatype="http://www.w3.org/2001/XMLSchema#hexBinary">
+    00bb768f060cfe41608694b248e99d89776874fb31bfe1c42b7c6eea4f6a1d35777ed4946c7ab9ba23e50b41053af66a1748ebf9968d91c7212adb2cec6d8ea22a24dfc304992261c3758566493404e45ee194efdb7ebf0fc84f31e676cb0c2e89993f94ce4d9b2a4dd0aa37546067cc14e34cd0d13cc81fbc1029b9052e58e653
+            </cert:modulus>
+        </cert:RSAPublicKey>
+    </cert:key>
+
+    <foaf:knows>
+        <foaf:Person>
+            <foaf:name>Lars Fischer</foaf:name>
+            <foaf:mbox_sha1sum>8a75530cfbeb076f2ad3568aa113e91abaeb7340</foaf:mbox_sha1sum>
+            <rdfs:seeAlso rdf:resource="http://larsipulami.de/lars_fischer/foaf.rdf"/>
+        </foaf:Person>
+    </foaf:knows>
+    </foaf:Person>
+</rdf:RDF>
