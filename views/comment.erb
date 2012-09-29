@@ -1,9 +1,13 @@
 <div class="comment">
     <%= comment.body %>
     <div>From
-    <% if comment.author.url != "" %>
-        <a href="<%= comment.author.url %>"><%= comment.author.name %></a>
-    <% else %>
-        !<%= comment.author.name %></div>
-    <% end %>
+        <% if comment.author.url != "" %>
+            <a href="<%= comment.author.url %>"><%= comment.author.name %></a>
+        <% else %>
+            <%= comment.author.name %>
+        <% end %>
+    </div>
+    <form action="/<%= comment.id %>/deleteComment" method="POST">
+        <button type="submit">delete</submit>
+    </form>
 </div>

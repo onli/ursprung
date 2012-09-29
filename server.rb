@@ -12,6 +12,13 @@ include ERB::Util
 require 'sinatra/browserid'
 set :sessions, true
 
+
+####
+#
+# Careful: Don't let this become a monster-"class". Delegate
+#
+####
+
 helpers do
     include Rack::Utils
     alias_method :h, :escape
@@ -69,17 +76,15 @@ post '/addEntry' do
     entry = Entry.new()
     entry.body = params[:body]
     entry.title = params[:title]
-    entry.author = "onli"
-    db = Database.new
-    id = db.addEntry(entry)
-
-    entry = Entry.new(id)
+    entry.id = params[:id] if params[:id] != nil
+    # That way, only one-user-blogs are possible. Is that part of the concept?
+    entry.author = blogOwner
+    entry.save
     entry.sendTrackbacks(request)
     "Done"
 end
 
 post %r{/([0-9]+)/addTrackback} do |id|
-    puts "adding trackback"
     commentAuthor = CommentAuthor.new
     commentAuthor.name = params[:blog_name]
     commentAuthor.url = params[:url]
@@ -91,13 +96,30 @@ post %r{/([0-9]+)/addTrackback} do |id|
     comment.replyToEntry = id
     comment.author = commentAuthor
     comment.type = "trackback"
-    db = Database.new
-    db.addComment(comment)
+    comment.save
     
     '<?xml version="1.0" encoding="utf-8"?>
     <response>
        <error>0</error>
-     </response>'
+    </response>'
+end
+
+get %r{/([0-9]+)/editEntry} do |id|
+    protected!
+    entry = Entry.new(id)
+    erb :edit, :locals => {:entry => entry}
+end
+
+post %r{/([0-9]+)/deleteComment} do |id|
+    protected!
+    Comment.new(id).delete
+    "Done"
+end
+
+post %r{/([0-9]+)/deleteEntry} do |id|
+    protected!
+    Entry.new(id).delete
+    "Done"
 end
 
 post %r{/([0-9]+)/addComment} do |id|
@@ -111,11 +133,11 @@ post %r{/([0-9]+)/addComment} do |id|
     comment.replyToEntry = id
     comment.body = params[:body]
     comment.author = commentAuthor
-    db = Database.new
-    db.addComment(comment)
+    comment.save
     "Done"
 end
 
+# A Page (entry with comments)
 get  %r{/([0-9]+)/([\w]+)} do |id, title|
     entry = Entry.new(id)
     db = Database.new

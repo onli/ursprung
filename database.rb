@@ -18,7 +18,7 @@ class Database
                             name TEXT,
                             mail TEXT,
                             url TEXT,
-                            UNIQUE (name, email)
+                            UNIQUE (name, mail)
                             );"
             @db.execute "CREATE TABLE IF NOT EXISTS comments(
                             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -32,7 +32,7 @@ class Database
                             date INTEGER DEFAULT CURRENT_TIMESTAMP,
                             FOREIGN KEY (replyToEntry) REFERENCES entries(id),
                             FOREIGN KEY (replyToComment) REFERENCES comments(id),
-                            FOREIGN KEY (author) REFERENCES comment_authors(name) ON UPDATE CASCADE
+                            FOREIGN KEY (author) REFERENCES comment_authors(id) ON UPDATE CASCADE
                             );"
             @db.execute "CREATE TABLE IF NOT EXISTS entries(
                             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -68,12 +68,13 @@ class Database
                     limit = amount
             end
             
-            @db.execute("SELECT id, title, body, date FROM entries ORDER BY date DESC LIMIT ?,?;", offset, limit) do |row|
+            @db.execute("SELECT id, title, body, author, date FROM entries ORDER BY date DESC LIMIT ?,?;", offset, limit) do |row|
                 entry = Entry.new()
                 entry.body = row["body"]
                 entry.id = row["id"]
                 entry.title = row["title"]
                 entry.date = row["date"]
+                entry.author = row["author"]
                 entries.push(entry)
             end
         rescue => error
@@ -97,16 +98,50 @@ class Database
         return @db.last_insert_row_id()
     end
 
+    def editEntry(entry)
+        begin
+            @db.execute("UPDATE entries SET title = ?, body = ? WHERE id = ?;", entry.title, entry.body, entry.id)
+        rescue => error
+            puts error
+            return false
+        end
+        return true
+    end
+
+    def deleteEntry(id)
+        begin
+            @db.execute("DELETE FROM entries WHERE id = ?", id)
+        rescue => error
+            puts "error in deleting entries: #{error}"
+        end
+    end
+
+    def getEntryData(id)
+        begin
+            return @db.execute("SELECT title, body, author, date FROM entries WHERE id == ?;", id)[0]
+        rescue => error
+            puts error
+        end
+    end
+
     def addComment(comment)
         begin
             @db.execute("INSERT OR REPLACE INTO comment_authors(name, mail, url)
                             VALUES(?, ?, ?);",
                             comment.author.name, comment.author.mail, comment.author.url)
+            commentAuthorID = @db.last_insert_row_id()
         rescue => error
             puts "error in inserting comment_author: #{error}"
+            begin
+                commentAuthorID = @db.get_first_value("SELECT id FROM comment_authors WHERE name = ? and mail = ?", comment.author.name, comment.author.mail)
+            rescue => error
+                puts "error in selecting comment_author: #{error}"
+            end
         end
-        commentAuthorID = @db.last_insert_row_id()
+        
         puts commentAuthorID
+        puts comment.replyToEntry
+        puts comment.replyToComment
         begin
              @db.execute("INSERT INTO comments(replyToEntry, replyToComment, body, author, type, status, title)
                             VALUES(?, ?, ?, ?, ?, ?, ?);",
@@ -116,25 +151,19 @@ class Database
         end
     end
 
+    def deleteComment(comment)
+        begin
+            @db.execute("DELETE FROM comments WHERE id = ?", comment.id)
+        rescue => error
+            puts "error in deleting comment: #{error}"
+        end
+    end
+
     def getCommentsForEntry(id)
         comments = []
         begin
-            @db.execute("SELECT comments.id, name, url, mail, body, replyToComment, date
-                            FROM comments INNER JOIN comment_authors ON comments.author = comment_authors.id
-                        WHERE replyToEntry == ?;", id) do  |row|
-                commentAuthor = CommentAuthor.new
-                commentAuthor.name = row["name"]
-                commentAuthor.mail = row["mail"]
-                commentAuthor.url = row["url"]
-                
-                comment = Comment.new
-                comment.author = commentAuthor
-                comment.replyToEntry = id
-                comment.replyToComment = row["replyToComment"]
-                comment.body = row["body"]
-                comment.date = row["date"]
-                comment.id = row["id"]
-                comments.push(comment)
+            @db.execute("SELECT comments.id FROM comments WHERE replyToEntry == ?;", id) do  |row|
+                comments.push(Comment.new(row["id"]))
             end
         rescue => error
             puts error
@@ -142,9 +171,11 @@ class Database
         return comments
     end
 
-    def getEntryData(id)
+    def getCommentData(id)
         begin
-            return @db.execute("SELECT title, body, author, date FROM entries WHERE id == ?;", id)[0]
+            return @db.execute("SELECT name, url, mail, body, title, replyToComment, date
+                            FROM comments INNER JOIN comment_authors ON comments.author = comment_authors.id
+                        WHERE comments.id == ?;", id)[0]
         rescue => error
             puts error
         end

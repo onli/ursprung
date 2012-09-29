@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html>
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -14,11 +15,7 @@
     <body>
         <% if isAdmin? %>
             Welcome, <%= authorized_email %>
-            <form action="/addEntry" method="POST">
-                <label>Title<input name="title"></input></label>
-                <label><textarea name="body"></textarea></label>
-                <button type="submit">Publish</button>
-            </form>
+            <%= erb :editor %>
         <% else %>
             <%= render_login_button %>
         <% end %>
@@ -38,7 +35,7 @@
         <% end %>
 
         <div id="browser">
-            <% if page.to_i != 1 %>
+            <% if page.to_i != 1 && page.to_i != 0 %>
                 <a href="/archive/<%= (page.to_i - 1) %>">prior</a>
             <% end %>
             <% if page.to_i != totalPages %>

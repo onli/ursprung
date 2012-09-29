@@ -27,6 +27,28 @@ class Entry
         self.author = entryData["author"]
     end
 
+    def save()
+        db = Database.new
+        if self.id == nil
+            id = db.addEntry(self)
+            entryData = db.getEntryData(id)        
+            self.id = id
+            self.body = entryData["body"]
+            self.title = entryData["title"]
+            self.date = entryData["date"]
+            self.author = entryData["author"]
+        else
+            # edit
+            db.editEntry(self)
+        end
+    end
+
+    def delete()
+        puts "deleting entry"
+        db = Database.new
+        db.deleteEntry(self.id)
+    end
+
     def sendTrackbacks(request)
         # get list of links
         links = self.body.scan(/<a[^>]*href="(.*)"[^>]*>/)

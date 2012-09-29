@@ -13,3 +13,16 @@ wordpress could enable them to be a part of the network as well.
 Created as an assessed assignment for the lecture [Security in Online Social Networks](http://www.uni-siegen.de/fb5/itsec/lehre/ss12/sec-osn-ss12/index.html), Siegen, summer semester 2012.
 
 Using ruby, sinatra, browserid.
+
+Dependencies
+ * gems:
+  * sinatra
+  * sinatra-browserid
+  * json
+  * sqlite3
+  * sanitize
+ * General:
+  * ruby
+  * libxml2-dev (used by sanitize) 
+  * libxslt1-dev (used by sanitize)
+  
