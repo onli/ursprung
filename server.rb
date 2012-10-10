@@ -8,16 +8,10 @@ require './commentauthor.rb'
 require './friend.rb'
 
 require 'sinatra'
+require 'RedCloth'
 include ERB::Util
 require 'sinatra/browserid'
 set :sessions, true
-
-
-####
-#
-# Careful: Don't let this become a monster-"class". Delegate
-#
-####
 
 helpers do
     include Rack::Utils
@@ -47,10 +41,30 @@ helpers do
         return db.getAdmin
     end
 
+    def autotitle(text)
+        Nokogiri::HTML(text).css("a").map do |link|
+            if (href = link.attr("href")) && link.attr("title") == nil && href.match(/^https?:/)
+                require 'mechanize'
+                agent = Mechanize.new
+                title = agent.get(href).title
+                old_link = link
+                link = link.to_s.sub("<a", "<a title=\"#{title}\"")
+                text = text.sub(old_link, link);
+            end
+        end
+        return text
+    end
+
     def friendManagerUrl
         return "http://localhost:4200/"
     end
 end
+
+####
+#
+# Careful: Don't let this become a blob. Delegate
+#
+####
 
 get '/' do
     db = Database.new
@@ -68,7 +82,8 @@ get %r{/archive/([0-9]+)} do |page|
     db = Database.new
     entries = db.getEntries(page.to_i, 5)
     totalPages = db.getTotalPages
-    erb :index, :locals => {:entries => entries, :page => page, :totalPages => totalPages}
+    friends = db.getFriends
+    erb :index, :locals => {:entries => entries, :page => page, :totalPages => totalPages, :friends => friends}
 end
 
 post '/addEntry' do
@@ -77,11 +92,11 @@ post '/addEntry' do
     entry.body = params[:body]
     entry.title = params[:title]
     entry.id = params[:id] if params[:id] != nil
-    # That way, only one-user-blogs are possible. Is that part of the concept?
+    # NOTE: That way, only one-user-blogs are possible:
     entry.author = blogOwner
     entry.save
     entry.sendTrackbacks(request)
-    "Done"
+    redirect "/#{entry.id}/#{entry.title}"
 end
 
 post %r{/([0-9]+)/addTrackback} do |id|
@@ -110,10 +125,39 @@ get %r{/([0-9]+)/editEntry} do |id|
     erb :edit, :locals => {:entry => entry}
 end
 
+get %r{/([0-9]+)/editComment} do |id|
+    protected!
+    comment = Comment.new(id)
+    puts comment.replyToEntry
+    entry = Entry.new(comment.replyToEntry)
+    erb :editComment, :locals => {:comment => comment, :entry => entry}
+end
+
 post %r{/([0-9]+)/deleteComment} do |id|
     protected!
     Comment.new(id).delete
     "Done"
+end
+
+post %r{/([0-9]+)/spam} do |id|
+    protected!
+    Comment.new(id).spam
+    Comment.delete
+    "Done"
+end
+
+post %r{/([0-9]+)/ham} do |id|
+    protected!
+    Comment.new(id).ham
+    "Done"
+end
+
+get %r{/([0-9]+)/verdict} do |id|
+    if Comment.new(id).isSpam?
+        "spam"
+    else
+        "ham"
+    end
 end
 
 post %r{/([0-9]+)/deleteEntry} do |id|
@@ -123,6 +167,7 @@ post %r{/([0-9]+)/deleteEntry} do |id|
 end
 
 post %r{/([0-9]+)/addComment} do |id|
+    entry = Entry.new(id)
     commentAuthor = CommentAuthor.new
     commentAuthor.name = params[:name]
     commentAuthor.mail = params[:mail]
@@ -133,8 +178,12 @@ post %r{/([0-9]+)/addComment} do |id|
     comment.replyToEntry = id
     comment.body = params[:body]
     comment.author = commentAuthor
+    comment.id = params[:id] if params[:id] != nil
+    comment.status = "moderate" if comment.isSpam? or entry.moderate
+    puts comment.status
     comment.save
-    "Done"
+    
+    redirect "/#{entry.id}/#{entry.title}"
 end
 
 # A Page (entry with comments)

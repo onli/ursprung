@@ -1,3 +1,6 @@
+require 'classifier'
+require 'madeleine'
+
 class Comment
     attr_accessor :author
     attr_accessor :body
@@ -41,12 +44,47 @@ class Comment
 
     def save()
         db = Database.new
-        db.addComment(self)
+        if self.id == nil
+            db.addComment(self)
+        else
+            db.editComment(self)
+        end
     end
 
     def delete()
         db = Database.new
         db.deleteComment(self)
+    end
+
+    def spam()
+        m = SnapshotMadeleine.new("bayes_data") {
+            Classifier::Bayes.new "Spam", "Ham"
+        }
+        m.system.train_spam self.body
+        m.system.train_spam self.author.name
+        m.system.train_spam self.author.mail
+        m.system.train_spam self.author.url
+        m.take_snapshot
+    end
+
+    def ham()
+        self.status = "approved"
+        m = SnapshotMadeleine.new("bayes_data") {
+            Classifier::Bayes.new "Spam", "Ham"
+        }
+        m.system.train_ham self.body
+        m.system.train_ham self.author.name
+        m.system.train_ham self.author.mail
+        m.system.train_ham self.author.url
+        m.take_snapshot
+        self.save
+    end
+
+    def isSpam?()
+        m = SnapshotMadeleine.new("bayes_data") {
+            Classifier::Bayes.new "Spam", "Ham"
+        }
+        return (m.system.classify "#{self.author.name} #{self.author.mail} #{self.author.url} #{self.body}") == "Spam"
     end
 
 end

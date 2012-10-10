@@ -1,0 +1,12 @@
+<form action="/<%= entry.id %>/addComment" method="POST">
+    <input type="hidden" name="replyToComment" value=""/>
+    <% if comment != nil %>
+        <input type="hidden" name="id" value="<%= comment.id %>"/>
+    <% end %>
+    <input type="hidden" name="replyToComment" value="<%= comment.replyToComment if comment != nil %>"/>
+    <label>Name<input name="name" value="<%= comment.author.name if comment != nil %>"></input></label>
+    <label>Email<input name="mail" value="<%= comment.author.mail if comment != nil %>"></input></label>
+    <label>Homepage<input name="url" value="<%= comment.author.url if comment != nil %>"></input></label>
+    <label><textarea name="body"><%= comment.body if comment != nil %></textarea></label>
+    <button type="submit">comment</button>
+</form>

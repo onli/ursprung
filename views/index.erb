@@ -15,7 +15,7 @@
     <body>
         <% if isAdmin? %>
             Welcome, <%= authorized_email %>
-            <%= erb :editor %>
+            <%= erb :editor, :locals => {:entry => nil} %>
         <% else %>
             <%= render_login_button %>
         <% end %>

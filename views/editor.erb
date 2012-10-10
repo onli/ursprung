@@ -1,8 +1,8 @@
 <form action="/addEntry" method="POST">
-    <label>Title<input name="title" value="<% begin %><%= entry.title %><% rescue; end %>"></input></label>
-    <label><textarea name="body" rows=10><% begin %><%= entry.body %><% rescue;end %></textarea></label>
-    <% begin; if entry %>
+    <label>Title<input name="title" value="<%= entry.title if entry != nil %>"></input></label>
+    <label><textarea name="body" rows=10><%= entry.body if entry != nil %></textarea></label>
+    <% if entry %>
         <input name="id" type="hidden" value="<%= entry.id %>"/>
-    <% end; rescue; end %>
+    <% end %>
     <button type="submit">Publish</button>
 </form>

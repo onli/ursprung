@@ -21,8 +21,11 @@ Dependencies
   * json
   * sqlite3
   * sanitize
+  * madeleine
+  * classifier
+  * RedCloth
  * General:
   * ruby
   * libxml2-dev (used by sanitize) 
   * libxslt1-dev (used by sanitize)
-  
+    

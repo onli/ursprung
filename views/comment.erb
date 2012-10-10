@@ -7,7 +7,20 @@
             <%= comment.author.name %>
         <% end %>
     </div>
-    <form action="/<%= comment.id %>/deleteComment" method="POST">
-        <button type="submit">delete</submit>
-    </form>
+    <% if isAdmin? %>
+        <form action="/<%= comment.id %>/editComment" method="GET">
+            <button type="submit">edit</button>
+        </form>
+        <form action="/<%= comment.id %>/deleteComment" method="POST">
+            <button type="submit">delete</button>
+        </form>
+        <form action="/<%= comment.id %>/ham" method="POST">
+            <button type="submit">ham</button>
+        </form>
+        <form action="/<%= comment.id %>/spam" method="POST">
+            <button type="submit">spam</button>
+        </form>
+        <a href="/<%= comment.id %>/verdict">see rating</a>
+        <i><%= comment.status %></i>
+    <% end %>
 </div>

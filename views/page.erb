@@ -34,20 +34,21 @@
 
         <ol id="comments">
              <% comments.each do |comment| %>
-                <li class="comment"
-                    <%= erb :comment, :locals => {:comment => comment} %>
-                </li>
+                <% if comment.status == "approved" %>
+                    <li>
+                        <%= erb :comment, :locals => {:comment => comment} %>
+                    </li>
+                <% else %>
+                    <% if isAdmin? %>
+                        <li class="comment_moderate">
+                            <%= erb :comment, :locals => {:comment => comment} %>
+                        </li>
+                    <% end %>
+                <% end %>
             <% end %>
         </ol>
 
-        <form action="addComment" method="POST">
-            <input type="hidden" name="replyToComment" value=""/>
-            <label>Name<input name="name"></input></label>
-            <label>Email<input name="mail"></input></label>
-            <label>Homepage<input name="url"></input></label>
-            <label><textarea name="body"></textarea></label>
-            <button type="submit">Comment</button>
-        </form>
+        <%= erb :commentForm, :locals => {:entry => entry, :comment => nil} %>
 
     </body>
 </html>

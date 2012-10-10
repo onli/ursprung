@@ -10,6 +10,7 @@ class Entry
     attr_accessor :title
     attr_accessor :date
     attr_accessor :author
+    attr_accessor :moderate
 
     def initialize(*args)
         if args.length == 1
@@ -25,6 +26,7 @@ class Entry
         self.title = entryData["title"]
         self.date = entryData["date"]
         self.author = entryData["author"]
+        self.moderate = entryData["moderate "]
     end
 
     def save()
@@ -32,13 +34,8 @@ class Entry
         if self.id == nil
             id = db.addEntry(self)
             entryData = db.getEntryData(id)        
-            self.id = id
-            self.body = entryData["body"]
-            self.title = entryData["title"]
-            self.date = entryData["date"]
-            self.author = entryData["author"]
+            initializeFromID(id)   # to get data added by the database, like the date
         else
-            # edit
             db.editEntry(self)
         end
     end
@@ -51,7 +48,13 @@ class Entry
 
     def sendTrackbacks(request)
         # get list of links
-        links = self.body.scan(/<a[^>]*href="(.*)"[^>]*>/)
+
+        links = Nokogiri::HTML(self.body).css("a").map do |link|
+            if (href = link.attr("href")) && href.match(/^https?:/)
+                href
+            end
+        end.compact
+        
         if links.length == 0
             return
         end
@@ -62,7 +65,7 @@ class Entry
         uris = []
         links.each do |link|
             puts link
-            uris.push(URI.parse(link[0].strip))
+            uris.push(URI.parse(link))
         end
 
         trackbackLinks  = []
@@ -71,15 +74,23 @@ class Entry
             http_request = Net::HTTP::Get.new(uri.request_uri)
 
             response = http.request(http_request)
-            headLink = response.body.scan(/<link.*rel="trackback".*href="([^"]+)"[^>]*>/)
+            #headLink = response.body.scan(/<link.*rel="trackback".*href="([^"]+)"[^>]*>/)
+            headLink = Nokogiri::HTML(response.body).css("link").map do |link|
+                puts link
+                if (href = link.attr("href")) && link.attr("rel") == "trackback" && href.match(/^https?:/)
+                    href
+                end
+            end.compact
+            
             if headLink.length > 0
-                trackbackLinks.push(headLink)
-                puts "found headLink"
+                trackbackLinks.push(headLink[0])
+                puts "found headLink: #{headLink}"
             else
-                rdfLink = response.body.scan(/<rdf:Description[^>]*trackback:ping="([^"]*)"/)
+                puts uri
+                rdfLink = response.body.scan(/<rdf:Description[^>]*trackback:ping="([^"]*)"[^>]*dc:identifier="#{Regexp.escape(uri.to_s)}"/)
                 if rdfLink.length > 0
-                    puts "found rdfLink"
-                    trackbackLinks.push(rdfLink)
+                    puts "found rdfLink: #{rdfLink}"
+                    trackbackLinks.push(rdfLink[0])
                 end
             end
         end
@@ -105,8 +116,12 @@ class Entry
             http = Net::HTTP.new(uri.host, uri.port)
             http.open_timeout = 40
             http.read_timeout = 20
-            response = http.request(req)
-            puts response
+            begin
+                response = http.request(req)
+                puts response
+            rescue Exception => error
+                puts error
+            end
         end
     end
 

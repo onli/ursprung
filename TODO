@@ -1,7 +1,6 @@
 = General =
 Login with browserid DONE
 Basic Installer DONE
-Register with dsnblog-friendmanager on install
 Have an external (web?) installer which the installs blog on a free heroku-instance, if possible
 
 = Blog = 
@@ -9,28 +8,31 @@ Frontpage DONE
 Editor
  * Preview
  * Marup buttons
- * Decide wether to use a markup-language or raw html, or both
+ * Decide wether to use a markup-language or raw html, or both DONE (added textile)
 Browsing DONE
-Pagination
+Pagination / Infinite Scroll
 Article view DONE
 Edit Entries DONE
+ * Ajaxify
 Delete Entries DONE
  * Ajaxify deletion
 
 Kommentare DONE
- * Rework comment to either work with the separate comemnt_authors or include them
+ * Rework comment to either work with the separate comment_authors or include them
 Trackbacks/Pingbacks DONE (Trackbacks)
 Test trackbacks with serendipity DONE
 Test trackbacks with wordpress
 Moderation
  * Delete comment DONE
   * Ajaxify deletion
+ * Edit comment DONE
+  * Ajaxify
  * have a toggle to let comments be moderated by default
- * approve comments
+ * approve comments DONE (via ham)
 
-Plugin-API
-Plugin: Bayesfilter
-Plugin: autotitle
+Plugin-API?
+Plugin: Bayesfilter DONE (integrated)
+Plugin: autotitle DONE (integrated)
 
 Enable designs
 Build good enough default design
@@ -42,6 +44,8 @@ Have a way to include images
  * use flickr, picasa, ... instead?
 
 = Social Network Features =
+
+Register with dsnblog-friendmanager on install
 
 Be able to add friends DONE (basic)
 Improve friend widget

@@ -13,32 +13,27 @@ class Database
                             name TEXT PRIMARY KEY,
                             url TEXT
                             );"
-            @db.execute "CREATE TABLE IF NOT EXISTS comment_authors(
-                            id INTEGER PRIMARY KEY AUTOINCREMENT,
-                            name TEXT,
-                            mail TEXT,
-                            url TEXT,
-                            UNIQUE (name, mail)
-                            );"
             @db.execute "CREATE TABLE IF NOT EXISTS comments(
                             id INTEGER PRIMARY KEY AUTOINCREMENT,
                             replyToEntry INTEGER,
                             replyToComment INTEGER,
+                            name TEXT,
+                            mail TEXT,
+                            url TEXT,
                             body TEXT,
                             title TEXT,
-                            author TEXT,
                             type TEXT DEFAULT 'comment',
                             status TEXT DEFAULT 'approved',
                             date INTEGER DEFAULT CURRENT_TIMESTAMP,
-                            FOREIGN KEY (replyToEntry) REFERENCES entries(id),
-                            FOREIGN KEY (replyToComment) REFERENCES comments(id),
-                            FOREIGN KEY (author) REFERENCES comment_authors(id) ON UPDATE CASCADE
+                            FOREIGN KEY (replyToEntry) REFERENCES entries(id) ON DELETE CASCADE,
+                            FOREIGN KEY (replyToComment) REFERENCES comments(id) 
                             );"
             @db.execute "CREATE TABLE IF NOT EXISTS entries(
                             id INTEGER PRIMARY KEY AUTOINCREMENT,
                             body TEXT,
                             title TEXT,
                             author TEXT,
+                            moderate TEXT,
                             date INTEGER DEFAULT CURRENT_TIMESTAMP,
                             FOREIGN KEY (author) REFERENCES authors(name) ON UPDATE CASCADE
                             );"
@@ -68,13 +63,14 @@ class Database
                     limit = amount
             end
             
-            @db.execute("SELECT id, title, body, author, date FROM entries ORDER BY date DESC LIMIT ?,?;", offset, limit) do |row|
+            @db.execute("SELECT id, title, body, author, date, moderate FROM entries ORDER BY date DESC LIMIT ?,?;", offset, limit) do |row|
                 entry = Entry.new()
                 entry.body = row["body"]
                 entry.id = row["id"]
                 entry.title = row["title"]
                 entry.date = row["date"]
                 entry.author = row["author"]
+                entry.moderate = row["moderate"]
                 entries.push(entry)
             end
         rescue => error
@@ -118,7 +114,7 @@ class Database
 
     def getEntryData(id)
         begin
-            return @db.execute("SELECT title, body, author, date FROM entries WHERE id == ?;", id)[0]
+            return @db.execute("SELECT title, body, author, date, moderate FROM entries WHERE id == ?;", id)[0]
         rescue => error
             puts error
         end
@@ -126,29 +122,24 @@ class Database
 
     def addComment(comment)
         begin
-            @db.execute("INSERT OR REPLACE INTO comment_authors(name, mail, url)
-                            VALUES(?, ?, ?);",
-                            comment.author.name, comment.author.mail, comment.author.url)
-            commentAuthorID = @db.last_insert_row_id()
-        rescue => error
-            puts "error in inserting comment_author: #{error}"
-            begin
-                commentAuthorID = @db.get_first_value("SELECT id FROM comment_authors WHERE name = ? and mail = ?", comment.author.name, comment.author.mail)
-            rescue => error
-                puts "error in selecting comment_author: #{error}"
-            end
-        end
-        
-        puts commentAuthorID
-        puts comment.replyToEntry
-        puts comment.replyToComment
-        begin
-             @db.execute("INSERT INTO comments(replyToEntry, replyToComment, body, author, type, status, title)
-                            VALUES(?, ?, ?, ?, ?, ?, ?);",
-                            comment.replyToEntry, comment.replyToComment, comment.body, commentAuthorID, comment.type, comment.status, comment.title)
+             @db.execute("INSERT INTO comments(replyToEntry, replyToComment, body, type, status, title, name, mail, url)
+                            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);",
+                            comment.replyToEntry, comment.replyToComment, comment.body, comment.type, comment.status,
+                            comment.title, comment.author.name, comment.author.mail, comment.author.url)
         rescue => error
             puts "error in inserting comment: #{error}"
         end
+    end
+
+    def editComment(comment)
+        begin
+            @db.execute("UPDATE comments SET title = ?, body = ?, name = ?, url = ?, mail = ?, replyToComment = ?, status = ? WHERE id = ?;",
+                        comment.title, comment.body, comment.author.name, comment.author.url, comment.author.mail, comment.replyToComment, comment.status, comment.id)
+        rescue => error
+            puts error
+            return false
+        end
+        return true
     end
 
     def deleteComment(comment)
@@ -173,9 +164,9 @@ class Database
 
     def getCommentData(id)
         begin
-            return @db.execute("SELECT name, url, mail, body, title, replyToComment, date
-                            FROM comments INNER JOIN comment_authors ON comments.author = comment_authors.id
-                        WHERE comments.id == ?;", id)[0]
+            return @db.execute("SELECT name, url, mail, body, title, replyToComment, replyToEntry, date, status
+                                FROM comments
+                                WHERE comments.id == ?;", id)[0]
         rescue => error
             puts error
         end
