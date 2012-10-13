@@ -169,7 +169,7 @@ end
 
 post %r{/([0-9]+)/deleteEntry} do |id|
     protected!
-    Entry.new(id).delete
+    #Entry.new(id).delete
     "Done"
 end
 
@@ -232,6 +232,8 @@ end
 post '/setOption' do
     protected!
     db = Database.new
+    puts "getting post to setOption"
+    puts params.to_s
     db.setOption(params[:name], params[:value])
     redirect session[:origin]
 end

@@ -8,11 +8,11 @@
         <% end %>
     </footer>
     <% if isAdmin? %>
-        <form action="/<%= comment.id %>/editComment" method="GET">
-            <button type="submit">edit</button>
-        </form>
+
+        <a href="/<%= comment.id %>/editComment"><button type="submit" class="edit">edit</button></a>
+   
         <form action="/<%= comment.id %>/deleteComment" method="POST">
-            <button type="submit">delete</button>
+            <button type="submit" class="delete">delete</button>
         </form>
         <form action="/<%= comment.id %>/ham" method="POST">
             <button type="submit">ham</button>

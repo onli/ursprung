@@ -2,15 +2,13 @@
     <header>
         <h2><a href="/<%= entry.id %>/<%= entry.title %>"><%= entry.title %></a></h2>
     </header>
-    <div "itemprop="articleBody"><%= autotitle(RedCloth.new(entry.body).to_html) %></div>
+    <div itemprop="articleBody"><%= autotitle(RedCloth.new(entry.body).to_html) %></div>
     <footer>
         <time itemprop="datePublished" datetime="<%= Time.at(entry.date.to_i).strftime("%Y-%m-%d") %>"><%= Time.at(entry.date.to_i).strftime("%d.%m.%Y") %></time>
         <% if isAdmin? %>
-            <form action="/<%= entry.id %>/editEntry" method="GET">
-                <button type="submit">edit</button>
-            </form>
+            <a href="/<%= entry.id %>/editEntry"><button type="submit" class="edit">edit</button></a>
             <form action="/<%= entry.id %>/deleteEntry" method="POST">
-                <button type="submit">delete</button>
+                <button type="submit" class="delete">delete</button>
             </form>
         <% end %>
     </footer>
