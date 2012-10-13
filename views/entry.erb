@@ -1,7 +1,7 @@
 <article class="entry">
     <h2><a href="/<%= entry.id %>/<%= entry.title %>"><%= entry.title %></a></h2>
-    <%= autotitle(RedCloth.new(entry.body).to_html) %>
-    <div>From <%= entry.author %></div>
+    <p><%= autotitle(RedCloth.new(entry.body).to_html) %></p>
+    <footer>From <%= entry.author %></footer>
     <% if isAdmin? %>
         <form action="/<%= entry.id %>/editEntry" method="GET">
             <button type="submit">edit</button>

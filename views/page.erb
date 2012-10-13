@@ -1,52 +1,47 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-
-        <title></title>
+        <%= erb :head %>
+        <title><%= entry.title %> - <%= blogTitle %></title>
         <meta name="description" content="">
-        <meta name="viewport" content="width=device-width">
-
         <link rel="trackback" type="application/x-www-form-urlencoded" href="http://<%= request.host_with_port %>/<%= entry.id %>/addTrackback" />
-           
-        <link rel="stylesheet" href="/css/main.css">
-        <link rel="alternate"  type="application/rss+xml" href="/feed" />
     </head>
 
     <body>
 
-        <div class="entry">
+        <%= erb :header, :locals => {:blogTitle => blogTitle} %>
+
+        <article class="entry">
             <%= erb :entry, :locals => {:entry => entry} %>
-        </div>
 
-        <!--
-        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-                 xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/"
-                 xmlns:dc="http://purl.org/dc/elements/1.1/">
-        <rdf:Description
-                 trackback:ping="http://<%= request.host_with_port %>/<%= entry.id %>/addTrackback"
-                 dc:title="<%= entry.title %>"
-                 dc:identifier="http://<%= request.host_with_port %>/<%= entry.id %>/<%= entry.title %>" />
-        </rdf:RDF>
-        -->
+            <!--
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+                     xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/"
+                     xmlns:dc="http://purl.org/dc/elements/1.1/">
+            <rdf:Description
+                     trackback:ping="http://<%= request.host_with_port %>/<%= entry.id %>/addTrackback"
+                     dc:title="<%= entry.title %>"
+                     dc:identifier="http://<%= request.host_with_port %>/<%= entry.id %>/<%= entry.title %>" />
+            </rdf:RDF>
+            -->
 
 
-        <ol id="comments">
-             <% comments.each do |comment| %>
-                <% if comment.status == "approved" %>
-                    <li>
-                        <%= erb :comment, :locals => {:comment => comment} %>
-                    </li>
-                <% else %>
-                    <% if isAdmin? %>
-                        <li class="comment_moderate">
+            <ol id="comments">
+                 <% comments.each do |comment| %>
+                    <% if comment.status == "approved" %>
+                        <li>
                             <%= erb :comment, :locals => {:comment => comment} %>
                         </li>
+                    <% else %>
+                        <% if isAdmin? %>
+                            <li class="comment_moderate">
+                                <%= erb :comment, :locals => {:comment => comment} %>
+                            </li>
+                        <% end %>
                     <% end %>
                 <% end %>
-            <% end %>
-        </ol>
+            </ol>
+        </article>
 
         <%= erb :commentForm, :locals => {:entry => entry, :comment => nil} %>
 

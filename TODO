@@ -1,7 +1,7 @@
 = General =
 Login with browserid DONE
 Basic Installer DONE
-Have an external (web?) installer which the installs blog on a free heroku-instance, if possible
+Have an external (web?) installer which then installs a blog on a free heroku-instance, if possible
 
 = Blog = 
 Frontpage DONE
@@ -18,7 +18,7 @@ Delete Entries DONE
  * Ajaxify deletion
 
 Kommentare DONE
- * Rework comment to either work with the separate comment_authors or include them
+ * Rework comment to either work with the separate comment_authors or include them DONE
 Trackbacks/Pingbacks DONE (Trackbacks)
 Test trackbacks with serendipity DONE
 Test trackbacks with wordpress

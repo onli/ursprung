@@ -1,3 +1,104 @@
+
+html {
+    font-family: ubuntu, 'Ubuntu', arial, sans-serif;
+    background-color: white;
+    color: #333;
+}
+
+body {
+    padding-left: 2em;
+}
+
+a {
+    color: #3B5998;
+    text-decoration: none;
+}
+
+a:visited {
+    color: #8496bc;
+}
+
+#title a:visited {
+    color: #3B5998;
+}
+
 label {
     display: block;
+}
+
+input, textarea, button {
+    font-family: inherit;
+    font-size: inherit;
+}
+
+article {
+    max-width: 50em;
+}
+
+.entry p {
+    padding-left: 1em;
+}
+
+#friendWidget {
+    float: right;
+    position: relative;
+    right: 3em;
+}
+
+#editor {
+    width: 40em;
+}
+
+#editor label span {
+    display: inline-block;
+    width: 2em;
+}
+
+#entryTitleInput {
+    margin-top: 1em;
+    min-width: 36em;
+    margin-left: 1em;
+}
+#entryInput {
+    margin-top: 1em;
+    min-width: 100%;
+}
+
+#entryPublish {
+    margin-left: 35em;
+    width: 5em;
+}
+
+#welcome {
+    font-size: 0.9em;
+}
+
+.comment {
+    margin-bottom: 1em;
+}
+
+#commentForm span {
+    width: 6em;
+    display: inline-block;
+}
+
+#commentForm input {
+    width: 15em;
+}
+
+#commentForm textarea {
+    width: 21em;
+    min-height: 6em;
+}
+
+#commentForm button {
+    margin-left: 16em;
+}
+
+#browser {
+    margin-top: 1em;
+}
+
+#browseNext {
+    margin-left: 40em;
 }

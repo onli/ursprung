@@ -42,14 +42,19 @@ helpers do
     end
 
     def autotitle(text)
+        db = Database.new
         Nokogiri::HTML(text).css("a").map do |link|
             if (href = link.attr("href")) && link.attr("title") == nil && href.match(/^https?:/)
-                require 'mechanize'
-                agent = Mechanize.new
-                title = agent.get(href).title
-                old_link = link
-                link = link.to_s.sub("<a", "<a title=\"#{title}\"")
-                text = text.sub(old_link, link);
+                if ((title = db.getCache(href)) == nil)
+                    require 'mechanize'
+                    agent = Mechanize.new
+                    title = agent.get(href).title
+                    db.cache(href, title)
+                else
+                    old_link = link
+                    link = link.to_s.sub("<a", "<a title=\"#{title}\"")
+                    text = text.sub(old_link, link);
+                end
             end
         end
         return text
@@ -74,7 +79,8 @@ get '/' do
         entries = db.getEntries(-1, 5)
         totalPages = db.getTotalPages
         friends = db.getFriends
-        erb :index, :locals => {:entries => entries, :page => totalPages, :totalPages => totalPages, :friends => friends}
+        blogTitle = db.getOption("blogTitle")
+        erb :index, :locals => {:entries => entries, :page => totalPages, :totalPages => totalPages, :friends => friends, :blogTitle => blogTitle}
     end
 end
 
@@ -83,7 +89,8 @@ get %r{/archive/([0-9]+)} do |page|
     entries = db.getEntries(page.to_i, 5)
     totalPages = db.getTotalPages
     friends = db.getFriends
-    erb :index, :locals => {:entries => entries, :page => page, :totalPages => totalPages, :friends => friends}
+    blogTitle = db.getOption("blogTitle")
+    erb :index, :locals => {:entries => entries, :page => page, :totalPages => totalPages, :friends => friends, :blogTitle => blogTitle}
 end
 
 post '/addEntry' do
@@ -191,7 +198,8 @@ get  %r{/([0-9]+)/([\w]+)} do |id, title|
     entry = Entry.new(id)
     db = Database.new
     comments = db.getCommentsForEntry(id)
-    erb :page, :locals => {:entry => entry, :comments => comments}
+    blogTitle = db.getOption("blogTitle")
+    erb :page, :locals => {:entry => entry, :comments => comments, :blogTitle => blogTitle}
 end
 
 get '/feed' do
@@ -220,3 +228,23 @@ post '/addAdmin' do
         'Error adding admin: param missing or admin already set'
     end
 end
+
+post '/setOption' do
+    protected!
+    db = Database.new
+    db.setOption(params[:name], params[:value])
+    redirect session[:origin]
+end
+
+get %r{/setOption/([\w]+)} do |name|
+    protected!
+    session[:origin] = back
+    erb :editOption, :locals => {:name => name}
+end
+
+get '/logout' do
+    protected!
+    logout!
+    redirect '/'
+end
+

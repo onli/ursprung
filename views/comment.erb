@@ -1,12 +1,12 @@
-<div class="comment">
+<article class="comment">
     <%= comment.body %>
-    <div>From
+    <footer>From
         <% if comment.author.url != "" %>
             <a href="<%= comment.author.url %>"><%= comment.author.name %></a>
         <% else %>
             <%= comment.author.name %>
         <% end %>
-    </div>
+    </footer>
     <% if isAdmin? %>
         <form action="/<%= comment.id %>/editComment" method="GET">
             <button type="submit">edit</button>
@@ -23,4 +23,4 @@
         <a href="/<%= comment.id %>/verdict">see rating</a>
         <i><%= comment.status %></i>
     <% end %>
-</div>
+</article>

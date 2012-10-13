@@ -1,47 +1,41 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-
-        <title></title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width">
-
-        <link rel="stylesheet" href="/css/main.css">
+        <%= erb :head %>
+        <title><%= blogTitle%></title>
         <link rel="alternate"  type="application/rss+xml" href="/feed" />
+        <meta name="description" content="">
     </head>
 
     <body>
-        <% if isAdmin? %>
-            Welcome, <%= authorized_email %>
-            <%= erb :editor, :locals => {:entry => nil} %>
-        <% else %>
-            <%= render_login_button %>
-        <% end %>
-
         <div id="friendWidget">
+            <% if isAdmin? %>
+                <aside id="welcome">Welcome, <%= authorized_email %> (<a href="/logout">Logout</a>)</aside>
+            <% else %>
+                <%= render_login_button %>
+            <% end %>
             <%= erb :friends, :locals => {:friends => friends} %>
         </div>
         
-            
+        <%= erb :header, :locals => {:blogTitle => blogTitle} %>
         
+        <% if isAdmin? && (page.to_i == 0 || page.to_i == totalPages) %>
+            <%= erb :editor, :locals => {:entry => nil} %>
+        <% end %>
 
         <h2>Entries</h2>
         <% entries.each do |entry| %>
-            <div class="entry">
-                <%= erb :entry, :locals => {:entry => entry} %>
-            </div>
+            <%= erb :entry, :locals => {:entry => entry} %>
         <% end %>
 
-        <div id="browser">
+        <nav id="browser">
             <% if page.to_i != 1 && page.to_i != 0 %>
-                <a href="/archive/<%= (page.to_i - 1) %>">prior</a>
+                <a id="browsePrior" href="/archive/<%= (page.to_i - 1) %>">prior</a>
             <% end %>
             <% if page.to_i != totalPages %>
-                <a href="/archive/<%= (page.to_i + 1) %>">next</a>
+                <a id="browseNext" href="/archive/<%= (page.to_i + 1) %>">next</a>
             <% end %>  
-        </div>
+        </nav>
 
     </body>
 </html>

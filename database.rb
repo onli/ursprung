@@ -9,6 +9,15 @@ class Database
                             name TEXT PRIMARY KEY,
                             mail TEXT UNIQUE
                             );"
+            @db.execute "CREATE TABLE IF NOT EXISTS options(
+                            name TEXT PRIMARY KEY,
+                            value TEXT
+                            );"
+            @db.execute "CREATE TABLE IF NOT EXISTS cache(
+                            key TEXT PRIMARY KEY,
+                            value TEXT,
+                            ttl INTEGER DEFAULT (strftime('%s','now') + 604800)
+                            );"
             @db.execute "CREATE TABLE IF NOT EXISTS friends(
                             name TEXT PRIMARY KEY,
                             url TEXT
@@ -220,6 +229,40 @@ class Database
         return friends
     end
 
+    def getOption(name)
+        begin
+            return @db.execute("SELECT value FROM options WHERE name = ? LIMIT 1;", name)[0]['value']
+        rescue => error
+            puts error
+        end
+    end
+
+    def setOption(name, value)
+        begin
+            @db.execute("INSERT OR IGNORE INTO options(name, value) VALUES(?, ?)", name, value)
+            @db.execute("UPDATE options SET value = ? WHERE name = ?", value, name)
+        rescue => error
+            puts error
+        end
+    end
+
+    def cache(key, value)
+        begin
+            @db.execute("INSERT OR IGNORE INTO cache(key, value) VALUES(?, ?)", key, value)
+            @db.execute("UPDATE cache SET value = ? WHERE key = ?", value, key)
+        rescue => error
+            puts error
+        end
+    end
+
+    def getCache(key)
+        begin
+            return @db.execute("SELECT value FROM cache WHERE key = ? AND ttl > strftime('%s','now') LIMIT 1;", key)[0]['value']
+        rescue => error
+            puts error
+        end
+    end
+    
     def getAdmin()
         begin
             return @db.execute("SELECT name FROM authors LIMIT 1;")[0]['name']
