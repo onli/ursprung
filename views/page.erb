@@ -11,7 +11,7 @@
 
         <%= erb :header, :locals => {:blogTitle => blogTitle} %>
 
-        <article class="entry">
+        <article class="entry" itemscope itemtype="http://schema.org/BlogPosting">
             <%= erb :entry, :locals => {:entry => entry} %>
 
             <!--

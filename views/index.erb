@@ -23,17 +23,18 @@
             <%= erb :editor, :locals => {:entry => nil} %>
         <% end %>
 
-        <h2>Entries</h2>
         <% entries.each do |entry| %>
-            <%= erb :entry, :locals => {:entry => entry} %>
+            <article class="entry" itemscope itemtype="http://schema.org/BlogPosting">
+                <%= erb :entry, :locals => {:entry => entry} %>
+            </article>
         <% end %>
 
         <nav id="browser">
             <% if page.to_i != 1 && page.to_i != 0 %>
-                <a id="browsePrior" href="/archive/<%= (page.to_i - 1) %>">prior</a>
+                <a id="browsePrior" rel="prev" href="/archive/<%= (page.to_i - 1) %>">prior</a>
             <% end %>
             <% if page.to_i != totalPages %>
-                <a id="browseNext" href="/archive/<%= (page.to_i + 1) %>">next</a>
+                <a id="browseNext" rel="next" href="/archive/<%= (page.to_i + 1) %>">next</a>
             <% end %>  
         </nav>
 

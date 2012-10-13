@@ -57,33 +57,30 @@ class Database
         entries = []
         begin
             totalEntries = @db.execute("SELECT COUNT(id) from entries")[0]["COUNT(id)"]
-            totalPages = (totalEntries.to_f / amount).ceil;
-            totalPages = totalPages <= 0 ? 1 : totalPages
-            case page
-                when -1 then
-                    # on frontpage, we have no real index
-                    offset = 0
-                    limit = amount
-                when totalPages - 1 then
-                    offset = amount
-                    limit = (totalEntries - ((totalPages - 2) * amount)) - amount
-                else
-                    offset = totalEntries - (amount * page)
-                    limit = amount
-            end
-            
-            @db.execute("SELECT id, title, body, author, date, moderate FROM entries ORDER BY date DESC LIMIT ?,?;", offset, limit) do |row|
-                entry = Entry.new()
-                entry.body = row["body"]
-                entry.id = row["id"]
-                entry.title = row["title"]
-                entry.date = row["date"]
-                entry.author = row["author"]
-                entry.moderate = row["moderate"]
+        rescue => error
+            puts "getEntries count: #{error}"
+        end
+        totalPages = (totalEntries.to_f / amount).ceil;
+        totalPages = totalPages <= 0 ? 1 : totalPages
+        case page
+            when -1 then
+                # on frontpage, we have no real index
+                offset = 0
+                limit = amount
+            when totalPages - 1 then
+                offset = amount
+                limit = (totalEntries - ((totalPages - 2) * amount)) - amount
+            else
+                offset = totalEntries - (amount * page)
+                limit = amount
+        end
+        begin
+            @db.execute("SELECT id FROM entries ORDER BY date DESC LIMIT ?,?;", offset, limit) do |row|
+                entry = Entry.new(row["id"])
                 entries.push(entry)
             end
         rescue => error
-            puts error
+            puts "getEntries: #{error}"
         end
         return entries
     end
@@ -123,9 +120,9 @@ class Database
 
     def getEntryData(id)
         begin
-            return @db.execute("SELECT title, body, author, date, moderate FROM entries WHERE id == ?;", id)[0]
+            return @db.execute("SELECT title, body, author, strftime('%s', date) as date, moderate FROM entries WHERE id == ?;", id)[0]
         rescue => error
-            puts error
+            puts "getEntryData: #{error}"
         end
     end
 

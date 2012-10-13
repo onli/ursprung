@@ -1,6 +1,7 @@
 
 html {
-    font-family: ubuntu, 'Ubuntu', arial, sans-serif;
+    font-family: ubuntu, arial, sans-serif;
+    font-weight: 400;
     background-color: white;
     color: #333;
 }
@@ -33,10 +34,6 @@ input, textarea, button {
 
 article {
     max-width: 50em;
-}
-
-.entry p {
-    padding-left: 1em;
 }
 
 #friendWidget {
@@ -75,6 +72,15 @@ article {
 
 .comment {
     margin-bottom: 1em;
+}
+
+.entry p {
+    padding-left: 1em;
+}
+
+.entry footer {
+    font-style: italic;
+    font-size: 0.9em;
 }
 
 #commentForm span {
