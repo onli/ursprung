@@ -28,4 +28,4 @@ Dependencies
   * ruby
   * libxml2-dev (used by sanitize) 
   * libxslt1-dev (used by sanitize)
-    
+  * libgsl-ruby1.9.1 (used by classifier, or install the gem gsl. optional)

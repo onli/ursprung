@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby1.8
+#!/usr/bin/env ruby1.9.3
 require 'rubygems'
 
 require './database.rb'
