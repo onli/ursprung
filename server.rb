@@ -148,8 +148,9 @@ end
 
 post %r{/([0-9]+)/spam} do |id|
     protected!
-    Comment.new(id).spam
-    Comment.delete
+    comment = Comment.new(id)
+    comment.spam
+    comment.delete
     "Done"
 end
 

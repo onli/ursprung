@@ -8,6 +8,14 @@ html {
 
 body {
     padding-left: 2em;
+    margin: auto;
+}
+
+#content {
+    margin: auto;
+    margin-bottom: 1em;
+    margin-top: 2em;
+	width: 50em;
 }
 
 a {
@@ -21,6 +29,10 @@ a:visited {
 
 #title a:visited {
     color: #3B5998;
+}
+
+#title h1 {
+    display: inline;
 }
 
 label {
@@ -83,6 +95,10 @@ article {
     font-size: 0.9em;
 }
 
+.comment_moderate .commentBody, .comment_moderate footer  {
+    opacity: 0.7;
+}
+
 #commentForm span {
     width: 6em;
     display: inline-block;
@@ -113,7 +129,7 @@ article {
   0% { opacity: 1;}
   100% { opacity: 0; }
 }
-@-webkit-keyframes fadeOut{
+@-webkit-keyframes fadeOut {
   0% { opacity: 1;}
   100% { opacity: 0; }
 }
@@ -141,3 +157,72 @@ article {
     -o-animation: fadeOut 300ms linear forwards;
     -webkit-animation: fadeOut 300ms linear forwards;
 }
+
+@-moz-keyframes fadeIn {
+  0% { opacity: 0;}
+  100% { opacity: 1; }
+}
+@-webkit-keyframes fadeIn {
+  0% { opacity: 0;}
+  100% { opacity: 1; }
+}
+@-o-keyframes fadeIn {
+  0% { opacity: 0;}
+  100% { opacity: 1; }
+}
+@-ms-keyframes fadeIn {
+    0% { filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+        opacity: 1; }
+    100% { filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+        opacity: 0; }
+}
+@keyframes fadeIn {
+    0% { filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+        opacity: 1; }
+    100% { filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+        opacity: 0; }
+}
+
+.fadein {
+    animation: fadeIn 300ms linear forwards;
+    -moz-animation: fadeIn 300ms linear forwards;
+    -ms-animation: fadeIn 300ms linear forwards;
+    -o-animation: fadeIn 300ms linear forwards;
+    -webkit-animation: fadeIn 300ms linear forwards;
+}
+
+.adminOptions form {
+    display: inline-block;
+}
+
+/* hover-menu: */
+.adminOptionsMore {
+    display: inline-block;
+    z-index: 1;
+}
+
+.adminOptionsMoreOptions {
+    display: none;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    background: white;
+    padding-top: 0;
+}
+
+.adminOptionsMoreOptions li, .adminMoreOption {
+    display: block;
+    width: 100%;
+    margin: 0;
+}
+
+.adminOptionsMoreSign {
+    cursor: default;
+    vertical-align: top;
+}
+
+.adminOptionsMoreSign:hover + .adminOptionsMoreOptions, .adminOptionsMoreOptions:hover {
+    display: block;
+}
+

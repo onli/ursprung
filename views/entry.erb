@@ -1,15 +1,17 @@
 <div class="container">
     <header>
-        <h2><a href="/<%= entry.id %>/<%= entry.title %>"><%= entry.title %></a></h2>
+        <a href="/<%= entry.id %>/<%= entry.title %>"><h2><%= entry.title %></h2></a>
     </header>
     <div itemprop="articleBody"><%= autotitle(RedCloth.new(entry.body).to_html) %></div>
     <footer>
         <time itemprop="datePublished" datetime="<%= Time.at(entry.date.to_i).strftime("%Y-%m-%d") %>"><%= Time.at(entry.date.to_i).strftime("%d.%m.%Y") %></time>
         <% if isAdmin? %>
-            <a href="/<%= entry.id %>/editEntry"><button type="submit" class="edit">edit</button></a>
-            <form action="/<%= entry.id %>/deleteEntry" method="POST">
-                <button type="submit" class="delete">delete</button>
-            </form>
+            <div class="adminOptions">
+                <a href="/<%= entry.id %>/editEntry"><button type="submit" class="edit adminAction" title="edit">&#9998;</button></a>
+                <form action="/<%= entry.id %>/deleteEntry" method="POST">
+                    <button type="submit" class="delete adminAction" title="delete">&#10005;</button>
+                </form>
+            </div>
         <% end %>
     </footer>
 </div>

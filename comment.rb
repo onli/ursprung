@@ -66,7 +66,7 @@ class Comment
         m.system.train_spam self.author.url
         m.take_snapshot
     end
-
+    
     def ham()
         self.status = "approved"
         m = SnapshotMadeleine.new("bayes_data") {
