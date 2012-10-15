@@ -20,11 +20,8 @@ helpers do
     def isAdmin?
         if authorized?
             db = Database.new
-            mails = db.getMails
-            mails.each do |row|
-                if row["mail"] == authorized_email
-                    return true
-                end
+            if db.getAdminMail == authorized_email
+                return true
             end
         end
         return false
@@ -205,9 +202,16 @@ end
 
 get '/feed' do
     db = Database.new
-    entries = db.getEntries(-1, 5)
+    entries = db.getEntries(-1, 10)
     headers "Content-Type"   => "application/rss+xml"
     erb :feed, :locals => {:entries => entries}
+end
+
+get '/commentFeed' do
+    db = Database.new
+    comments = db.getComments(30)
+    headers "Content-Type"   => "application/rss+xml"
+    erb :commentFeed, :locals => {:comments => comments}
 end
 
 post %r{/people/([\w]+)/([\w]+)} do |userid, groupid|

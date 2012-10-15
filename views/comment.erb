@@ -2,7 +2,7 @@
     <div class="commentBody"><%= comment.body %></div>
     <footer>From
         <% if comment.author.url != "" %>
-            <a href="<%= comment.author.url %>"><%= comment.author.name %></a> if comment.author.url != "" else <%= comment.author.name %> end
+            <a href="<%= comment.author.url %>"><%= comment.author.name %></a>
         <% else %>
             <%= comment.author.name %>
         <% end %>

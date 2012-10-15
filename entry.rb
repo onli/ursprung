@@ -74,7 +74,6 @@ class Entry
             http_request = Net::HTTP::Get.new(uri.request_uri)
 
             response = http.request(http_request)
-            #headLink = response.body.scan(/<link.*rel="trackback".*href="([^"]+)"[^>]*>/)
             headLink = Nokogiri::HTML(response.body).css("link").map do |link|
                 puts link
                 if (href = link.attr("href")) && link.attr("rel") == "trackback" && href.match(/^https?:/)
@@ -103,9 +102,10 @@ class Entry
         puts "gathering data"
 
         data = {"title" => self.title,
-                "url" => "http://#{request.host_with_port}/#{self.id}/#{self.title}}",
+                "url" => "http://#{request.host_with_port}/#{self.id}/#{URI.escape(self.title)}",
                 "excerpt" => Sanitize.clean(self.body)[0..30].gsub(/\s\w+$/, '...'),
-                "blog_name" => "blog testblog"}
+                "blog_name" => Database.new.getOption("blogTitle")
+                }
                 
         trackbackLinks.each do |link|
             puts "sending to #{link}"
@@ -123,6 +123,10 @@ class Entry
                 puts error
             end
         end
+    end
+
+    def link(request)
+        return "http://#{request.host_with_port}/#{self.id}/#{URI.escape(title)}"
     end
 
 end

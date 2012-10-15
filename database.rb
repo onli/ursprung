@@ -120,7 +120,7 @@ class Database
 
     def getEntryData(id)
         begin
-            return @db.execute("SELECT title, body, author, strftime('%s', date) as date, moderate FROM entries WHERE id == ?;", id)[0]
+            return @db.execute("SELECT title, body, author, date, moderate FROM entries WHERE id == ?;", id)[0]
         rescue => error
             puts "getEntryData: #{error}"
         end
@@ -266,6 +266,28 @@ class Database
         rescue => error
             puts error
         end
+    end
+
+    def getAdminMail()
+        begin
+            admin = self.getAdmin()
+            return @db.execute("SELECT mail FROM authors WHERE name = ? LIMIT 1;", admin)[0]['mail']
+        rescue => error
+            puts error
+        end
+    end
+
+    # get the amount of last comments
+    def getComments(amount)
+        comments = []
+        begin
+            @db.execute("SELECT comments.id FROM comments ORDER BY date DESC LIMIT ?;", amount) do  |row|
+                comments.push(Comment.new(row["id"]))
+            end
+        rescue => error
+            puts error
+        end
+        return comments
     end
     
 

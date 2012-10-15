@@ -87,4 +87,8 @@ class Comment
         return (m.system.classify "#{self.author.name} #{self.author.mail} #{self.author.url} #{self.body}") == "Spam"
     end
 
+    def entry() 
+        return Entry.new(self.replyToEntry)
+    end
+
 end

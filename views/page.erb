@@ -21,7 +21,7 @@
                 <rdf:Description
                          trackback:ping="http://<%= request.host_with_port %>/<%= entry.id %>/addTrackback"
                          dc:title="<%= entry.title %>"
-                         dc:identifier="http://<%= request.host_with_port %>/<%= entry.id %>/<%= entry.title %>" />
+                         dc:identifier="http://<%= request.host_with_port %>/<%= entry.id %>/<%= h entry.title %>" />
                 </rdf:RDF>
                 -->
 

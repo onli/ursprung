@@ -111,7 +111,7 @@ snack.ready(function() {
                                 snack.wrap(parent).removeClass("fadein");
                                 snack.wrap(parent).addClass("fadeout");
                                 clearTimeout(fadeout);
-                            }, 1000);
+                            }, 300);
     }
 
     snack.wrap('.adminOptionsMoreOptions').attach('mouseover', function(evt) {
