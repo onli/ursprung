@@ -80,43 +80,45 @@ snack.ready(function() {
     });
 
     // support for the hover-menu, dont vanish directly
-    
-    
-    var fadeout;
-    snack.wrap('.adminOptionsMoreSign').attach('mouseover', function(evt) {
-        parent = evt.target.parentNode.querySelectorAll(".adminOptionsMoreOptions")[0];
-        parent.style["display"] = "block";
-        snack.wrap(parent).removeClass("fadeout");
-        clearTimeout(fadeout);
-        if (! navigator.userAgent.match(/.*Firefox.*/)) {
-            // detect firefox here, because in firefox the animation leads to the menu vanishing immediately
-            snack.wrap(evt.target.parentNode.querySelectorAll(".adminOptionsMoreOptions")[0]).addClass("fadein");
-        }
-    });
 
-    snack.wrap('.adminOptionsMoreSign').attach('mouseout', function(evt) {
-        fadeOutMenut(parent);
-    });
-    
-    snack.wrap('.adminOptionsMoreOptions').attach('mouseout', function(evt) {
-        var parent = evt.target
-        while (! parent.className.match(/\badminOptionsMoreOptions\b/)) {
-            var parent = parent.parentNode;
-        }
-        fadeOutMenut(parent);
-    });
+    if (snack.wrap('.adminOptionsMoreSign').length > 1) {
+        // start this only on a page with comments, else snack throws errors
+        var fadeout;
+        snack.wrap('.adminOptionsMoreSign').attach('mouseover', function(evt) {
+            parent = evt.target.parentNode.querySelectorAll(".adminOptionsMoreOptions")[0];
+            parent.style["display"] = "block";
+            snack.wrap(parent).removeClass("fadeout");
+            clearTimeout(fadeout);
+            if (! navigator.userAgent.match(/.*Firefox.*/)) {
+                // detect firefox here, because in firefox the animation leads to the menu vanishing immediately
+                snack.wrap(evt.target.parentNode.querySelectorAll(".adminOptionsMoreOptions")[0]).addClass("fadein");
+            }
+        });
 
-    function fadeOutMenut(parent) {
-        fadeout = setTimeout(function() {
-                                snack.wrap(parent).removeClass("fadein");
-                                snack.wrap(parent).addClass("fadeout");
-                                clearTimeout(fadeout);
-                            }, 300);
+        snack.wrap('.adminOptionsMoreSign').attach('mouseout', function(evt) {
+            fadeOutMenut(parent);
+        });
+        
+        snack.wrap('.adminOptionsMoreOptions').attach('mouseout', function(evt) {
+            var parent = evt.target
+            while (! parent.className.match(/\badminOptionsMoreOptions\b/)) {
+                var parent = parent.parentNode;
+            }
+            fadeOutMenut(parent);
+        });
+
+        function fadeOutMenut(parent) {
+            fadeout = setTimeout(function() {
+                                    snack.wrap(parent).removeClass("fadein");
+                                    snack.wrap(parent).addClass("fadeout");
+                                    clearTimeout(fadeout);
+                                }, 300);
+        }
+
+        snack.wrap('.adminOptionsMoreOptions').attach('mouseover', function(evt) {
+            parent.style["background-color"] = "white";
+            clearTimeout(fadeout);
+        });
     }
-
-    snack.wrap('.adminOptionsMoreOptions').attach('mouseover', function(evt) {
-        parent.style["background-color"] = "white";
-        clearTimeout(fadeout);
-    });
     
 });

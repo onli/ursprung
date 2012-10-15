@@ -185,7 +185,9 @@ post %r{/([0-9]+)/addComment} do |id|
     comment.author = commentAuthor
     comment.id = params[:id] if params[:id] != nil
     comment.status = "moderate" if comment.isSpam? or entry.moderate
-    puts comment.status
+    comment.subscribe = 1 if params[:subscribe] != nil
+    puts params[:subscribe]
+    puts comment.subscribe
     comment.save
     
     redirect "/#{entry.id}/#{entry.title}"
@@ -237,8 +239,6 @@ end
 post '/setOption' do
     protected!
     db = Database.new
-    puts "getting post to setOption"
-    puts params.to_s
     db.setOption(params[:name], params[:value])
     redirect session[:origin]
 end

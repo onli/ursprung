@@ -33,6 +33,7 @@ class Database
                             title TEXT,
                             type TEXT DEFAULT 'comment',
                             status TEXT DEFAULT 'approved',
+                            subscribe INTEGER DEFAULT 0,
                             date INTEGER DEFAULT CURRENT_TIMESTAMP,
                             FOREIGN KEY (replyToEntry) REFERENCES entries(id) ON DELETE CASCADE,
                             FOREIGN KEY (replyToComment) REFERENCES comments(id) 
@@ -128,10 +129,10 @@ class Database
 
     def addComment(comment)
         begin
-             @db.execute("INSERT INTO comments(replyToEntry, replyToComment, body, type, status, title, name, mail, url)
-                            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);",
+             @db.execute("INSERT INTO comments(replyToEntry, replyToComment, body, type, status, title, name, mail, url, subscribe)
+                            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
                             comment.replyToEntry, comment.replyToComment, comment.body, comment.type, comment.status,
-                            comment.title, comment.author.name, comment.author.mail, comment.author.url)
+                            comment.title, comment.author.name, comment.author.mail, comment.author.url, comment.subscribe)
         rescue => error
             puts "error in inserting comment: #{error}"
         end
@@ -139,8 +140,8 @@ class Database
 
     def editComment(comment)
         begin
-            @db.execute("UPDATE comments SET title = ?, body = ?, name = ?, url = ?, mail = ?, replyToComment = ?, status = ? WHERE id = ?;",
-                        comment.title, comment.body, comment.author.name, comment.author.url, comment.author.mail, comment.replyToComment, comment.status, comment.id)
+            @db.execute("UPDATE comments SET title = ?, body = ?, name = ?, url = ?, mail = ?, replyToComment = ?, status = ?, subscribe = ? WHERE id = ?;",
+                        comment.title, comment.body, comment.author.name, comment.author.url, comment.author.mail, comment.replyToComment, comment.status, comment.subscribe, comment.id)
         rescue => error
             puts error
             return false
@@ -170,7 +171,7 @@ class Database
 
     def getCommentData(id)
         begin
-            return @db.execute("SELECT name, url, mail, body, title, replyToComment, replyToEntry, date, status
+            return @db.execute("SELECT name, url, mail, body, title, replyToComment, replyToEntry, date, status, subscribe
                                 FROM comments
                                 WHERE comments.id == ?;", id)[0]
         rescue => error

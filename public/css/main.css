@@ -117,6 +117,10 @@ article {
     margin-left: 16em;
 }
 
+#commentForm .adminAction button {
+    margin-left: 0;
+}
+
 #browser {
     margin-top: 1em;
 }

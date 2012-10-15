@@ -1,5 +1,6 @@
 require 'classifier'
 require 'madeleine'
+require 'pony'
 
 class Comment
     attr_accessor :author
@@ -12,6 +13,7 @@ class Comment
     attr_accessor :replyToEntry
     attr_accessor :type
     attr_accessor :status 
+    attr_accessor :subscribe
 
     def initialize(*args)
         if args.length == 1
@@ -45,7 +47,12 @@ class Comment
     def save()
         db = Database.new
         if self.id == nil
+            # it is a new comment
             db.addComment(self)
+            mailOwner()
+            if (comment.status == "approved")
+                mailSubscribers()
+            end
         else
             db.editComment(self)
         end
@@ -89,6 +96,32 @@ class Comment
 
     def entry() 
         return Entry.new(self.replyToEntry)
+    end
+
+    def mailOwner()
+        db = Database.new
+        Pony.mail(:to => db.getAdminMail,
+                  :from => db.getOption("fromMail"),
+                  :subject => "#{db.getOption("blogTitle")}: #{self.author.name} commented on #{Entry.new(self.replyToEntry).title}",
+                  :body => "He wrote: #{self.body}"
+                  )
+    end
+
+    def mailSubscribers()
+        db = Database.new
+        fromMail = db.getOption("fromMail")
+        blogTitle = db.getOption("blogTitle")
+        if fromMail && fromMail != "" 
+            db.getCommentsForEntry(Entry.new(self.replyToEntry)).each do |comment|
+                if comment.subscribe && comment.author.mail && comment != self
+                    Pony.mail(:to => comment.author.mail,
+                              :from => fromMail,
+                              :subject => "#{blogTitle}: #{self.author.name} commented on #{Entry.new(self.replyToEntry).title}",
+                              :body => "He wrote: #{self.body}"
+                              )
+                end
+            end
+        end
     end
 
 end
