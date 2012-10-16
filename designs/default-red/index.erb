@@ -41,6 +41,9 @@
                     <a id="browseNext" rel="next" href="/archive/<%= (page.to_i + 1) %>">next</a>
                 <% end %>  
             </nav>
+            <footer>
+                <%= erb :searchWidget %>
+            </footer>
         </div>
     </body>
 </html>

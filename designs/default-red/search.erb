@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%= erb :head %>
+        <title>search for <%= keyword %> - <%= blogTitle %></title>
+        <meta name="description" content="">
+    </head>
+    <body>
+        <div id="content">
+            <%= erb :header, :locals => {:blogTitle => blogTitle} %>
+            <h2>Searchresults for <em><%= keyword %></em></h2>
+            <ol>
+            <% entries.each do |entry| %>
+                <li>
+                    <h3><a href="<%= entry.link(request) %>"><%= entry.title %></a></h3>
+                    <div itemprop="articleBody"><%= entry.body %></div>
+                </li>
+            <% end %>
+            </li>
+        </div>
+        
+    </body>
+</html>
