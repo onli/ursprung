@@ -1,0 +1,8 @@
+<form id="editor" action="/addEntry" method="POST">
+    <label><span>Title</span><input id="entryTitleInput" name="title" value="<%= entry.title if entry != nil %>"></input></label>
+    <label><textarea id="entryInput" name="body" rows=10><%= entry.body if entry != nil %></textarea></label>
+    <% if entry %>
+        <input name="id" type="hidden" value="<%= entry.id %>"/>
+    <% end %>
+    <button type="submit" id="entryPublish">Publish</button>
+</form>

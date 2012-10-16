@@ -9,14 +9,15 @@
 
     <body>
         
-        <div id="friendWidget">
+        <aside id="friendWidget">
             <% if isAdmin? %>
-                <aside id="welcome">Welcome, <%= authorized_email %> (<a href="/logout">Logout</a>)</aside>
+                <div id="welcome">Welcome <%= authorized_email %> (<a href="/logout">Logout</a>)</div>
+                <%= erb :designs, :locals => {:design => design, :designs => designs} %>
             <% else %>
                 <%= render_login_button %>
             <% end %>
             <%= erb :friends, :locals => {:friends => friends} %>
-        </div>
+        </aside>
 
         <div id="content">
         
@@ -40,6 +41,9 @@
                     <a id="browseNext" rel="next" href="/archive/<%= (page.to_i + 1) %>">next</a>
                 <% end %>  
             </nav>
+            <footer>
+                <%= erb :searchWidget %>
+            </footer>
         </div>
     </body>
 </html>

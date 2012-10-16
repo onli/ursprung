@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%= erb :head %>
+        <title><%= entry.title %> - <%= blogTitle %></title>
+        <meta name="description" content="">
+        <link rel="trackback" type="application/x-www-form-urlencoded" href="http://<%= request.host_with_port %>/<%= entry.id %>/addTrackback" />
+    </head>
+
+    <body>
+        <div id="content">
+            <%= erb :header, :locals => {:blogTitle => blogTitle} %>
+
+            <article class="entry" itemscope itemtype="http://schema.org/BlogPosting">
+                <%= erb :entry, :locals => {:entry => entry} %>
+
+                <!--
+                <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+                         xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/"
+                         xmlns:dc="http://purl.org/dc/elements/1.1/">
+                <rdf:Description
+                         trackback:ping="http://<%= request.host_with_port %>/<%= entry.id %>/addTrackback"
+                         dc:title="<%= entry.title %>"
+                         dc:identifier="http://<%= request.host_with_port %>/<%= entry.id %>/<%= h entry.title %>" />
+                </rdf:RDF>
+                -->
+
+
+                <ol id="comments">
+                     <% comments.each do |comment| %>
+                        <% if comment.status == "approved" %>
+                            <li>
+                                <%= erb :comment, :locals => {:comment => comment} %>
+                            </li>
+                        <% else %>
+                            <% if isAdmin? %>
+                                <li class="comment_moderate">
+                                    <%= erb :comment, :locals => {:comment => comment} %>
+                                </li>
+                            <% end %>
+                        <% end %>
+                    <% end %>
+                </ol>
+            </article>
+
+            <%= erb :commentForm, :locals => {:entry => entry, :comment => nil} %>
+        <div id="content">
+
+    </body>
+</html>

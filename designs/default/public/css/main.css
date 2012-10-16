@@ -78,7 +78,7 @@ article {
     width: 5em;
 }
 
-#welcome {
+#welcome, #designs {
     font-size: 0.9em;
 }
 
@@ -228,5 +228,9 @@ article {
 
 .adminOptionsMoreSign:hover + .adminOptionsMoreOptions, .adminOptionsMoreOptions:hover {
     display: block;
+}
+
+#search {
+    margin-top: 3em;
 }
 

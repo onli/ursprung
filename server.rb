@@ -19,8 +19,7 @@ helpers do
 
     def isAdmin?
         if authorized?
-            db = Database.new
-            if db.getAdminMail == authorized_email
+            if Database.new.getAdminMail == authorized_email
                 return true
             end
         end
@@ -34,8 +33,11 @@ helpers do
     end
 
     def blogOwner
-        db = Database.new
-        return db.getAdmin
+        return Database.new.getAdmin
+    end
+
+    def blogTitle
+        return Database.new.getOption("blogTitle")
     end
 
     def autotitle(text)
@@ -62,6 +64,17 @@ helpers do
     end
 end
 
+def loadConfiguration()
+    design = Database.new.getOption("design")
+    set(:design_root) { File.join(File.dirname(app_file), "designs") }
+    set(:views) { File.join(design_root, design) }
+    set(:public_folder) { File.join(views, 'public') }
+end
+
+configure do
+   loadConfiguration
+end
+
 ####
 #
 # Careful: Don't let this become a blob. Delegate
@@ -69,25 +82,27 @@ end
 ####
 
 get '/' do
+    serveIndex(-1)
+end
+
+get %r{/archive/([0-9]+)} do |page|
+    serveIndex(page.to_i)
+end
+
+def serveIndex(page)
     db = Database.new
     if db.firstUse?
         erb :installer
     else
-        entries = db.getEntries(-1, 5)
+        entries = db.getEntries(page, 5)
         totalPages = db.getTotalPages
+        page = totalPages if page == -1
         friends = db.getFriends
-        blogTitle = db.getOption("blogTitle")
-        erb :index, :locals => {:entries => entries, :page => totalPages, :totalPages => totalPages, :friends => friends, :blogTitle => blogTitle}
+        designs = Dir.new(settings.design_root).entries.reject{|design| design == "." || design == ".." }
+        design = db.getOption("design")
+        return erb :index, :locals => {:entries => entries, :page => page, :totalPages => totalPages, :friends => friends,
+                                :designs => designs, :design => design}
     end
-end
-
-get %r{/archive/([0-9]+)} do |page|
-    db = Database.new
-    entries = db.getEntries(page.to_i, 5)
-    totalPages = db.getTotalPages
-    friends = db.getFriends
-    blogTitle = db.getOption("blogTitle")
-    erb :index, :locals => {:entries => entries, :page => page, :totalPages => totalPages, :friends => friends, :blogTitle => blogTitle}
 end
 
 post '/addEntry' do
@@ -167,7 +182,7 @@ end
 
 post %r{/([0-9]+)/deleteEntry} do |id|
     protected!
-    #Entry.new(id).delete
+    Entry.new(id).delete
     "Done"
 end
 
@@ -186,8 +201,6 @@ post %r{/([0-9]+)/addComment} do |id|
     comment.id = params[:id] if params[:id] != nil
     comment.status = "moderate" if comment.isSpam? or entry.moderate
     comment.subscribe = 1 if params[:subscribe] != nil
-    puts params[:subscribe]
-    puts comment.subscribe
     comment.save
     
     redirect "/#{entry.id}/#{entry.title}"
@@ -196,22 +209,18 @@ end
 # A Page (entry with comments)
 get  %r{/([0-9]+)/([\w]+)} do |id, title|
     entry = Entry.new(id)
-    db = Database.new
-    comments = db.getCommentsForEntry(id)
-    blogTitle = db.getOption("blogTitle")
-    erb :page, :locals => {:entry => entry, :comments => comments, :blogTitle => blogTitle}
+    comments = Database.new.getCommentsForEntry(id)
+    erb :page, :locals => {:entry => entry, :comments => comments}
 end
 
 get '/feed' do
-    db = Database.new
-    entries = db.getEntries(-1, 10)
+    entries = Database.new.getEntries(-1, 10)
     headers "Content-Type"   => "application/rss+xml"
     erb :feed, :locals => {:entries => entries}
 end
 
 get '/commentFeed' do
-    db = Database.new
-    comments = db.getComments(30)
+    comments = Database.new.getComments(30)
     headers "Content-Type"   => "application/rss+xml"
     erb :commentFeed, :locals => {:comments => comments}
 end
@@ -220,8 +229,7 @@ post %r{/people/([\w]+)/([\w]+)} do |userid, groupid|
     protected!
     puts userid
     puts params[:url]
-    db = Database.new
-    db.addFriend(userid, params[:url])
+    Database.new.addFriend(userid, params[:url])
     redirect to('/')
 end
 
@@ -238,15 +246,19 @@ end
 
 post '/setOption' do
     protected!
-    db = Database.new
-    db.setOption(params[:name], params[:value])
+    Database.new.setOption(params[:name], params[:value])
+    loadConfiguration
     redirect session[:origin]
 end
 
 get %r{/setOption/([\w]+)} do |name|
     protected!
     session[:origin] = back
-    erb :editOption, :locals => {:name => name}
+    erb :editOption, :locals => {:name => name, :value => Database.new.getOption(name)}
+end
+
+get %r{/search} do
+    erb :search, :locals => {:entries => Database.new.searchEntries(params[:keyword]), :keyword => params[:keyword]}
 end
 
 get '/logout' do
@@ -254,4 +266,3 @@ get '/logout' do
     logout!
     redirect '/'
 end
-

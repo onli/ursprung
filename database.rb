@@ -47,10 +47,28 @@ class Database
                             date INTEGER DEFAULT CURRENT_TIMESTAMP,
                             FOREIGN KEY (author) REFERENCES authors(name) ON UPDATE CASCADE
                             );"
+            begin
+                @db.execute 'CREATE VIRTUAL TABLE IF NOT EXISTS search
+                                USING fts4(content="entries", body, title);'
+            rescue => error
+                # if not exists should work here, but doesn't, so this always throws an error if table exists
+            end
+            @db.execute 'CREATE TRIGGER IF NOT EXISTS entries_ai AFTER INSERT ON entries BEGIN
+                            INSERT INTO search(docid, body, title) VALUES(new.rowid, new.body, new.title);
+                        END;'
+            @db.execute 'CREATE TRIGGER IF NOT EXISTS entries_au AFTER UPDATE ON entries BEGIN
+                            INSERT INTO search(docid, body, title) VALUES(new.rowid, new.body, new.title);
+                        END;'
+            @db.execute 'CREATE TRIGGER IF NOT EXISTS entries_bd BEFORE DELETE ON entries BEGIN
+                            DELETE FROM search WHERE docid=old.rowid;
+                        END;'
+            @db.execute 'CREATE TRIGGER IF NOT EXISTS entries_bu BEFORE UPDATE ON entries BEGIN
+                            DELETE FROM search WHERE docid=old.rowid;
+                        END;'
             @db.execute "PRAGMA foreign_keys = ON;"
             @db.results_as_hash = true
         rescue => error
-            puts error
+            puts "error creating tables: #{error}"
         end
     end
 
@@ -231,7 +249,8 @@ class Database
         begin
             return @db.execute("SELECT value FROM options WHERE name = ? LIMIT 1;", name)[0]['value']
         rescue => error
-            puts error
+            puts "error getting option: #{error}"
+            return "default" if name == "design"
         end
     end
 
@@ -278,7 +297,7 @@ class Database
         end
     end
 
-    # get the amount of last comments
+    # get amount of last comments
     def getComments(amount)
         comments = []
         begin
@@ -290,6 +309,13 @@ class Database
         end
         return comments
     end
-    
+
+    def searchEntries(keyword)
+        entries = []
+        @db.execute("SELECT docid FROM search WHERE search MATCH ?;", keyword) do |row|
+            entries.push(Entry.new(row["docid"]))
+        end
+        return entries
+    end
 
 end

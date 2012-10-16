@@ -16,10 +16,17 @@ snack.ready(function() {
             while (! parent.className.match(/\bcontainer\b/)) {
                 var parent = parent.parentNode;
             }
-            var form = document.createElement();
+
+            if (navigator.userAgent.match(/.*Firefox.*/)) {
+                // detect firefox here, because in firefox you cant create an empty element and chrome can't add the form as inner/outerhtml without errors
+                var form = document.createElement("form");
+            } else {
+                var form = document.createElement();
+            }
             form.innerHTML = res;
             var original = parent;
             parent.parentNode.replaceChild(form, parent);
+
 
             /* TODO: Find a way to use this and to get the new content afterwards */
             /*var params = {

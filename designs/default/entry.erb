@@ -1,0 +1,17 @@
+<div class="container">
+    <header>
+        <a href="<%= entry.link(request) %>"><h2><%= entry.title %></h2></a>
+    </header>
+    <div itemprop="articleBody"><%= autotitle(RedCloth.new(entry.body).to_html) %></div>
+    <footer>
+        <time itemprop="datePublished" datetime="<%= Time.parse(entry.date).iso8601 %>"><%= Time.parse(entry.date).strftime("%d.%m.%Y") %></time>
+        <% if isAdmin? %>
+            <div class="adminOptions">
+                <a href="/<%= entry.id %>/editEntry"><button type="submit" class="edit adminAction" title="edit">&#9998;</button></a>
+                <form action="/<%= entry.id %>/deleteEntry" method="POST">
+                    <button type="submit" class="delete adminAction" title="delete">&#10005;</button>
+                </form>
+            </div>
+        <% end %>
+    </footer>
+</div>
