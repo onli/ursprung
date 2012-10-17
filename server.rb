@@ -248,11 +248,16 @@ post '/setOption' do
     protected!
     Database.new.setOption(params[:name], params[:value])
     loadConfiguration
-    redirect session[:origin]
+    origin = session[:origin]
+    # when setOption wasn't called first, like with the design, origin is old, so unset it
+    session.delete(:origin)
+    redirect origin if origin != nil
+    redirect back
 end
 
 get %r{/setOption/([\w]+)} do |name|
     protected!
+    puts "setting option"
     session[:origin] = back
     erb :editOption, :locals => {:name => name, :value => Database.new.getOption(name)}
 end
