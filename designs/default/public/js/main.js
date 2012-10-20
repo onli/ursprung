@@ -121,12 +121,12 @@ snack.ready(function() {
 
     if (snack.wrap('.adminOptionsMoreSign').length > 1) {
         // start this only on a page with comments, else snack throws errors
-        var fadeout;
+        var fadeouts = {};
         snack.wrap('.adminOptionsMoreSign').attach('mouseover', function(evt) {
             var parent = evt.target.parentNode.querySelectorAll(".adminOptionsMoreOptions")[0];
             parent.style["display"] = "block";
             snack.wrap(parent).removeClass("fadeout");
-            clearTimeout(fadeout);
+            clearTimeout(fadeouts[parent.innerHTML]);
             if (! navigator.userAgent.match(/.*Firefox.*/)) {
                 // detect firefox here, because in firefox the animation leads to the menu vanishing immediately
                 snack.wrap(evt.target.parentNode.querySelectorAll(".adminOptionsMoreOptions")[0]).addClass("fadein");
@@ -144,16 +144,17 @@ snack.ready(function() {
         });
 
         function fadeOutMenut(parent) {
-            fadeout = setTimeout(function() {
+            var fadeout = setTimeout(function() {
                                     snack.wrap(parent).removeClass("fadein");
                                     snack.wrap(parent).addClass("fadeout");
                                     clearTimeout(fadeout);
                                 }, 300);
+            fadeouts[parent.innerHTML] = fadeout
         }
 
         snack.wrap('.adminOptionsMoreOptions').attach('mouseover', function(evt) {
             var parent = getParent(evt.target, 'adminOptionsMoreOptions'); 
-            clearTimeout(fadeout);
+            clearTimeout(fadeouts[parent.innerHTML]);
         });
     }
 
