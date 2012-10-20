@@ -9,6 +9,7 @@ require './friend.rb'
 
 require 'sinatra'
 require 'RedCloth'
+require 'sanitize'
 include ERB::Util
 require 'sinatra/browserid'
 set :sessions, true
@@ -58,6 +59,21 @@ helpers do
         end
         return text
     end
+
+    def excerpt (text, length = 200)
+        if text.length >= length
+                excFullString = text[0, length]
+                splitFullString = excFullString.split(/\s/)
+                fullWords = splitFullString.length
+                splitFullString[0, fullWords-1].join(" ") + '...'
+        else
+                text
+        end
+    end
+
+    def stripHtml(text)
+        Sanitize.clean(text)
+    end 
 
     def friendManagerUrl
         return "http://localhost:4200/"

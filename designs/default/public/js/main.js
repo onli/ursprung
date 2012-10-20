@@ -80,6 +80,7 @@ snack.ready(function() {
         });
     });
 
+    // preview-button
     var publish;
     if ((publish = document.getElementById('entryPublish')) != null) {
         var previewButton = document.createElement('button');
@@ -118,7 +119,6 @@ snack.ready(function() {
     }
 
     // support for the hover-menu, dont vanish directly
-
     if (snack.wrap('.adminOptionsMoreSign').length > 1) {
         // start this only on a page with comments, else snack throws errors
         var fadeouts = {};

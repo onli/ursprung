@@ -13,7 +13,7 @@
             <% entries.each do |entry| %>
                 <li>
                     <h3><a href="<%= entry.link(request) %>"><%= entry.title %></a></h3>
-                    <div itemprop="articleBody"><%= entry.body %></div>
+                    <div itemprop="articleBody"><%= excerpt(stripHtml(autotitle(RedCloth.new(entry.body).to_html))) %></div>
                 </li>
             <% end %>
             </li>
