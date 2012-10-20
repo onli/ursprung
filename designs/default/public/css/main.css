@@ -48,6 +48,10 @@ article {
     max-width: 50em;
 }
 
+summary {
+    cursor: pointer;
+}
+
 #friendWidget {
     float: right;
     position: relative;
@@ -73,9 +77,15 @@ article {
     min-width: 100%;
 }
 
-#entryPublish {
+#entryPublish, #previewButton {
     margin-left: 35em;
     width: 5em;
+}
+
+#preview {
+    border: 1px dashed rgba(0, 0, 0, .3);
+    opacity: 0.8;
+    margin-top: 1em;
 }
 
 #welcome, #designs {

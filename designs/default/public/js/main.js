@@ -9,13 +9,10 @@ snack.ready(function() {
         }
         snack.request(options, function (err, res){
             if (err) {
-                alert('error fetching option');
+                alert('error fetching option: ' + err);
                 return;
             }
-            var parent = evt.target.parentNode.parentNode;
-            while (! parent.className.match(/\bcontainer\b/)) {
-                var parent = parent.parentNode;
-            }
+            var parent = getParent(evt.target, 'container')
 
             if (navigator.userAgent.match(/.*Firefox.*/)) {
                 // detect firefox here, because in firefox you cant create an empty element and chrome can't add the form as inner/outerhtml without errors
@@ -68,13 +65,10 @@ snack.ready(function() {
         }
         snack.request(options, function (err, res) {
             if (err) {
-                alert('error fetching option');
+                alert('error fetching option: ' + err);
                 return;
             }
-            var parent = evt.target.parentNode.parentNode;
-            while (! parent.className.match(/\bcontainer\b/)) {
-                var parent = parent.parentNode;
-            }
+            var parent = getParent(evt.target, 'container')
 
             events = ["animationend", "webkitAnimationEnd", "oanimationend", "MSAnimationEnd"];
             events.forEach(function(event) {
@@ -86,13 +80,50 @@ snack.ready(function() {
         });
     });
 
+    var publish;
+    if ((publish = document.getElementById('entryPublish')) != null) {
+        var previewButton = document.createElement('button');
+        previewButton.innerHTML = "Preview";
+        previewButton['id'] = "previewButton";
+        previewButton.setAttribute('type', 'button');
+        publish.parentNode.insertBefore(previewButton, publish);
+        snack.wrap(previewButton).attach('click', function(evt) {
+            var options = {
+                method: 'post',
+                url: '/preview',
+                data: {
+                    body: document.getElementById('entryInput').value,
+                    title: document.getElementById('entryTitleInput').value
+                }
+            }
+            snack.request(options, function (err, res) {
+                if (err) {
+                    alert('error getting preview: ' + err);
+                    return;
+                }
+                var entry = document.createElement('div');
+                entry.innerHTML = res;
+                entry['id'] = "preview";
+                var preview;
+                if ((preview = document.getElementById("preview")) != null) {
+                    publish.parentNode.replaceChild(entry, preview);
+                } else {
+                    publish.parentNode.appendChild(entry);
+                }
+                preview = document.getElementById("preview");
+                var adminOptions = preview.querySelectorAll('.adminOptions')[0];
+                adminOptions.parentNode.removeChild(adminOptions);
+            });
+        });
+    }
+
     // support for the hover-menu, dont vanish directly
 
     if (snack.wrap('.adminOptionsMoreSign').length > 1) {
         // start this only on a page with comments, else snack throws errors
         var fadeout;
         snack.wrap('.adminOptionsMoreSign').attach('mouseover', function(evt) {
-            parent = evt.target.parentNode.querySelectorAll(".adminOptionsMoreOptions")[0];
+            var parent = evt.target.parentNode.querySelectorAll(".adminOptionsMoreOptions")[0];
             parent.style["display"] = "block";
             snack.wrap(parent).removeClass("fadeout");
             clearTimeout(fadeout);
@@ -103,14 +134,12 @@ snack.ready(function() {
         });
 
         snack.wrap('.adminOptionsMoreSign').attach('mouseout', function(evt) {
+            var parent = evt.target.parentNode.querySelectorAll(".adminOptionsMoreOptions")[0];
             fadeOutMenut(parent);
         });
         
         snack.wrap('.adminOptionsMoreOptions').attach('mouseout', function(evt) {
-            var parent = evt.target
-            while (! parent.className.match(/\badminOptionsMoreOptions\b/)) {
-                var parent = parent.parentNode;
-            }
+            var parent = getParent(evt.target, 'adminOptionsMoreOptions'); 
             fadeOutMenut(parent);
         });
 
@@ -123,9 +152,16 @@ snack.ready(function() {
         }
 
         snack.wrap('.adminOptionsMoreOptions').attach('mouseover', function(evt) {
-            parent.style["background-color"] = "white";
+            var parent = getParent(evt.target, 'adminOptionsMoreOptions'); 
             clearTimeout(fadeout);
         });
+    }
+
+    function getParent(start, classname) {
+        while (! start.className.match(new RegExp('\\b'+classname+'\\b'))) {
+            var start = start.parentNode;
+        }
+        return start
     }
     
 });

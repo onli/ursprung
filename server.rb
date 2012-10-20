@@ -266,6 +266,14 @@ get %r{/search} do
     erb :search, :locals => {:entries => Database.new.searchEntries(params[:keyword]), :keyword => params[:keyword]}
 end
 
+post '/preview' do
+    entry = Entry.new()
+    entry.body = params[:body]
+    entry.title = params[:title]
+    entry.date = DateTime.now().to_s
+    erb :entry, :locals => {:entry => entry}
+end
+
 get '/logout' do
     protected!
     logout!
