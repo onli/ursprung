@@ -10,6 +10,7 @@ require './friend.rb'
 require 'sinatra'
 require 'RedCloth'
 require 'sanitize'
+require 'xmlrpc/marshal'
 include ERB::Util
 require 'sinatra/browserid'
 set :sessions, true
@@ -119,6 +120,12 @@ def serveIndex(page)
     end
 end
 
+get '/feed' do
+    entries = Database.new.getEntries(-1, 10)
+    headers "Content-Type"   => "application/rss+xml"
+    erb :feed, :locals => {:entries => entries}
+end
+
 post '/addEntry' do
     protected!
     entry = Entry.new(params, request)
@@ -127,23 +134,56 @@ end
 
 post %r{/([0-9]+)/addTrackback} do |id|
     puts "adding trackback"
-    commentAuthor = CommentAuthor.new
-    commentAuthor.name = params[:blog_name]
-    commentAuthor.url = params[:url]
-
-    comment = Comment.new()
-    comment.body = params[:excerpt]
-    comment.title = params[:title]
-    comment.replyToComment = nil
-    comment.replyToEntry = id
-    comment.author = commentAuthor
-    comment.type = "trackback"
-    comment.save
+    params = params.merge({:name => params[:blog_name], :body => params[:excerpt], :entryId => id, :type => 'trackback'})
+    Comment.new(params)
     
     '<?xml version="1.0" encoding="utf-8"?>
     <response>
        <error>0</error>
     </response>'
+end
+
+# solely used to handle pingbacks
+post '/xmlrpc' do
+    xml = @request.body.read
+ 
+    if(xml.empty?)
+        error = 400
+        return
+    end
+ 
+    method, arguments = XMLRPC::Marshal.load_call(xml)
+
+    if method == 'pingback.ping'
+        puts "adding pingback!"
+        source = arguments[0]
+        target = arguments[1]
+        id = target.gsub(/http:\/\/.*\/([0-9]*)\/.*/, '\1')
+        
+        puts "adding pingback"
+        commentAuthor = CommentAuthor.new
+        commentAuthor.name = params[:blog_name]
+        commentAuthor.url = source
+
+        comment = Comment.new()
+        comment.body = ""
+        comment.title = ""
+        comment.replyToComment = nil
+        comment.replyToEntry = id
+        comment.author = commentAuthor
+        comment.type = "trackback"
+        comment.save
+    end
+
+    
+ 
+    # Check if method exists
+    #if(respond_to?(method))
+        #content_type("text/xml", :charset => "utf-8")
+        #send(method, arguments)
+    #else
+        #error = 404
+    #end
 end
 
 get %r{/([0-9]+)/editEntry} do |id|
@@ -196,35 +236,10 @@ end
 
 post %r{/([0-9]+)/addComment} do |id|
     entry = Entry.new(id)
-    commentAuthor = CommentAuthor.new
-    commentAuthor.name = params[:name]
-    commentAuthor.mail = params[:mail]
-    commentAuthor.url = params[:url]
-
-    comment = Comment.new()
-    comment.replyToComment = params[:replyToComment].empty? ? nil : params[:replyToComment]
-    comment.replyToEntry = id
-    comment.body = params[:body]
-    comment.author = commentAuthor
-    comment.id = params[:id] if params[:id] != nil
-    comment.status = "moderate" if comment.isSpam? or entry.moderate
-    comment.subscribe = 1 if params[:subscribe] != nil
-    comment.save
+    params[:entryId] = id
+    Comment.new(params)
     
     redirect "/#{entry.id}/#{entry.title}"
-end
-
-# A Page (entry with comments)
-get  %r{/([0-9]+)/([\w]+)} do |id, title|
-    entry = Entry.new(id)
-    comments = Database.new.getCommentsForEntry(id)
-    erb :page, :locals => {:entry => entry, :comments => comments}
-end
-
-get '/feed' do
-    entries = Database.new.getEntries(-1, 10)
-    headers "Content-Type"   => "application/rss+xml"
-    erb :feed, :locals => {:entries => entries}
 end
 
 get '/commentFeed' do
@@ -280,6 +295,13 @@ post '/preview' do
     entry.title = params[:title]
     entry.date = DateTime.now().to_s
     erb :entry, :locals => {:entry => entry}
+end
+
+# A Page (entry with comments)
+get  %r{/([0-9]+)/([\w]+)} do |id, title|
+    entry = Entry.new(id)
+    comments = Database.new.getCommentsForEntry(id)
+    erb :page, :locals => {:entry => entry, :comments => comments}
 end
 
 get '/logout' do

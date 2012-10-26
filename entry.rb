@@ -3,6 +3,7 @@ require 'net/http'
 require 'uri'
 require 'sanitize'
 require 'RedCloth'
+require 'xmlrpc/client'
 
 class Entry
 
@@ -27,6 +28,7 @@ class Entry
                 self.author = Database.new.getAdmin
                 self.save
                 self.sendTrackbacks(request)
+                self.sendPingbacks(request)
             end
         end
     end
@@ -60,26 +62,16 @@ class Entry
     end
 
     def sendTrackbacks(request)
-        # get list of links
+    
         puts "sending trackback"
-        links = Nokogiri::HTML(RedCloth.new(self.body).to_html).css("a").map do |link|
-            if (href = link.attr("href")) && href.match(/^https?:/)
-                href
-            end
-        end.compact
         
-        if links.length == 0
-            return
+        uris = self.links()
+        if uris.length == 0
+            return false
         end
-
         puts "found links"
         
         # check links for trackback-urls
-        uris = []
-        links.each do |link|
-            puts link
-            uris.push(URI.parse(link))
-        end
 
         trackbackLinks  = []
         uris.each do |uri|
@@ -115,7 +107,7 @@ class Entry
         puts "gathering data"
 
         data = {"title" => self.title,
-                "url" => "http://#{request.host_with_port}/#{self.id}/#{URI.escape(self.title)}",
+                "url" => self.link(request),
                 "excerpt" => Sanitize.clean(self.body)[0..30].gsub(/\s\w+$/, '...'),
                 "blog_name" => Database.new.getOption("blogTitle")
                 }
@@ -136,6 +128,62 @@ class Entry
                 puts error
             end
         end
+    end
+
+    def sendPingbacks(request)
+        puts "sending pingbacks"
+        
+        uris = self.links()
+        if uris.length == 0
+            return false
+        end
+        puts "found links"
+
+        # check for pingback-url
+        pingbackLinks  = []
+        uris.each do |uri|
+            http = Net::HTTP.new(uri.host, uri.port)
+            http_request = Net::HTTP::Get.new(uri.request_uri)
+
+            response = http.request(http_request)
+            headLink = Nokogiri::HTML(response.body).css("link").map do |link|
+                if (href = link.attr("href")) && link.attr("rel") == "pingback" && href.match(/^https?:/)
+                    href
+                end
+            end.compact
+            
+            if headLink.length > 0
+                pingbackLinks.push({ :target => uri, :server => headLink[0] })
+                puts "found headLink: #{headLink}"
+            end
+        end
+        
+        if pingbackLinks.length == 0
+            return false
+        end
+
+        # send pingback via xmlrpc
+        pingbackLinks.each do |link|
+            server = XMLRPC::Client.new2(link[:server])
+            result = server.call('pingback.ping', self.link(request), link[:target].to_s)
+            puts result
+        end
+        
+    end
+
+    # get list of links 
+    def links()
+        links = Nokogiri::HTML(RedCloth.new(self.body).to_html).css("a").map do |link|
+            if (href = link.attr("href")) && href.match(/^https?:/)
+                href
+            end
+        end.compact
+        uris = []
+        links.each do |link|
+            puts link
+            uris.push(URI.parse(link))
+        end
+        return uris
     end
 
     def link(request)

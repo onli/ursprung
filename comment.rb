@@ -16,17 +16,31 @@ class Comment
     attr_accessor :subscribe
 
     def initialize(*args)
-        if args.length == 1
+        if args.length == 1 && args[0].respond_to?("even?")
             initializeFromID(args[0])
         else
-            # TODO: Dont hardcode those values
-            self.type = "comment"
-            self.status = "approved"
-            self.replyToComment = nil
+            if args[0].class == "Hash"
+                args[0] = params
+                commentAuthor = CommentAuthor.new
+                commentAuthor.name = params[:name]
+                commentAuthor.mail = params[:mail]
+                commentAuthor.url = params[:url]
+
+                self.replyToComment = params[:replyToComment].empty? ? nil : params[:replyToComment]
+                self.replyToEntry = params[:entryId]
+                self.body = params[:body]
+                self.author = commentAuthor
+                self.id = params[:id] if params[:id] != nil
+                self.status = "moderate" if comment.isSpam? or Entry.new(params[:entryId]).moderate
+                self.subscribe = 1 if params[:subscribe] != nil
+                self.type = params[:type] if params[:type] != nil
+                self.save
+            end
         end
     end
 
     def initializeFromID(id)
+        puts "initializeFromID"
         db = Database.new
         commentData = db.getCommentData(id)
         self.id = id

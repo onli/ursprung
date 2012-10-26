@@ -5,6 +5,7 @@
         <title><%= entry.title %> - <%= blogTitle %></title>
         <meta name="description" content="">
         <link rel="trackback" type="application/x-www-form-urlencoded" href="http://<%= request.host_with_port %>/<%= entry.id %>/addTrackback" />
+        <link rel="pingback" href="http://<%= request.host_with_port %>/xmlrpc" />
     </head>
 
     <body>
