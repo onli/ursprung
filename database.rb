@@ -189,7 +189,7 @@ class Database
 
     def getCommentData(id)
         begin
-            return @db.execute("SELECT name, url, mail, body, title, replyToComment, replyToEntry, date, status, subscribe
+            return @db.execute("SELECT name, url, mail, body, title, replyToComment, replyToEntry, date, status, subscribe, type
                                 FROM comments
                                 WHERE comments.id == ?;", id)[0]
         rescue => error

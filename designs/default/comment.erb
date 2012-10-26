@@ -1,5 +1,7 @@
 <article class="comment container" itemprop="comment" itemscope itemtype="http://schema.org/UserComments">
-    <div class="commentBody"><%= comment.body %></div>
+    <div class="commentBody">
+        <%= comment.body %><%='...' if comment.type == 'trackback' %>
+    </div>
     <footer>From
         <% if comment.author.url != "" %>
             <a href="<%= comment.author.url %>"><%= comment.author.name %></a>
