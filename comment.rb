@@ -50,7 +50,7 @@ class Comment
             # it is a new comment
             db.addComment(self)
             mailOwner()
-            if (comment.status == "approved")
+            if (self.status == "approved")
                 mailSubscribers()
             end
         else

@@ -2,6 +2,7 @@ require './database.rb'
 require 'net/http'
 require 'uri'
 require 'sanitize'
+require 'RedCloth'
 
 class Entry
 
@@ -16,15 +17,17 @@ class Entry
         if args.length == 1
             initializeFromID(args[0])
         else
-            params = args[0]
-            request = args[1]
-            self.body = params[:body]
-            self.title = params[:title]
-            self.id = params[:id] if params[:id] != nil
-            # NOTE: That way, only one-user-blogs are possible:
-            self.author = Database.new.getAdmin
-            self.save
-            self.sendTrackbacks(request)
+            if args.length == 2
+                params = args[0]
+                request = args[1]
+                self.body = params[:body]
+                self.title = params[:title]
+                self.id = params[:id] if params[:id] != nil
+                # NOTE: That way, only one-user-blogs are possible:
+                self.author = Database.new.getAdmin
+                self.save
+                self.sendTrackbacks(request)
+            end
         end
     end
     
@@ -58,8 +61,8 @@ class Entry
 
     def sendTrackbacks(request)
         # get list of links
-
-        links = Nokogiri::HTML(self.body).css("a").map do |link|
+        puts "sending trackback"
+        links = Nokogiri::HTML(RedCloth.new(self.body).to_html).css("a").map do |link|
             if (href = link.attr("href")) && href.match(/^https?:/)
                 href
             end
