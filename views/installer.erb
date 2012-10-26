@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+        <title>First Use Question</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+
+        <link rel="stylesheet" href="/css/main.css">
+    </head>
+
+    <body>
+        <% if ! authorized? %>
+            Step 1/2
+            <%= render_login_button %>
+        <% else %>
+            Step 2/2
+            <form method="POST" action="/addAdmin">
+                <label>Displayname: <input name="name" type="text"></input></label>
+                <button type="submit">OK</button>
+            </form>
+        <% end %>
+    </body>
+</html>

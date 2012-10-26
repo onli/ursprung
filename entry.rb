@@ -15,6 +15,16 @@ class Entry
     def initialize(*args)
         if args.length == 1
             initializeFromID(args[0])
+        else
+            params = args[0]
+            request = args[1]
+            self.body = params[:body]
+            self.title = params[:title]
+            self.id = params[:id] if params[:id] != nil
+            # NOTE: That way, only one-user-blogs are possible:
+            self.author = Database.new.getAdmin
+            self.save
+            self.sendTrackbacks(request)
         end
     end
     
@@ -33,10 +43,10 @@ class Entry
         db = Database.new
         if self.id == nil
             id = db.addEntry(self)
-            entryData = db.getEntryData(id)        
             initializeFromID(id)   # to get data added by the database, like the date
         else
             db.editEntry(self)
+            initializeFromID(self.id)
         end
     end
 
@@ -96,7 +106,7 @@ class Entry
         
         # if there are trackback-enabled links, gather data
         if trackbackLinks.length == 0
-            return
+            return false
         end
 
         puts "gathering data"

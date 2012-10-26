@@ -17,10 +17,12 @@ Using ruby, sinatra, browserid.
 Dependencies
  * gems:
   * sinatra
-  * sinatra-browserid
+  * sinatra-browserid (the one in the repo is currently defunct, see http://40hourworkweek.blogspot.de/2012/06/i-have-been-playing-with-mozillas.html for a solution)
   * json
   * sqlite3
   * sanitize
+  * nokogiri
+  * mechanize
   * madeleine
   * classifier
   * RedCloth

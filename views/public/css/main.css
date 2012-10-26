@@ -1,0 +1,232 @@
+
+html {
+    font-family: ubuntu, arial, sans-serif;
+    font-weight: 400;
+    background-color: white;
+    color: #333;
+}
+
+body {
+    padding-left: 2em;
+    margin: auto;
+}
+
+#content {
+    margin: auto;
+    margin-bottom: 1em;
+    margin-top: 2em;
+	width: 50em;
+}
+
+a {
+    color: #3B5998;
+    text-decoration: none;
+}
+
+a:visited {
+    color: #8496bc;
+}
+
+#title a:visited {
+    color: #3B5998;
+}
+
+#title h1 {
+    display: inline;
+}
+
+label {
+    display: block;
+}
+
+input, textarea, button {
+    font-family: inherit;
+    font-size: inherit;
+}
+
+article {
+    max-width: 50em;
+}
+
+#friendWidget {
+    float: right;
+    position: relative;
+    right: 3em;
+}
+
+#editor {
+    width: 40em;
+}
+
+#editor label span {
+    display: inline-block;
+    width: 2em;
+}
+
+#entryTitleInput {
+    margin-top: 1em;
+    min-width: 36em;
+    margin-left: 1em;
+}
+#entryInput {
+    margin-top: 1em;
+    min-width: 100%;
+}
+
+#entryPublish {
+    margin-left: 35em;
+    width: 5em;
+}
+
+#welcome {
+    font-size: 0.9em;
+}
+
+.comment {
+    margin-bottom: 1em;
+}
+
+.entry p {
+    padding-left: 1em;
+}
+
+.entry footer {
+    font-style: italic;
+    font-size: 0.9em;
+}
+
+.comment_moderate .commentBody, .comment_moderate footer  {
+    opacity: 0.7;
+}
+
+#commentForm span {
+    width: 6em;
+    display: inline-block;
+}
+
+#commentForm input {
+    width: 15em;
+}
+
+#commentForm textarea {
+    width: 21em;
+    min-height: 6em;
+}
+
+#commentForm button {
+    margin-left: 16em;
+}
+
+#commentForm .adminAction button {
+    margin-left: 0;
+}
+
+#browser {
+    margin-top: 1em;
+}
+
+#browseNext {
+    margin-left: 40em;
+}
+
+@-moz-keyframes fadeOut {
+  0% { opacity: 1;}
+  100% { opacity: 0; }
+}
+@-webkit-keyframes fadeOut {
+  0% { opacity: 1;}
+  100% { opacity: 0; }
+}
+@-o-keyframes fadeOut {
+  0% { opacity: 1;}
+  100% { opacity: 0; }
+}
+@-ms-keyframes fadeOut {
+    0% { filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+        opacity: 1; }
+    100% { filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+        opacity: 0; }
+}
+@keyframes fadeOut {
+    0% { filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+        opacity: 1; }
+    100% { filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+        opacity: 0; }
+}
+
+.fadeout {
+    animation: fadeOut 300ms linear forwards;
+    -moz-animation: fadeOut 300ms linear forwards;
+    -ms-animation: fadeOut 300ms linear forwards;
+    -o-animation: fadeOut 300ms linear forwards;
+    -webkit-animation: fadeOut 300ms linear forwards;
+}
+
+@-moz-keyframes fadeIn {
+  0% { opacity: 0;}
+  100% { opacity: 1; }
+}
+@-webkit-keyframes fadeIn {
+  0% { opacity: 0;}
+  100% { opacity: 1; }
+}
+@-o-keyframes fadeIn {
+  0% { opacity: 0;}
+  100% { opacity: 1; }
+}
+@-ms-keyframes fadeIn {
+    0% { filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+        opacity: 1; }
+    100% { filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+        opacity: 0; }
+}
+@keyframes fadeIn {
+    0% { filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+        opacity: 1; }
+    100% { filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+        opacity: 0; }
+}
+
+.fadein {
+    animation: fadeIn 300ms linear forwards;
+    -moz-animation: fadeIn 300ms linear forwards;
+    -ms-animation: fadeIn 300ms linear forwards;
+    -o-animation: fadeIn 300ms linear forwards;
+    -webkit-animation: fadeIn 300ms linear forwards;
+}
+
+.adminOptions form {
+    display: inline-block;
+}
+
+/* hover-menu: */
+.adminOptionsMore {
+    display: inline-block;
+    z-index: 1;
+}
+
+.adminOptionsMoreOptions {
+    display: none;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    background: white;
+    padding-top: 0;
+}
+
+.adminOptionsMoreOptions li, .adminMoreOption {
+    display: block;
+    width: 100%;
+    margin: 0;
+}
+
+.adminOptionsMoreSign {
+    cursor: default;
+    vertical-align: top;
+}
+
+.adminOptionsMoreSign:hover + .adminOptionsMoreOptions, .adminOptionsMoreOptions:hover {
+    display: block;
+}
+

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%= erb :head %>
+        <title><%= blogTitle%></title>
+        <link rel="alternate"  type="application/rss+xml" href="/feed" />
+        <meta name="description" content="">
+    </head>
+
+    <body>
+        
+        <div id="friendWidget">
+            <% if isAdmin? %>
+                <aside id="welcome">Welcome, <%= authorized_email %> (<a href="/logout">Logout</a>)</aside>
+            <% else %>
+                <%= render_login_button %>
+            <% end %>
+            <%= erb :friends, :locals => {:friends => friends} %>
+        </div>
+
+        <div id="content">
+        
+            <%= erb :header, :locals => {:blogTitle => blogTitle} %>
+            
+            <% if isAdmin? && (page.to_i == 0 || page.to_i == totalPages) %>
+                <%= erb :editor, :locals => {:entry => nil} %>
+            <% end %>
+
+            <% entries.each do |entry| %>
+                <article class="entry" itemscope itemtype="http://schema.org/BlogPosting">
+                    <%= erb :entry, :locals => {:entry => entry} %>
+                </article>
+            <% end %>
+
+            <nav id="browser">
+                <% if page.to_i != 1 && page.to_i != 0 %>
+                    <a id="browsePrior" rel="prev" href="/archive/<%= (page.to_i - 1) %>">prior</a>
+                <% end %>
+                <% if page.to_i != totalPages %>
+                    <a id="browseNext" rel="next" href="/archive/<%= (page.to_i + 1) %>">next</a>
+                <% end %>  
+            </nav>
+        </div>
+    </body>
+</html>

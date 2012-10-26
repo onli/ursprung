@@ -62,10 +62,8 @@ helpers do
 
     def excerpt (text, length = 200)
         if text.length >= length
-                excFullString = text[0, length]
-                splitFullString = excFullString.split(/\s/)
-                fullWords = splitFullString.length
-                splitFullString[0, fullWords-1].join(" ") + '...'
+                splitFullString = text[0, length].split(/\s/)
+                splitFullString[0, splitFullString.length-1].join(" ") + '...'
         else
                 text
         end
@@ -123,18 +121,12 @@ end
 
 post '/addEntry' do
     protected!
-    entry = Entry.new()
-    entry.body = params[:body]
-    entry.title = params[:title]
-    entry.id = params[:id] if params[:id] != nil
-    # NOTE: That way, only one-user-blogs are possible:
-    entry.author = blogOwner
-    entry.save
-    entry.sendTrackbacks(request)
+    entry = Entry.new(params, request)
     redirect "/#{entry.id}/#{entry.title}"
 end
 
 post %r{/([0-9]+)/addTrackback} do |id|
+    puts "adding trackback"
     commentAuthor = CommentAuthor.new
     commentAuthor.name = params[:blog_name]
     commentAuthor.url = params[:url]
