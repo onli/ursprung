@@ -100,6 +100,7 @@ end
 before do
     @cacheContent = nil
     if request.request_method == "GET"
+        puts "requesting cache for #{request.path_info}"
         @cacheContent = Database.new.getCache(request.path_info)
     end
 end
@@ -150,7 +151,7 @@ get '/feed' do
     end
     entries = Database.new.getEntries(-1, 10)
     headers "Content-Type"   => "application/rss+xml"
-    erb :feed, :locals => {:entries => entries}
+    body erb :feed, :locals => {:entries => entries}
 end
 
 post '/addEntry' do
@@ -322,12 +323,15 @@ end
 
 # A Page (entry with comments)
 get  %r{/([0-9]+)/([\w]+)} do |id, title|
+    puts "serving page"
     if @cacheContent != nil
+        puts "returning cache"
         return @cacheContent
     end
+    puts "@cacheContent: #{@cacheContent}"
     entry = Entry.new(id.to_i)
     comments = Database.new.getCommentsForEntry(id)
-    erb :page, :locals => {:entry => entry, :comments => comments}
+    body erb :page, :locals => {:entry => entry, :comments => comments}
 end
 
 get '/logout' do
