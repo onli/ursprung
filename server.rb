@@ -14,6 +14,7 @@ require 'xmlrpc/marshal'
 include ERB::Util
 require 'sinatra/browserid'
 set :sessions, true
+set :static_cache_control, [:public, max_age: 31536000]
 
 helpers do
     include Rack::Utils
@@ -96,6 +97,23 @@ end
 #
 ####
 
+before do
+    @cacheContent = nil
+    if request.request_method == "GET"
+        @cacheContent = Database.new.getCache(request.path_info)
+    end
+end
+
+after do
+    if @cacheContent == nil && request.request_method == "GET"
+        Database.new.cache(request.path_info, body)
+    else
+        if request.request_method == "POST"
+            Database.new.invalidateCache
+        end
+    end
+end
+
 get '/' do
     serveIndex(-1)
 end
@@ -105,6 +123,9 @@ get %r{/archive/([0-9]+)} do |page|
 end
 
 def serveIndex(page)
+    if @cacheContent != nil
+        return @cacheContent
+    end
     db = Database.new
     if db.firstUse?
         erb :installer
@@ -115,12 +136,18 @@ def serveIndex(page)
         friends = db.getFriends
         designs = Dir.new(settings.design_root).entries.reject{|design| design == "." || design == ".." }
         design = db.getOption("design")
-        return erb :index, :locals => {:entries => entries, :page => page, :totalPages => totalPages, :friends => friends,
+            
+        body erb :index, :locals => {:entries => entries, :page => page, :totalPages => totalPages, :friends => friends,
                                 :designs => designs, :design => design}
     end
 end
 
+
+
 get '/feed' do
+    if @cacheContent != nil
+        return @cacheContent
+    end
     entries = Database.new.getEntries(-1, 10)
     headers "Content-Type"   => "application/rss+xml"
     erb :feed, :locals => {:entries => entries}
@@ -170,19 +197,16 @@ post '/xmlrpc' do
 
         paramsNew = {:name => "", :body => "", :entryId => id, :type => 'trackback', :url => source}
         comment = Comment.new(paramsNew, request)
+        content_type("text/xml", :charset => "utf-8")
+        if comment.validTrackback
+            XMLRPC::Marshal.dump_response("Pingback successfully added")
+        else
+            XMLRPC::Marshal.dump_response("Error: Didn't find pingback-link on originating page")
+            error = 400
+        end
     else
         error = 404
     end
-
-    content_type("text/xml", :charset => "utf-8")
-    if comment.validTrackback
-        XMLRPC::Marshal.dump_response("Pingback successfully added")
-    else
-        XMLRPC::Marshal.dump_response("Error: Didn't find pingback-link on originating page")
-        error = 400
-    end
-    
-
 end
 
 get %r{/([0-9]+)/editEntry} do |id|
@@ -298,6 +322,9 @@ end
 
 # A Page (entry with comments)
 get  %r{/([0-9]+)/([\w]+)} do |id, title|
+    if @cacheContent != nil
+        return @cacheContent
+    end
     entry = Entry.new(id.to_i)
     comments = Database.new.getCommentsForEntry(id)
     erb :page, :locals => {:entry => entry, :comments => comments}

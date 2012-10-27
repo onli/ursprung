@@ -281,6 +281,15 @@ class Database
             puts error
         end
     end
+
+    # delete from cache all pages, but not linktitles
+    def invalidateCache()
+        begin
+            return @db.execute("DELETE FROM cache WHERE key LIKE '/%'")
+        rescue => error
+            puts error
+        end
+    end
     
     def getAdmin()
         begin
