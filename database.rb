@@ -168,6 +168,8 @@ class Database
     end
 
     def deleteComment(comment)
+        puts "database comment delete"
+        puts "id: #{comment.id}"
         begin
             @db.execute("DELETE FROM comments WHERE id = ?", comment.id)
         rescue => error

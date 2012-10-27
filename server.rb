@@ -134,18 +134,26 @@ end
 
 post %r{/([0-9]+)/addTrackback} do |id|
     puts "adding trackback"
-    params = params.merge({:name => params[:blog_name], :body => params[:excerpt], :entryId => id, :type => 'trackback'})
-    Comment.new(params)
-    
-    '<?xml version="1.0" encoding="utf-8"?>
-    <response>
-       <error>0</error>
-    </response>'
+    paramsNew = {:name => params[:blog_name], :body => params[:excerpt], :entryId => id, :type => 'trackback', :url => params[:url]}
+    trackback = Comment.new(paramsNew, request)
+    if trackback.validTrackback
+        '<?xml version="1.0" encoding="utf-8"?>
+        <response>
+            <error>0</error>
+        </response>'
+    else
+        '<?xml version="1.0" encoding="utf-8"?>
+        <response>
+            <error>1</error>
+            <message>Could not find originating link</message>
+        </response>'
+    end
 end
 
 # solely used to handle pingbacks
 post '/xmlrpc' do
-    xml = @request.body.read
+    puts "xmlrpc called"
+    xml = request.body.read
  
     if(xml.empty?)
         error = 400
@@ -159,42 +167,33 @@ post '/xmlrpc' do
         source = arguments[0]
         target = arguments[1]
         id = target.gsub(/http:\/\/.*\/([0-9]*)\/.*/, '\1')
-        
-        puts "adding pingback"
-        commentAuthor = CommentAuthor.new
-        commentAuthor.name = params[:blog_name]
-        commentAuthor.url = source
 
-        comment = Comment.new()
-        comment.body = ""
-        comment.title = ""
-        comment.replyToComment = nil
-        comment.replyToEntry = id
-        comment.author = commentAuthor
-        comment.type = "trackback"
-        comment.save
+        paramsNew = {:name => "", :body => "", :entryId => id, :type => 'trackback', :url => source}
+        comment = Comment.new(paramsNew, request)
+    else
+        error = 404
     end
 
+    content_type("text/xml", :charset => "utf-8")
+    if comment.validTrackback
+        XMLRPC::Marshal.dump_response("Pingback successfully added")
+    else
+        XMLRPC::Marshal.dump_response("Error: Didn't find pingback-link on originating page")
+        error = 400
+    end
     
- 
-    # Check if method exists
-    #if(respond_to?(method))
-        #content_type("text/xml", :charset => "utf-8")
-        #send(method, arguments)
-    #else
-        #error = 404
-    #end
+
 end
 
 get %r{/([0-9]+)/editEntry} do |id|
     protected!
-    entry = Entry.new(id)
+    entry = Entry.new(id.to_i)
     erb :edit, :locals => {:entry => entry}
 end
 
 get %r{/([0-9]+)/editComment} do |id|
     protected!
-    comment = Comment.new(id)
+    comment = Comment.new(id.to_i)
     puts comment.replyToEntry
     entry = Entry.new(comment.replyToEntry)
     erb :editComment, :locals => {:comment => comment, :entry => entry}
@@ -202,13 +201,13 @@ end
 
 post %r{/([0-9]+)/deleteComment} do |id|
     protected!
-    Comment.new(id).delete
+    Comment.new(id.to_i).delete
     "Done"
 end
 
 post %r{/([0-9]+)/spam} do |id|
     protected!
-    comment = Comment.new(id)
+    comment = Comment.new(id.to_i)
     comment.spam
     comment.delete
     "Done"
@@ -216,12 +215,12 @@ end
 
 post %r{/([0-9]+)/ham} do |id|
     protected!
-    Comment.new(id).ham
+    Comment.new(id.to_i).ham
     "Done"
 end
 
 get %r{/([0-9]+)/verdict} do |id|
-    if Comment.new(id).isSpam?
+    if Comment.new(id.to_i).isSpam?
         "spam"
     else
         "ham"
@@ -230,14 +229,14 @@ end
 
 post %r{/([0-9]+)/deleteEntry} do |id|
     protected!
-    Entry.new(id).delete
+    Entry.new(id.to_i).delete
     "Done"
 end
 
 post %r{/([0-9]+)/addComment} do |id|
-    entry = Entry.new(id)
+    entry = Entry.new(id.to_i)
     params[:entryId] = id
-    Comment.new(params)
+    Comment.new(params, request)
     
     redirect "/#{entry.id}/#{entry.title}"
 end
@@ -299,7 +298,7 @@ end
 
 # A Page (entry with comments)
 get  %r{/([0-9]+)/([\w]+)} do |id, title|
-    entry = Entry.new(id)
+    entry = Entry.new(id.to_i)
     comments = Database.new.getCommentsForEntry(id)
     erb :page, :locals => {:entry => entry, :comments => comments}
 end

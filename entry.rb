@@ -19,6 +19,7 @@ class Entry
             initializeFromID(args[0])
         else
             if args.length == 2
+                puts "creating entry from hash"
                 params = args[0]
                 request = args[1]
                 self.body = params[:body]
@@ -27,13 +28,16 @@ class Entry
                 # NOTE: That way, only one-user-blogs are possible:
                 self.author = Database.new.getAdmin
                 self.save
-                self.sendTrackbacks(request)
-                self.sendPingbacks(request)
+                remainingLinks = self.sendTrackbacks(request)
+                if remainingLinks.length > 1
+                    self.sendPingbacks(request, remainingLinks)
+                end
             end
         end
     end
     
     def initializeFromID(id)
+        puts "creating entry from id: #{id}"
         db = Database.new
         entryData = db.getEntryData(id)
         self.id = id
@@ -88,6 +92,7 @@ class Entry
             
             if headLink.length > 0
                 trackbackLinks.push(headLink[0])
+                uris.delete(uri)
                 puts "found headLink: #{headLink}"
             else
                 puts uri
@@ -95,6 +100,7 @@ class Entry
                 if rdfLink.length > 0
                     puts "found rdfLink: #{rdfLink}"
                     trackbackLinks.push(rdfLink[0])
+                    uris.delete(uri)
                 end
             end
         end
@@ -123,17 +129,28 @@ class Entry
             http.read_timeout = 20
             begin
                 response = http.request(req)
-                puts response
+                doc = Nokogiri::XML(response.body)
+                error = doc.xpath("/response/error")
+                if error == 0
+                    uris.delete(uri)
+                else
+                    puts response.body
+                end
             rescue Exception => error
                 puts error
             end
         end
+        return uris
     end
 
-    def sendPingbacks(request)
+    def sendPingbacks(request, remainingLinks = nil)
         puts "sending pingbacks"
         
-        uris = self.links()
+        uris = remainingLinks
+        if uris == nil
+            uris = self.links()
+        end
+            
         if uris.length == 0
             return false
         end
