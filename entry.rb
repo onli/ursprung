@@ -29,7 +29,8 @@ class Entry
                 self.author = Database.new.getAdmin
                 self.save
                 remainingLinks = self.sendTrackbacks(request)
-                if remainingLinks.length > 1
+                puts remainingLinks.to_s
+                if remainingLinks.length >= 1
                     self.sendPingbacks(request, remainingLinks)
                 end
             end
@@ -71,7 +72,7 @@ class Entry
         
         uris = self.links()
         if uris.length == 0
-            return false
+            return uris
         end
         puts "found links"
         
@@ -107,7 +108,8 @@ class Entry
         
         # if there are trackback-enabled links, gather data
         if trackbackLinks.length == 0
-            return false
+            puts "no trackback-enabled links"
+            return uris
         end
 
         puts "gathering data"
@@ -182,7 +184,11 @@ class Entry
         # send pingback via xmlrpc
         pingbackLinks.each do |link|
             server = XMLRPC::Client.new2(link[:server])
-            result = server.call('pingback.ping', self.link(request), link[:target].to_s)
+            begin
+                result = server.call('pingback.ping', self.link(request), link[:target].to_s)
+            rescue Exception => error
+                puts error
+            end
             puts result
         end
         
