@@ -100,14 +100,14 @@ end
 before do
     @cacheContent = nil
     if request.request_method == "GET"
-        puts "requesting cache for #{request.path_info}"
-        @cacheContent = Database.new.getCache(request.path_info)
+        puts "requesting cache for #{request.path_info}#{isAdmin?}"
+        @cacheContent = Database.new.getCache("#{request.path_info}#{isAdmin?}")
     end
 end
 
 after do
     if @cacheContent == nil && request.request_method == "GET"
-        Database.new.cache(request.path_info, body)
+        Database.new.cache("#{request.path_info}#{isAdmin?}", body)
     else
         if request.request_method == "POST"
             Database.new.invalidateCache
@@ -328,7 +328,6 @@ get  %r{/([0-9]+)/([\w]+)} do |id, title|
         puts "returning cache"
         return @cacheContent
     end
-    puts "@cacheContent: #{@cacheContent}"
     entry = Entry.new(id.to_i)
     comments = Database.new.getCommentsForEntry(id)
     body erb :page, :locals => {:entry => entry, :comments => comments}
