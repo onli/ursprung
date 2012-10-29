@@ -3,7 +3,7 @@
         <div class="commentBody">Pingback: <a href="<%= comment.author.url %>"><%= comment.author.name %></a></div>
     <% else %>
         <div class="commentBody">
-            <%= comment.body %><%='...' if comment.type == 'trackback' %>
+            <%= htmlentities(comment.body) %><%='...' if comment.type == 'trackback' %>
         </div>
         <footer>From
             <% if comment.author.url != "" %>

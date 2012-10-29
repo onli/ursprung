@@ -158,6 +158,59 @@ snack.ready(function() {
         });
     }
 
+    // markup-buttons
+    if (snack.wrap('#entryInput').length == 1) {
+        editor = document.getElementById('entryInput');
+        buttonBar = document.createElement("div");
+        buttonBar.className = "buttonBar";
+        boldButton = document.createElement("span");
+        boldButton.innerHTML = "B";
+        boldButton.className = "markupButton boldButton";
+        italicButton = document.createElement("span");
+        italicButton.innerHTML = "I";
+        italicButton.className = "markupButton italicButton";
+        linkButton = document.createElement("img");
+        linkButton["alt"] = "Link";
+        linkButton["src"] = "/link.png";
+        linkButton.className = "markupButton linkButton";
+        buttonBar.innerHTML += boldButton.outerHTML;
+        buttonBar.innerHTML += italicButton.outerHTML;
+        buttonBar.innerHTML += linkButton.outerHTML;
+        editor.parentNode.insertBefore(buttonBar, editor);
+        snack.wrap('.boldButton').attach('click', function(evt) {
+            var sel = getTextSelection(editor);
+            var replace = "*"+sel+"*";
+            replaceSelection(editor, replace);
+        });
+        snack.wrap('.italicButton').attach('click', function(evt) {
+            var sel = getTextSelection(editor);
+            var replace = "_"+sel+"_";
+            replaceSelection(editor, replace);
+        });
+        snack.wrap('.linkButton').attach('click', function(evt) {
+            var sel = getTextSelection(editor);
+            var replace = '"'+sel+'":http://';
+            replaceSelection(editor, replace);
+        });
+    }
+
+    function getTextSelection(textarea){
+        var startPos = textarea.selectionStart;
+        var endPos = textarea.selectionEnd;        
+        var field_value = textarea.value;
+        var selectedText = field_value.substring(startPos,endPos);
+        return selectedText;
+    }
+
+    function replaceSelection(editor, text) {
+        var start = editor.selectionStart;
+        var end = editor.selectionEnd;
+        var len = editor.value.length;
+        editor.value =  editor.value.substring(0,start) + text + editor.value.substring(end,len);
+        editor.selectionEnd = start + text.length;
+    }
+    
+
     function getParent(start, classname) {
         while (! start.className.match(new RegExp('\\b'+classname+'\\b'))) {
             var start = start.parentNode;

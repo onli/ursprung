@@ -10,10 +10,13 @@ require './friend.rb'
 require 'sinatra'
 require 'RedCloth'
 require 'sanitize'
+require 'htmlentities'
 require 'xmlrpc/marshal'
 include ERB::Util
 require 'sinatra/browserid'
 set :sessions, true
+set :browserid_login_button, "/browserid.png"
+
 set :static_cache_control, [:public, max_age: 31536000]
 
 helpers do
@@ -73,7 +76,11 @@ helpers do
 
     def stripHtml(text)
         Sanitize.clean(text)
-    end 
+    end
+
+    def htmlentities(text)
+        return HTMLEntities.new.encode(text)
+    end
 
     def friendManagerUrl
         return "http://localhost:4200/"
@@ -267,9 +274,12 @@ post %r{/([0-9]+)/addComment} do |id|
 end
 
 get '/commentFeed' do
+    if @cacheContent != nil
+        return @cacheContent
+    end
     comments = Database.new.getComments(30)
     headers "Content-Type"   => "application/rss+xml"
-    erb :commentFeed, :locals => {:comments => comments}
+    body erb :commentFeed, :locals => {:comments => comments}
 end
 
 post %r{/people/([\w]+)/([\w]+)} do |userid, groupid|

@@ -1,6 +1,6 @@
 
 html {
-    font-family: ubuntu, arial, sans-serif;
+    font-family: ubuntu, helvetica, arial, sans-serif;
     font-weight: 400;
     background-color: white;
     color: #333;
@@ -62,19 +62,15 @@ summary {
     width: 40em;
 }
 
-#editor label span {
-    display: inline-block;
-    width: 2em;
-}
-
 #entryTitleInput {
     margin-top: 1em;
+    margin-bottom: 1em;
     min-width: 36em;
     margin-left: 1em;
 }
 #entryInput {
-    margin-top: 1em;
     min-width: 100%;
+    #border-top-right-radius: 5px;
 }
 
 #entryPublish, #previewButton {
@@ -88,6 +84,32 @@ summary {
     margin-top: 1em;
     padding-left: 0.2em;
     padding-right: 0.2em;
+}
+
+.markupButton {
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 18px;
+    font-family: serif;
+}
+
+.boldButton {
+    font-weight: bold;
+}
+
+.italicButton {
+    font-style: italic;
+}
+
+.linkButton {
+    position: relative;
+    top: 1px;
+}
+
+.buttonBar {
+    display: inline-block;
 }
 
 #welcome, #designs {
