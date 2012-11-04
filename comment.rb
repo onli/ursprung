@@ -207,6 +207,14 @@ class Comment
         end.compact
 
         return false
+    end
 
+    def avatar
+        if self.author.mail
+            require 'digest/md5'
+            return "http://www.gravatar.com/avatar/#{Digest::MD5.hexdigest(self.author.mail.downcase)}?d=mm&s=40"
+        else
+            return nil
+        end
     end
 end

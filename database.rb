@@ -268,7 +268,7 @@ class Database
     def cache(key, value)
         begin
             @db.execute("INSERT OR IGNORE INTO cache(key, value) VALUES(?, ?)", key, value)
-            @db.execute("UPDATE cache SET value = ? WHERE key = ?", value, key)
+            @db.execute("UPDATE cache SET value = ?, ttl = (strftime('%s','now') + 604800) WHERE key = ?", value, key)
         rescue => error
             puts error
         end

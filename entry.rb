@@ -46,7 +46,7 @@ class Entry
         self.title = entryData["title"]
         self.date = entryData["date"]
         self.author = entryData["author"]
-        self.moderate = entryData["moderate "]
+        self.moderate = entryData["moderate"]
     end
 
     def save()

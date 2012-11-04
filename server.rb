@@ -53,7 +53,11 @@ helpers do
                 if ((title = db.getCache(href)) == nil)
                     require 'mechanize'
                     agent = Mechanize.new
-                    title = agent.get(href).title
+                    begin
+                        title = agent.get(href).title
+                    rescue Exception => error
+                        title = ""
+                    end
                     db.cache(href, title)
                 else
                     old_link = link

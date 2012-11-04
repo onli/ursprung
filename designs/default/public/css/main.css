@@ -120,6 +120,11 @@ summary {
     margin-bottom: 1em;
 }
 
+.avatar {
+    float: left;
+    margin-right: 0.5em;
+}
+
 .entry p {
     padding-left: 1em;
 }
