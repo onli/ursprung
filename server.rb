@@ -15,7 +15,7 @@ require 'xmlrpc/marshal'
 include ERB::Util
 require 'sinatra/browserid'
 set :sessions, true
-set :browserid_login_button, "/browserid.png"
+set :browserid_login_button, "/img/browserid.png"
 
 set :static_cache_control, [:public, max_age: 31536000]
 

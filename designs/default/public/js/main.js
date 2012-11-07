@@ -171,7 +171,7 @@ snack.ready(function() {
         italicButton.className = "markupButton italicButton";
         linkButton = document.createElement("img");
         linkButton["alt"] = "Link";
-        linkButton["src"] = "/link.png";
+        linkButton["src"] = "/img/link.png";
         linkButton.className = "markupButton linkButton";
         buttonBar.innerHTML += boldButton.outerHTML;
         buttonBar.innerHTML += italicButton.outerHTML;
