@@ -145,6 +145,14 @@ class Database
         end
     end
 
+    def setEntryModeration(id, value)
+        begin
+            return @db.execute("UPDATE entries SET moderate = ? WHERE id = ?;", value, id)
+        rescue => error
+            puts "setEntryOption: #{error}"
+        end
+    end
+
     def addComment(comment)
         begin
              @db.execute("INSERT INTO comments(replyToEntry, replyToComment, body, type, status, title, name, mail, url, subscribe)

@@ -335,6 +335,12 @@ post '/preview' do
     erb :entry, :locals => {:entry => entry}
 end
 
+post %r{/([0-9]+)/setEntryModeration} do |id|
+    protected!
+    Database.new.setEntryModeration(id, params[:value])
+    "Done"
+end
+
 # A Page (entry with comments)
 get  %r{/([0-9]+)/([\w]+)} do |id, title|
     puts "serving page"
