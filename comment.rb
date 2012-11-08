@@ -39,7 +39,8 @@ class Comment
                 self.body = params[:body]
                 self.author = commentAuthor
                 self.id = params[:id] if params[:id] != nil
-                self.status = "moderate" if self.isSpam? or self.entry.moderate
+                self.status = "approved"
+                self.status = "moderate" if self.isSpam? or self.entry.moderate == true
                 self.subscribe = 1 if params[:subscribe] != nil
                 self.type = params[:type] if params[:type] != nil
                 if self.type == "trackback"
@@ -133,19 +134,19 @@ class Comment
         }
         begin
             m.system.train_ham self.body
-        rescue 
+        rescue
         end
         begin
             m.system.train_ham self.author.name
-        rescue 
+        rescue
         end
         begin
             m.system.train_ham self.author.mail
-        rescue 
+        rescue
         end
         begin
             m.system.train_ham self.author.url
-        rescue 
+        rescue
         end
         m.take_snapshot
         self.save

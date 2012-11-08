@@ -159,7 +159,7 @@ snack.ready(function() {
     }
 
     // markup-buttons
-    if (snack.wrap('#entryInput').length == 1) {
+    if (document.getElementById('entryInput') != null) {
         editor = document.getElementById('entryInput');
         buttonBar = document.createElement("div");
         buttonBar.className = "buttonBar";
