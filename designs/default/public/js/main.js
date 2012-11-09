@@ -160,16 +160,16 @@ snack.ready(function() {
 
     // markup-buttons
     if (document.getElementById('entryInput') != null) {
-        editor = document.getElementById('entryInput');
-        buttonBar = document.createElement("div");
+        var editor = document.getElementById('entryInput');
+        var buttonBar = document.createElement("div");
         buttonBar.className = "buttonBar";
-        boldButton = document.createElement("span");
+        var boldButton = document.createElement("span");
         boldButton.innerHTML = "B";
         boldButton.className = "markupButton boldButton";
-        italicButton = document.createElement("span");
+        var italicButton = document.createElement("span");
         italicButton.innerHTML = "I";
         italicButton.className = "markupButton italicButton";
-        linkButton = document.createElement("img");
+        var linkButton = document.createElement("img");
         linkButton["alt"] = "Link";
         linkButton["src"] = "/img/link.png";
         linkButton.className = "markupButton linkButton";
@@ -193,6 +193,34 @@ snack.ready(function() {
             replaceSelection(editor, replace);
         });
     }
+
+    /* toggle-slider-button */
+    if  (document.getElementById('entryModerationToggle') != null) {
+        var moderationForm = document.getElementById('entryModerationToggle');
+        var saveButton = moderationForm.querySelectorAll('.save')[0];
+        var toggle = moderationForm.querySelectorAll('input[type="checkbox"]')[0];
+        toggle.parentNode.insertBefore(document.createElement('span'), toggle.nextSibling);
+        // the css will make a toggle-button out of the span, so the checkbox is no longer needed, as a click on the span triggers the label which triggers the checkbox
+        toggle.style['display'] = 'none';
+       
+        snack.wrap(toggle).attach('change', function() {
+                                                var options = {
+                                                    method: 'post',
+                                                    url: moderationForm.action,
+                                                    data: {
+                                                        value: toggle.checked
+                                                    }
+                                                    
+                                                }
+                                                snack.request(options, function (err, res) {
+                                                    if (err) {
+                                                        alert('error setting moderation: ' + err);
+                                                        return;
+                                                    }
+                                                });
+        });
+        moderationForm.removeChild(saveButton);
+    } 
 
     function getTextSelection(textarea){
         var startPos = textarea.selectionStart;

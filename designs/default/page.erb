@@ -27,9 +27,9 @@
                 -->
 
                  <% if isAdmin? %>
-                    <form action="/<%= entry.id %>/setEntryModeration" method="POST">
+                    <form id="entryModerationToggle" action="/<%= entry.id %>/setEntryModeration" method="POST" >
                         <label>Moderate Comments:
-                            <input type="checkbox" name="value" <%= "checked" if entry.moderate %> />
+                            <input type="checkbox" name="value" <%= "checked" if entry.moderate == 1 || entry.moderate == "on" %>/>
                         </label>
                         <button type="submit" class="save">OK</button>
                     </form>

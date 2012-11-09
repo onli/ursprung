@@ -134,6 +134,15 @@ summary {
     font-size: 0.9em;
 }
 
+#entryModerationToggle {
+    margin: 1em;
+    
+}
+
+#entryModerationToggle label {
+    display: inline;
+}
+
 .comment_moderate .commentBody, .comment_moderate footer  {
     opacity: 0.7;
 }
@@ -273,3 +282,31 @@ summary {
     margin-top: 3em;
 }
 
+/* checkoxes from http://www.chrisnorstrom.com/2012/11/invention-multiple-choice-windowed-slider-ui/ */
+#entryModerationToggle input[type="checkbox"] + span {
+    width: 84px;
+    height: 26px;
+    display: inline-block;
+    vertical-align: middle;
+    padding: 0px;
+	margin: 0px;
+    margin-left: 1em;
+}
+
+#entryModerationToggle input[type="checkbox"] + span:before {
+    content:"";
+    display:inline-block;
+    width: 100%;
+    height: 100%;
+    background: url("/img/off.jpg") no-repeat 0 0;
+    background-size: 100% 100%;
+}
+
+#entryModerationToggle input[type="checkbox"]:checked + span:before {
+    content:"";
+    display:inline-block;
+    width: 100%;
+    height: 100%;
+    background: url("/img/on.jpg") no-repeat 0 0;
+    background-size: 100% 100%;
+}
