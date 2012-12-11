@@ -168,7 +168,7 @@ end
 post '/addEntry' do
     protected!
     entry = Entry.new(params, request)
-    redirect "/#{entry.id}/#{entry.title}"
+    redirect "/#{entry.id}/#{URI.escape(entry.title)}"
 end
 
 post %r{/([0-9]+)/addTrackback} do |id|
