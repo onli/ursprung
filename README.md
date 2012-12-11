@@ -15,6 +15,13 @@ Created as an assessed assignment for the lecture [Security in Online Social Net
 Using ruby, sinatra, browserid.
 
 Dependencies
+
+ * General:
+  * ruby
+  * libxml2-dev (used by sanitize) 
+  * libxslt1-dev (used by sanitize)
+  * libgsl-ruby1.9.1 (used by classifier, or install the gem gsl. optional)
+
  * gems:
   * sinatra
   * sinatra-browserid (the one in the repo is currently defunct, see http://40hourworkweek.blogspot.de/2012/06/i-have-been-playing-with-mozillas.html for a solution)
@@ -24,10 +31,8 @@ Dependencies
   * nokogiri
   * mechanize
   * madeleine
+  * pony 
+  * htmlentities
   * classifier
   * RedCloth
- * General:
-  * ruby
-  * libxml2-dev (used by sanitize) 
-  * libxslt1-dev (used by sanitize)
-  * libgsl-ruby1.9.1 (used by classifier, or install the gem gsl. optional)
+
