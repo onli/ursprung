@@ -47,8 +47,19 @@ class Database
                             date INTEGER DEFAULT CURRENT_TIMESTAMP,
                             FOREIGN KEY (author) REFERENCES authors(name) ON UPDATE CASCADE
                             );"
+            @db.execute "CREATE TABLE IF NOT EXISTS stream(
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            body TEXT,
+                            title TEXT,
+                            author TEXT,
+                            date INTEGER,
+                            url TEXT,
+                            guid INTEGER,
+                            FOREIGN KEY (author) REFERENCES friends(name) ON UPDATE CASCADE,
+                            UNIQUE (author, guid)
+                        );"
             begin
-                @db.execute 'CREATE VIRTUAL TABLE IF NOT EXISTS search
+                @db.execute 'CREATE VIRTUAL TABLE search
                                 USING fts4(content="entries", body, title);'
             rescue => error
                 # if not exists should work here, but doesn't, so this always throws an error if table exists
