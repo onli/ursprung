@@ -268,6 +268,14 @@ class Database
         return friends
     end
 
+    def getFriendData(id)
+        begin
+            return @db.execute("SELECT name, url FROM friends WHERE name == ?;", id)[0]
+        rescue => error
+            puts "getFriendData: #{error}"
+        end
+    end
+
     def getOption(name)
         begin
             return @db.execute("SELECT value FROM options WHERE name = ? LIMIT 1;", name)[0]['value']
@@ -350,4 +358,19 @@ class Database
         return entries
     end
 
+    def fillStream(body, title, author, date, url, guid)
+        begin
+            @db.execute("INSERT INTO stream(body, title, author, date, url, guid) VALUES(?, ?, ?, ?, ?, ?)", body, title, author, date, url, guid)
+        rescue => error
+            puts error
+        end
+    end
+
+    def getStream()
+        begin
+            return @db.execute("SELECT body, title, author, date, url, guid FROM stream ORDER BY date DESC")
+        rescue => error
+            puts error
+        end
+    end
 end

@@ -15,25 +15,25 @@ class Entry
     attr_accessor :moderate
 
     def initialize(*args)
-        if args.length == 1
+        case args.length
+        when 1
             initializeFromID(args[0])
-        else
-            if args.length == 2
-                puts "creating entry from hash"
-                params = args[0]
-                request = args[1]
-                self.body = params[:body]
-                self.title = params[:title]
-                self.id = params[:id] if params[:id] != nil
-                # NOTE: That way, only one-user-blogs are possible:
-                self.author = Database.new.getAdmin
-                self.save
-                remainingLinks = self.sendTrackbacks(request)
-                puts remainingLinks.to_s
-                if remainingLinks.length >= 1
-                    self.sendPingbacks(request, remainingLinks)
-                end
+        when 2
+            # creating entry from params and save in database
+            params = args[0]
+            request = args[1]
+            self.body = params[:body]
+            self.title = params[:title]
+            self.id = params[:id] if params[:id] != nil
+            # NOTE: That way, only one-user-blogs are possible:
+            self.author = Database.new.getAdmin
+            self.save
+            remainingLinks = self.sendTrackbacks(request)
+            puts remainingLinks.to_s
+            if remainingLinks.length >= 1
+                self.sendPingbacks(request, remainingLinks)
             end
+            Database.new.getFriends.each{|friend| friend.notify}
         end
     end
     

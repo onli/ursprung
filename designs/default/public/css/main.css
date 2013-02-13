@@ -58,6 +58,18 @@ summary {
     right: 3em;
 }
 
+mainNav {
+    float: left;
+    position: relative;
+    left: 3em;
+}
+
+#mainNav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
 #editor {
     width: 40em;
 }

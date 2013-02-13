@@ -1,6 +1,6 @@
 <div class="container">
     <header>
-        <a href="<%= entry.link(request) %>"><h2><%= entry.title %></h2></a>
+        <h2><a href="<%= entry.link(request) %>"><%= entry.title %></a></h2>
     </header>
     <div itemprop="articleBody"><%= autotitle(RedCloth.new(entry.body).to_html) %></div>
     <footer>

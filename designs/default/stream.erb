@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%= erb :head %>
+        <title><%= blogTitle%> - Stream</title>
+        <meta name="description" content="">
+    </head>
+    <body>
+        
+        <%= erb :navigation %>
+        
+        <div id="content">
+            <%= erb :header, :locals => {:blogTitle => blogTitle} %>
+            <h2>Friend Activities</h2>
+            <% stream.each do |entry| %>
+                <article class="entry" itemscope itemtype="http://schema.org/BlogPosting">
+                    <div class="container">
+                        <header>
+                            <h2><a href="<%= entry["url"] %>"><%= entry["title"] %></a></h2>
+                        </header>
+                        <div itemprop="articleBody"><%= entry["body"] %></div>
+                        <footer>
+                            Written by <span itemprop="articleAuthor"><%= entry["author"] %></span>, <time itemprop="datePublished" datetime="<%= Time.at(entry["date"].to_i).iso8601 %>"><%= Time.at(entry["date"].to_i).strftime("%d.%m.%Y") %></time>
+                        </footer>
+                    </div>
+                </article>
+            <% end %>
+        </div>
+    </body>
+</html>

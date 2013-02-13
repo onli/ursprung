@@ -108,23 +108,23 @@ end
 #
 ####
 
-before do
-    @cacheContent = nil
-    if request.request_method == "GET"
-        puts "requesting cache for #{request.path_info}#{isAdmin?}"
-        @cacheContent = Database.new.getCache("#{request.path_info}#{isAdmin?}")
-    end
-end
-
-after do
-    if @cacheContent == nil && request.request_method == "GET"
-        Database.new.cache("#{request.path_info}#{isAdmin?}", body)
-    else
-        if request.request_method == "POST"
-            Database.new.invalidateCache
-        end
-    end
-end
+#before do
+    #@cacheContent = nil
+    #if request.request_method == "GET"
+        #puts "requesting cache for #{request.path_info}#{isAdmin?}"
+        #@cacheContent = Database.new.getCache("#{request.path_info}#{isAdmin?}")
+    #end
+#end
+#
+#after do
+    #if @cacheContent == nil && request.request_method == "GET"
+        #Database.new.cache("#{request.path_info}#{isAdmin?}", body)
+    #else
+        #if request.request_method == "POST"
+            #Database.new.invalidateCache
+        #end
+    #end
+#end
 
 get '/' do
     serveIndex(-1)
@@ -163,6 +163,11 @@ get '/feed' do
     entries = Database.new.getEntries(-1, 10)
     headers "Content-Type"   => "application/rss+xml"
     body erb :feed, :locals => {:entries => entries}
+end
+
+post '/entry' do
+    puts "#{params[:id]} has update"
+    Friend.new(params[:id]).hasUpdate
 end
 
 post '/addEntry' do
@@ -340,6 +345,10 @@ post %r{/([0-9]+)/setEntryModeration} do |id|
     Database.new.setEntryModeration(id, params[:value])
     redirect back if ! request.xhr?
     "Done"
+end
+
+get '/stream' do
+    erb :stream, :locals => { :stream => Database.new.getStream }
 end
 
 # A Page (entry with comments)
