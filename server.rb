@@ -6,6 +6,7 @@ require './entry.rb'
 require './comment.rb'
 require './commentauthor.rb'
 require './friend.rb'
+require './message.rb'
 
 require 'sinatra'
 require 'RedCloth'
@@ -168,6 +169,30 @@ end
 post '/entry' do
     puts "#{params[:id]} has update"
     Friend.new(params[:id]).hasUpdate
+end
+
+post '/message' do
+    puts "#{params[:id]} has message #{params[:mid]}"
+    Friend.new(params[:id]).hasMessage(params[:key], params[:mid])
+end
+
+get '/message' do
+    Message.new(params[:id]).content
+end
+
+get '/testMessage' do
+    Message.new(params[:id]).decryptContent
+end
+
+get '/messages' do
+    protected!
+    erb :messages
+end
+
+post '/addMessage' do
+    protected!
+    Message.new(params[:to], params[:content])
+    redirect "/messages"
 end
 
 post '/addEntry' do

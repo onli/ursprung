@@ -24,7 +24,7 @@ Dependencies
 
  * gems:
   * sinatra
-  * sinatra-browserid (the one in the repo is currently defunct, see http://40hourworkweek.blogspot.de/2012/06/i-have-been-playing-with-mozillas.html for a solution)
+  * sinatra-browserid (the one in the repo is currently defunct ruby 1.9.x, see http://40hourworkweek.blogspot.de/2012/06/i-have-been-playing-with-mozillas.html for a solution)
   * json
   * sqlite3
   * sanitize
@@ -35,4 +35,5 @@ Dependencies
   * htmlentities
   * classifier
   * RedCloth
+  * crypt (to work in ruby 1.9.x, change @key[keypos] to @key[keypos].ord in line 47, see http://www.ruby-forum.com/topic/203985)
 

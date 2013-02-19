@@ -48,7 +48,7 @@ class Database
                             FOREIGN KEY (author) REFERENCES authors(name) ON UPDATE CASCADE
                             );"
             @db.execute "CREATE TABLE IF NOT EXISTS stream(
-                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,   
                             body TEXT,
                             title TEXT,
                             author TEXT,
@@ -57,6 +57,14 @@ class Database
                             guid INTEGER,
                             FOREIGN KEY (author) REFERENCES friends(name) ON UPDATE CASCADE,
                             UNIQUE (author, guid)
+                        );"
+            @db.execute "CREATE TABLE IF NOT EXISTS messages(
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            content TEXT,
+                            key TEXT,
+                            author TEXT,
+                            recipient TEXT,
+                            read INTEGER DEFAULT 0
                         );"
             begin
                 @db.execute 'CREATE VIRTUAL TABLE search
@@ -371,6 +379,23 @@ class Database
             return @db.execute("SELECT body, title, author, date, url, guid FROM stream ORDER BY date DESC")
         rescue => error
             puts error
+        end
+    end
+
+    def addMessage(message)
+        begin
+            @db.execute("INSERT INTO messages(content, key, author, recipient) VALUES(?, ?, ?, ?);", message.content, message.key, message.from, message.to)
+        rescue => error
+            puts error
+        end
+        return @db.last_insert_row_id()
+    end
+
+    def getMessageData(id)
+        begin
+            return @db.execute("SELECT id, content, key, author, recipient, read FROM messages WHERE id == ?;", id)[0]
+        rescue => error
+            puts "getMessageData: #{error}"
         end
     end
 end
