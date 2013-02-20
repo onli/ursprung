@@ -167,13 +167,11 @@ get '/feed' do
 end
 
 post '/entry' do
-    puts "#{params[:id]} has update"
     Friend.new(params[:id]).hasUpdate
 end
 
 post '/message' do
-    puts "#{params[:id]} has message #{params[:mid]}"
-    Friend.new(params[:id]).hasMessage(params[:key], params[:mid])
+    Friend.new(params[:id]).hasMessage(params[:mid], params[:key])
 end
 
 get '/message' do
@@ -181,6 +179,7 @@ get '/message' do
 end
 
 get '/testMessage' do
+    protected!
     Message.new(params[:id]).decryptContent
 end
 
@@ -191,7 +190,7 @@ end
 
 post '/addMessage' do
     protected!
-    Message.new(params[:to], params[:content])
+    Message.new(params[:to], params[:content]).send
     redirect "/messages"
 end
 

@@ -55,9 +55,7 @@ class Message
     end
 
     def send()
-        friend = Friend.new(self.to).sendMessage
-        
-        
+        friend = Friend.new(self.to).send(self)
     end
 
 
