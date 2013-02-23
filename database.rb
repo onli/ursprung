@@ -64,6 +64,7 @@ class Database
                             key TEXT,
                             author TEXT,
                             recipient TEXT,
+                            date INTEGER DEFAULT CURRENT_TIMESTAMP,
                             read INTEGER DEFAULT 0
                         );"
             begin
@@ -396,6 +397,18 @@ class Database
             return @db.execute("SELECT id, content, key, author, recipient, read FROM messages WHERE id == ?;", id)[0]
         rescue => error
             puts "getMessageData: #{error}"
+        end
+    end
+
+    def getMessages(participant)
+        begin
+            messages = []
+            @db.execute("SELECT id FROM messages WHERE author == ? OR recipient == ?", participant, participant) do |row|
+                messages.push(Message.new(row["id"]));
+            end
+            return messages
+        rescue => error
+            puts "getMessages: #{error}"
         end
     end
 end

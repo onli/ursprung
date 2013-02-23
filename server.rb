@@ -178,16 +178,6 @@ get '/message' do
     Message.new(params[:id]).content
 end
 
-get '/testMessage' do
-    protected!
-    Message.new(params[:id]).decryptContent
-end
-
-get '/messages' do
-    protected!
-    erb :messages
-end
-
 post '/addMessage' do
     protected!
     Message.new(params[:to], params[:content]).send
@@ -373,6 +363,20 @@ end
 
 get '/stream' do
     erb :stream, :locals => { :stream => Database.new.getStream }
+end
+
+get '/testMessage' do
+    protected!
+    Message.new(params[:id]).decryptContent
+end
+
+get '/messageControl' do
+    protected!
+    erb :messageControl, :locals => {:friends => Database.new.getFriends}
+end
+
+get '/messageList' do
+    erb :messageList, :locals => {:messages => Database.new.getMessages(params[:participant])}
 end
 
 # A Page (entry with comments)

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%= erb :head %>
+        <title><%= blogTitle%> - Messages</title>
+        <meta name="description" content="">
+    </head>
+    <body>
+        
+        <%= erb :navigation %>
+        
+        <div id="content">
+            <%= erb :header, :locals => {:blogTitle => blogTitle} %>
+            <h2>Messages</h2>
+
+
+                <ol id="messengers">
+                <% friends.each do |friend| %>
+                    <li><button class="messenger" data-name="<%= friend.name %>"><%= friend.name %></button></li>
+                <% end %>
+                </ol>
+
+                <section id="messages">
+                    
+                    <form id="messageEditor" action="addMessage" method="post">
+                        <ul>
+                            <li><input type="hidden" name="to" id="to" /></li>
+                            <li><textarea name="content" placeholder="Message" required></textarea></li>
+                            <li><button type="submit">Send</button></li>
+                        </ul>
+                    </form>
+                </section>
+
+
+
+            
+                
+            
+        </div>
+    </body>
+</html>

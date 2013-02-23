@@ -58,7 +58,7 @@ summary {
     right: 3em;
 }
 
-mainNav {
+#mainNav {
     float: left;
     position: relative;
     left: 3em;
@@ -321,4 +321,19 @@ mainNav {
     height: 100%;
     background: url("/img/on.jpg") no-repeat 0 0;
     background-size: 100% 100%;
+}
+
+#messages, #messengers {
+    display: inline-block;
+    vertical-align: top;
+}
+
+#messageEditor {
+    opacity: 0;
+}
+
+#messageEditor ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
 }
