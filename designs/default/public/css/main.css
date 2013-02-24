@@ -326,14 +326,50 @@ summary {
 #messages, #messengers {
     display: inline-block;
     vertical-align: top;
+    list-style-type: none;
+    padding: 0;
+}
+
+#messageList {
+    list-style-type: none;
+    padding: 0;
+    max-width: 30em;
+}
+
+.message {
+    margin-bottom: 1em;
+}
+
+.messageIncoming {
+    margin-right: 2em;
+    margin-left: 0em;
+}
+
+.messageOwn {
+    margin-right: 0em;
+    margin-left: 2em;
+}
+
+.messageOwn:after {
+    content: "»";
+}
+
+.message .author {
+    font-size: 0.8em;
+    text-align: right;
+    font-style: italic;
 }
 
 #messageEditor {
     opacity: 0;
 }
 
-#messageEditor ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
+textarea[name="content"] {
+    width: 30em;
+    height: 4em;
+    display: block;
+}
+
+#messageEditor button {
+    margin-left: 27em;
 }

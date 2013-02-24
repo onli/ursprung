@@ -82,35 +82,34 @@ snack.ready(function() {
             });
         });
     }
-
-    snack.wrap('.messenger').attach('click', function(evt) {
-        var options = {
-                method: 'get',
-                url: "/messageList",
-                data: {
-                    participant: evt.target.dataset["name"]
+    if (snack.wrap('.messenger')[0].addEventListener != undefined) {
+        snack.wrap('.messenger').attach('click', function(evt) {
+            var options = {
+                    method: 'get',
+                    url: "/messageList",
+                    data: {
+                        participant: evt.target.dataset["name"]
+                    }
                 }
-            }
-        snack.request(options, function(err,res) {
-            if (navigator.userAgent.match(/.*Firefox.*/)) {
-                // detect firefox here, because in firefox you cant create an empty element and chrome can't add the form as inner/outerhtml without errors
-                var list = document.createElement("ul");
-            } else {
-                var list = document.createElement();
-            }
-            list.innerHTML = res;
-            if (document.querySelector('#messageList') != null) {
-                document.querySelector('#messages').replaceChild(list, document.querySelector('#messageEditor').previousSibling);
-            } else {
-                document.querySelector('#messages').insertBefore(list, document.querySelector('#messageEditor'));
-            }
-            
-            snack.wrap('#messageEditor').addClass("fadein");
-            document.querySelector('#to').value = evt.target.dataset["name"]
+            snack.request(options, function(err,res) {
+                if (navigator.userAgent.match(/.*Firefox.*/)) {
+                    // detect firefox here, because in firefox you cant create an empty element and chrome can't add the form as inner/outerhtml without errors
+                    var list = document.createElement("ul");
+                } else {
+                    var list = document.createElement();
+                }
+                list.innerHTML = res;
+                if (document.querySelector('#messageList') != null) {
+                    document.querySelector('#messages').replaceChild(list, document.querySelector('#messageEditor').previousSibling);
+                } else {
+                    document.querySelector('#messages').insertBefore(list, document.querySelector('#messageEditor'));
+                }
+                
+                snack.wrap('#messageEditor').addClass("fadein");
+                document.querySelector('#to').value = evt.target.dataset["name"]
+            });
         });
-        
-            
-    });
+    }
 
     // preview-button
     var publish;

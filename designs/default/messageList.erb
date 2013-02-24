@@ -1,5 +1,8 @@
 <ol id="messageList">
     <% messages.each do |message| %>
-        <li><%= message.decryptContent %></li>
+        <li class="message <%= message.from == blogOwnerMail ? "messageOwn" : "messageIncoming" %>" >
+            <div class="content"><%= message.decryptContent %></div>
+            <span class="author">From <%= message.from %></span>
+        </li>
     <% end %>
 </ol>

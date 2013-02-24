@@ -43,6 +43,10 @@ helpers do
         return Database.new.getAdmin
     end
 
+    def blogOwnerMail
+        return Database.new.getAdminMail
+    end
+
     def blogTitle
         return Database.new.getOption("blogTitle")
     end
@@ -181,7 +185,7 @@ end
 post '/addMessage' do
     protected!
     Message.new(params[:to], params[:content]).send
-    redirect "/messages"
+    redirect "/messageControl"
 end
 
 post '/addEntry' do
