@@ -1,3 +1,4 @@
+<%# -*- encoding : utf-8 -*- %>
 <ol id="messageList">
     <% messages.each do |message| %>
         <li class="message <%= message.from == blogOwnerMail ? "messageOwn" : "messageIncoming" %>" >

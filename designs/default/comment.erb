@@ -1,3 +1,4 @@
+<%# -*- encoding : utf-8 -*- %>
 <article class="comment container" itemprop="comment" itemscope itemtype="http://schema.org/UserComments">
     <% if comment.type == 'trackback' && comment.body == "" %>
         <div class="commentBody">Pingback: <a href="<%= comment.author.url %>"><%= comment.author.name %></a></div>
