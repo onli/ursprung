@@ -13,6 +13,7 @@ require 'RedCloth'
 require 'sanitize'
 require 'htmlentities'
 require 'xmlrpc/marshal'
+require 'json'
 include ERB::Util
 require 'sinatra/browserid'
 set :sessions, true
@@ -93,6 +94,15 @@ helpers do
 
     def friendManagerUrl
         return "http://localhost:4200/"
+    end
+
+    def registeredDomain?
+        uri = URI.parse(friendManagerUrl + 'url')
+        http = Net::HTTP.new(uri.host, uri.port)
+        http_request = Net::HTTP::Get.new(uri.request_uri)
+        http_request.set_form_data({:id => authorized_email})
+        response = http.request(http_request)
+        return response.code == "200" && JSON.parse(response.body).has_key?("url") && JSON.parse(response.body)["url"] != "not registered!"
     end
 end
 
@@ -309,7 +319,7 @@ get '/commentFeed' do
     body erb :commentFeed, :locals => {:comments => comments}
 end
 
-post %r{/people/([\w]+)/([\w]+)} do |userid, groupid|
+post %r{/people/(.+)/([\w]+)} do |userid, groupid|
     protected!
     puts userid
     puts params[:url]

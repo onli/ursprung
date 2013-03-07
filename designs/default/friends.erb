@@ -8,5 +8,5 @@
 <% end %>
 <% if ! isAdmin? %>
     <br %>
-    <a href="<%= friendManagerUrl %>addFriend?name=<%= blogOwner %>&amp;url=<%=u 'http://' + request.host_with_port %>">add <%= blogOwner %> as Friend!</a>
+    <a href="<%= friendManagerUrl %>addFriend?id=<%= blogOwnerMail %>&amp;url=<%=u 'http://' + request.host_with_port %>">add <%= blogOwner %> as Friend!</a>
 <% end %>
