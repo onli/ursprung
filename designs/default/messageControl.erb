@@ -14,27 +14,20 @@
             <%= erb :header, :locals => {:blogTitle => blogTitle} %>
             <h2>Messages</h2>
 
+            <ol id="messengers">
+            <% friends.each do |friend| %>
+                <li><button class="messenger" data-name="<%= friend.name %>"><%= friend.name %></button></li>
+            <% end %>
+            </ol>
 
-                <ol id="messengers">
-                <% friends.each do |friend| %>
-                    <li><button class="messenger" data-name="<%= friend.name %>"><%= friend.name %></button></li>
-                <% end %>
-                </ol>
-
-                <section id="messages">
-                    
-                    <form id="messageEditor" action="addMessage" method="post">
-                        <input type="hidden" name="to" id="to" />
-                        <textarea name="content" placeholder="Message" required></textarea>
-                        <button type="submit">Send</button>
-                    </form>
-                </section>
-
-
-
-            
+            <section id="messages">
                 
-            
+                <form id="messageEditor" action="addMessage" method="post">
+                    <input type="hidden" name="to" id="to" />
+                    <textarea name="content" placeholder="Message" required></textarea>
+                    <button type="submit">Send</button>
+                </form>
+            </section> 
         </div>
     </body>
 </html>

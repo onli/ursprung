@@ -223,7 +223,7 @@ summary {
 }
 
 @-moz-keyframes fadeIn {
-  0% { opacity: 0;}
+  0% { opacity: 0; }
   100% { opacity: 1; }
 }
 @-webkit-keyframes fadeIn {
@@ -236,15 +236,15 @@ summary {
 }
 @-ms-keyframes fadeIn {
     0% { filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
-        opacity: 1; }
-    100% { filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
         opacity: 0; }
+    100% { filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+        opacity: 1; }
 }
 @keyframes fadeIn {
     0% { filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
-        opacity: 1; }
-    100% { filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
         opacity: 0; }
+    100% { filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+        opacity: 1; }
 }
 
 .fadein {
