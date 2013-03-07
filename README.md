@@ -35,5 +35,5 @@ Dependencies
   * htmlentities
   * classifier
   * RedCloth
-  * crypt (to work in ruby 1.9.x, change @key[keypos] to @key[keypos].ord in line 47, see http://www.ruby-forum.com/topic/203985)
+  * crypt (to work in ruby 1.9.x, change @key[keypos] to @key[keypos].ord in the file *blowfish.rb* in line 47, see http://www.ruby-forum.com/topic/203985)
 
