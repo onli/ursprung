@@ -72,6 +72,7 @@ class Database
                                 USING fts4(content="entries", body, title);'
             rescue => error
                 # if not exists should work here, but doesn't, so this always throws an error if table exists
+                puts "Creating search-table: #{error}"
             end
             @db.execute 'CREATE TRIGGER IF NOT EXISTS entries_ai AFTER INSERT ON entries BEGIN
                             INSERT INTO search(docid, body, title) VALUES(new.rowid, new.body, new.title);

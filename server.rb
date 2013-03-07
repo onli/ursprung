@@ -20,6 +20,7 @@ set :sessions, true
 set :browserid_login_button, "/img/browserid.png"
 
 set :static_cache_control, [:public, max_age: 31536000]
+set :protection, :except => [:http_origin, :remote_token]
 
 helpers do
     include Rack::Utils
