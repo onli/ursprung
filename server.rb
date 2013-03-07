@@ -93,7 +93,7 @@ helpers do
     end
 
     def friendManagerUrl
-        return "http://localhost:4200/"
+        return "http://nanooq.org:45678/"
     end
 
     def registeredDomain?
