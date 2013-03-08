@@ -195,6 +195,8 @@ end
 
 post '/addMessage' do
     protected!
+    puts params[:to]
+    puts params[:content]
     Message.new(params[:to], params[:content]).send
     redirect "/messageControl"
 end

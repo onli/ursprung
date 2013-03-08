@@ -111,6 +111,27 @@ snack.ready(function() {
                 document.querySelector('#to').value = evt.target.dataset["name"]
             });
         });
+        snack.wrap('#messageEditor').attach('submit', function(evt) {
+            snack.preventDefault(evt);
+            var data = {};
+            for (var i=0; i < evt.target.length; i++) {
+                if (evt.target.elements[i].name) {
+                    data[evt.target.elements[i].name] = evt.target.elements[i].value;
+                }
+            }
+            var options = {
+                method: evt.target.method,
+                url: evt.target.action,
+                data: data
+            }
+            snack.request(options, function (err, res) {
+                if (err) {
+                    alert('error sending message: ' + err);
+                    return;
+                }
+                evt.target.querySelector('textarea').value = "";
+            });
+        });
     }
 
     // preview-button
