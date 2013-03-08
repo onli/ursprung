@@ -1,0 +1,10 @@
+<%# -*- encoding : utf-8 -*- %>
+<nav id="mainNav">
+    <ul>
+        <li><a href="/">Blog</a></li>
+        <li><a href="/stream">Stream</a></li>
+        <% if isAdmin? %>
+            <li><a href="/messageControl">Messages</a></li>
+        <% end %>
+    </ul>
+</nav>

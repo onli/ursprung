@@ -1,6 +1,6 @@
 
 html {
-    font-family: ubuntu, arial, sans-serif;
+    font-family: ubuntu, helvetica, arial, sans-serif;
     font-weight: 400;
     background-color: white;
     color: #333;
@@ -48,34 +48,80 @@ article {
     max-width: 50em;
 }
 
+summary {
+    cursor: pointer;
+}
+
 #friendWidget {
     float: right;
     position: relative;
     right: 3em;
 }
 
+#mainNav {
+    float: left;
+    position: relative;
+    left: 3em;
+}
+
+#mainNav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
 #editor {
     width: 40em;
 }
 
-#editor label span {
-    display: inline-block;
-    width: 2em;
-}
-
 #entryTitleInput {
     margin-top: 1em;
+    margin-bottom: 1em;
     min-width: 36em;
     margin-left: 1em;
 }
 #entryInput {
-    margin-top: 1em;
     min-width: 100%;
+    #border-top-right-radius: 5px;
 }
 
-#entryPublish {
+#entryPublish, #previewButton {
     margin-left: 35em;
     width: 5em;
+}
+
+#preview {
+    border: 1px dashed rgba(0, 0, 0, .3);
+    opacity: 0.8;
+    margin-top: 1em;
+    padding-left: 0.2em;
+    padding-right: 0.2em;
+}
+
+.markupButton {
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 18px;
+    font-family: serif;
+}
+
+.boldButton {
+    font-weight: bold;
+}
+
+.italicButton {
+    font-style: italic;
+}
+
+.linkButton {
+    position: relative;
+    top: 1px;
+}
+
+.buttonBar {
+    display: inline-block;
 }
 
 #welcome, #designs {
@@ -86,6 +132,11 @@ article {
     margin-bottom: 1em;
 }
 
+.avatar {
+    float: left;
+    margin-right: 0.5em;
+}
+
 .entry p {
     padding-left: 1em;
 }
@@ -93,6 +144,15 @@ article {
 .entry footer {
     font-style: italic;
     font-size: 0.9em;
+}
+
+#entryModerationToggle {
+    margin: 1em;
+    
+}
+
+#entryModerationToggle label {
+    display: inline;
 }
 
 .comment_moderate .commentBody, .comment_moderate footer  {
@@ -163,7 +223,7 @@ article {
 }
 
 @-moz-keyframes fadeIn {
-  0% { opacity: 0;}
+  0% { opacity: 0; }
   100% { opacity: 1; }
 }
 @-webkit-keyframes fadeIn {
@@ -176,15 +236,15 @@ article {
 }
 @-ms-keyframes fadeIn {
     0% { filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
-        opacity: 1; }
-    100% { filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
         opacity: 0; }
+    100% { filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+        opacity: 1; }
 }
 @keyframes fadeIn {
     0% { filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
-        opacity: 1; }
-    100% { filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
         opacity: 0; }
+    100% { filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+        opacity: 1; }
 }
 
 .fadein {
@@ -234,4 +294,82 @@ article {
     margin-top: 3em;
 }
 
+/* checkoxes from http://www.chrisnorstrom.com/2012/11/invention-multiple-choice-windowed-slider-ui/ */
+#entryModerationToggle input[type="checkbox"] + span {
+    width: 84px;
+    height: 26px;
+    display: inline-block;
+    vertical-align: middle;
+    padding: 0px;
+	margin: 0px;
+    margin-left: 1em;
+}
 
+#entryModerationToggle input[type="checkbox"] + span:before {
+    content:"";
+    display:inline-block;
+    width: 100%;
+    height: 100%;
+    background: url("/img/off.jpg") no-repeat 0 0;
+    background-size: 100% 100%;
+}
+
+#entryModerationToggle input[type="checkbox"]:checked + span:before {
+    content:"";
+    display:inline-block;
+    width: 100%;
+    height: 100%;
+    background: url("/img/on.jpg") no-repeat 0 0;
+    background-size: 100% 100%;
+}
+
+#messages, #messengers {
+    display: inline-block;
+    vertical-align: top;
+    list-style-type: none;
+    padding: 0;
+}
+
+#messageList {
+    list-style-type: none;
+    padding: 0;
+    max-width: 30em;
+}
+
+.message {
+    margin-bottom: 1em;
+}
+
+.messageIncoming {
+    margin-right: 2em;
+    margin-left: 0em;
+}
+
+.messageOwn {
+    margin-right: 0em;
+    margin-left: 2em;
+}
+
+.messageOwn:after {
+    content: "»";
+}
+
+.message .author {
+    font-size: 0.8em;
+    text-align: right;
+    font-style: italic;
+}
+
+#messageEditor {
+    opacity: 0;
+}
+
+textarea[name="content"] {
+    width: 30em;
+    height: 4em;
+    display: block;
+}
+
+#messageEditor button {
+    margin-left: 27em;
+}

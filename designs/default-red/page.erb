@@ -1,3 +1,4 @@
+<%# -*- encoding : utf-8 -*- %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -5,6 +6,7 @@
         <title><%= entry.title %> - <%= blogTitle %></title>
         <meta name="description" content="">
         <link rel="trackback" type="application/x-www-form-urlencoded" href="http://<%= request.host_with_port %>/<%= entry.id %>/addTrackback" />
+        <link rel="pingback" href="http://<%= request.host_with_port %>/xmlrpc" />
     </head>
 
     <body>
@@ -25,6 +27,14 @@
                 </rdf:RDF>
                 -->
 
+                 <% if isAdmin? %>
+                    <form id="entryModerationToggle" action="/<%= entry.id %>/setEntryModeration" method="POST" >
+                        <label>Moderate Comments:
+                            <input type="checkbox" name="value" <%= "checked" if entry.moderate == 1 || entry.moderate == "on" %>/>
+                        </label>
+                        <button type="submit" class="save">OK</button>
+                    </form>
+                <% end %>
 
                 <ol id="comments">
                      <% comments.each do |comment| %>

@@ -1,13 +1,22 @@
+<%# -*- encoding : utf-8 -*- %>
 <article class="comment container" itemprop="comment" itemscope itemtype="http://schema.org/UserComments">
-    <div class="commentBody"><%= comment.body %></div>
-    <footer>From
-        <% if comment.author.url != "" %>
-            <a href="<%= comment.author.url %>"><%= comment.author.name %></a>
-        <% else %>
-            <%= comment.author.name %>
+    <% if comment.type == 'trackback' && comment.body == "" %>
+        <div class="commentBody">Pingback: <a href="<%= comment.author.url %>"><%= comment.author.name %></a></div>
+    <% else %>
+        <% if comment.author.mail %>
+            <img class="avatar" src="<%= comment.avatar %>" />
         <% end %>
-        , <%= comment.status %>
-    </footer>
+        <div class="commentBody">
+            <%= htmlentities(comment.body) %><%='...' if comment.type == 'trackback' %>
+        </div>
+        <footer>From
+            <% if comment.author.url != "" %>
+                <a href="<%= comment.author.url %>"><%= comment.author.name %></a>
+            <% else %>
+                <%= comment.author.name %>
+            <% end %>
+        </footer>
+    <% end %>
     <% if isAdmin? %>
         <div class="adminOptions">
             <% if comment.status != "approved" %>
@@ -42,9 +51,5 @@
                 </ul>
             </div>
         </div>
-
-        
-        
-        
     <% end %>
 </article>

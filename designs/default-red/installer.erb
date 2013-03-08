@@ -1,3 +1,4 @@
+<%# -*- encoding : utf-8 -*- %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -13,14 +14,20 @@
 
     <body>
         <% if ! authorized? %>
-            Step 1/2
+            Step 1/3
             <%= render_login_button %>
         <% else %>
-            Step 2/2
-            <form method="POST" action="/addAdmin">
-                <label>Displayname: <input name="name" type="text"></input></label>
-                <button type="submit">OK</button>
-            </form>
+
+            <% if ! registeredDomain? %>
+                Step 2/3
+                <p><a href="<%= friendManagerUrl %>addURL?id=<%= authorized_email %>&url=http://<%= request.host_with_port %>">Add to dsnns</a></p>
+            <% else %>
+                Step 3/3
+                <form method="POST" action="/addAdmin">
+                    <label>Displayname: <input name="name" type="text"></input></label>
+                    <button type="submit">OK</button>
+                </form>
+            <% end %>
         <% end %>
     </body>
 </html>
