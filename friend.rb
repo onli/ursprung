@@ -3,20 +3,25 @@ require 'uri'
 
 class Friend
     attr_accessor :name
-    attr_accessor :url
 
     def initialize(*args)
         case args.length
         when  1
-            friendData = Database.new.getFriendData(args[0])
-            self.name = friendData["name"]
-            self.url = friendData["url"]
+            self.name = args[0]
         end
     end
 
     # get URL for this id from dsnns
-    def getUrl()
-
+    def url()
+        friendManagerUrl = "http://localhost:4200/"
+        uri = URI.parse(friendManagerUrl + 'url')
+        http = Net::HTTP.new(uri.host, uri.port)
+        http_request = Net::HTTP::Get.new(uri.request_uri)
+        http_request.set_form_data({:id => self.name})
+        response = JSON.parse(http.request(http_request).body)
+        url = response['url']
+        url = url + '/' if url[-1] != '/'
+        return url if response['url'] != "not registered!"
     end
 
     # This friend has written a new entry, update stream or mark for later
@@ -74,6 +79,7 @@ class Friend
 
     # notify friend-blog of new message on this blog and send the key
     def send(message)
+        puts self.url
         uri = URI.parse(self.url + '/message')
         http = Net::HTTP.new(uri.host, uri.port)    # TODO: Use SSL
         http_request = Net::HTTP::Post.new(uri.request_uri)

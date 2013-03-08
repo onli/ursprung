@@ -94,7 +94,7 @@ helpers do
     end
 
     def friendManagerUrl
-        return "http://nanooq.org:45678/"
+        return "http://localhost:4200/"
     end
 
     def registeredDomain?
@@ -322,9 +322,7 @@ end
 
 post %r{/people/(.+)/([\w]+)} do |userid, groupid|
     protected!
-    puts userid
-    puts params[:url]
-    Database.new.addFriend(userid, params[:url])
+    Database.new.addFriend(userid)
     redirect to('/')
 end
 
@@ -387,7 +385,7 @@ end
 
 get '/messageControl' do
     protected!
-    erb :messageControl, :locals => {:friends => Database.new.getFriends}
+    erb :messageControl, :locals => {:messengers => Database.new.getMessengers}
 end
 
 get '/messageList' do

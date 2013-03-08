@@ -255,9 +255,9 @@ class Database
         end
     end
     
-    def addFriend(name, url)
+    def addFriend(name)
         begin
-            mail = @db.execute("INSERT INTO friends(name, url) VALUES(?, ?);", name, url)
+            mail = @db.execute("INSERT INTO friends(name) VALUES(?);", name)
         rescue => error
             puts error
         end
@@ -266,24 +266,15 @@ class Database
     def getFriends()
         friends = []
         begin
-            @db.execute("SELECT name, url FROM friends;") do |row|
+            @db.execute("SELECT name FROM friends;") do |row|
                 friend = Friend.new()
                 friend.name = row["name"]
-                friend.url = row["url"]
                 friends.push(friend)
             end
         rescue => error
             puts error
         end
         return friends
-    end
-
-    def getFriendData(id)
-        begin
-            return @db.execute("SELECT name, url FROM friends WHERE name == ?;", id)[0]
-        rescue => error
-            puts "getFriendData: #{error}"
-        end
     end
 
     def getOption(name)
@@ -412,4 +403,20 @@ class Database
             puts "getMessages: #{error}"
         end
     end
+
+    def getMessengers()
+        messengers = self.getFriends()
+        begin
+            @db.execute("SELECT DISTINCT messenger FROM
+                            (SELECT author as messenger FROM messages
+                                UNION ALL
+                            SELECT recipient as messenger from messages);") do |row|
+                messengers.push(Friend.new(row['messenger'])) if row['messenger'] != self.getAdminMail
+            end
+            return messengers.uniq{ |friend| friend.name }
+        rescue => error
+            puts "getMessengers: #{error}"
+        end
+    end
+    
 end
