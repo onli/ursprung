@@ -84,6 +84,8 @@ snack.ready(function() {
     }
     if (snack.wrap('.messenger')[0].addEventListener != undefined) {
         snack.wrap('.messenger').attach('click', function(evt) {
+            snack.wrap('.messenger').removeClass("activeMessenger");
+            snack.wrap(evt.target).addClass("activeMessenger");
             var options = {
                     method: 'get',
                     url: "/messageList",

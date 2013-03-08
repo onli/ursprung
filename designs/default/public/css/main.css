@@ -330,6 +330,10 @@ summary {
     padding: 0;
 }
 
+#messages {
+    padding-left: 1em;
+}
+
 #messageList {
     list-style-type: none;
     padding: 0;
@@ -372,4 +376,8 @@ textarea[name="content"] {
 
 #messageEditor button {
     margin-left: 27em;
+}
+
+.activeMessenger {
+    border-style: inset;
 }
