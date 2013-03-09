@@ -166,8 +166,6 @@ def serveIndex(page)
     end
 end
 
-
-
 get '/feed' do
     if @cacheContent != nil
         return @cacheContent
@@ -320,7 +318,8 @@ end
 
 post %r{/people/(.+)/([\w]+)} do |userid, groupid|
     protected!
-    Database.new.addFriend(userid)
+    friend = Friend.new(userid)
+    friend.save and friend.subscribe
     redirect to('/')
 end
 

@@ -58,6 +58,7 @@ class Friend
     end
 
     # notify friend-blog of new content on this blog
+    # NOTE: Use only as fallback if dsnns is not reachable
     def notify()
         uri = URI.parse(self.url + '/entry')
         http = Net::HTTP.new(uri.host, uri.port)
@@ -84,5 +85,12 @@ class Friend
         end
     end
 
+    def save()
+        Database.new.addFriend(self)
+    end
+
+    def subscribe()
+        Dsnns.new.subscribe(self.name)
+    end
     
 end

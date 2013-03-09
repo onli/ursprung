@@ -260,9 +260,9 @@ class Database
         end
     end
     
-    def addFriend(name)
+    def addFriend(friend)
         begin
-            mail = @@db.execute("INSERT INTO friends(name) VALUES(?);", name)
+            mail = @@db.execute("INSERT INTO friends(name) VALUES(?);", friend.name)
         rescue => error
             puts error
         end

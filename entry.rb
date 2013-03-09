@@ -1,4 +1,5 @@
 require './database.rb'
+require './dsnns.rb'
 require 'net/http'
 require 'uri'
 require 'sanitize'
@@ -33,7 +34,7 @@ class Entry
             if remainingLinks.length >= 1
                 self.sendPingbacks(request, remainingLinks)
             end
-            Database.new.getFriends.each{|friend| friend.notify}
+            Dsnns.new.notify or Database.new.getFriends.each{|friend| friend.notify}
         end
     end
     

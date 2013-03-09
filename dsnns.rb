@@ -29,4 +29,20 @@ class Dsnns
         end
     end
 
+    # let dsnns know that this blog has a new entry, so it can ping its subscribers.
+    # This way also non-friends can be reached
+    def notify
+        uri = URI.parse(self.friendManagerUrl + 'notify')
+        http = Net::HTTP.new(uri.host, uri.port)
+        http_request = Net::HTTP::Get.new(uri.request_uri)
+        http_request.set_form_data({:id => Database.new.getAdminMail})
+        begin
+            http.request(http_request)
+            return true
+        rescue Errno::ECONNREFUSED => e
+            puts "Couldn't connect to dsnns: #{e}"
+        end
+        return false
+    end
+    
 end
