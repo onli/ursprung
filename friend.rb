@@ -1,5 +1,6 @@
 require 'net/http'
 require 'uri'
+require './dsnns.rb'
 
 class Friend
     attr_accessor :name
@@ -13,15 +14,7 @@ class Friend
 
     # get URL for this id from dsnns
     def url()
-        friendManagerUrl = "http://localhost:4200/"
-        uri = URI.parse(friendManagerUrl + 'url')
-        http = Net::HTTP.new(uri.host, uri.port)
-        http_request = Net::HTTP::Get.new(uri.request_uri)
-        http_request.set_form_data({:id => self.name})
-        response = JSON.parse(http.request(http_request).body)
-        url = response['url']
-        url = url + '/' if url[-1] != '/'
-        return url if response['url'] != "not registered!"
+        return Dsnns.new.url(self.name)
     end
 
     # This friend has written a new entry, update stream or mark for later

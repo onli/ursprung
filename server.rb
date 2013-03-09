@@ -94,16 +94,12 @@ helpers do
     end
 
     def friendManagerUrl
-        return "http://localhost:4200/"
+        return Dsnns.new.friendManagerUrl
     end
 
     def registeredDomain?
-        uri = URI.parse(friendManagerUrl + 'url')
-        http = Net::HTTP.new(uri.host, uri.port)
-        http_request = Net::HTTP::Get.new(uri.request_uri)
-        http_request.set_form_data({:id => authorized_email})
-        response = http.request(http_request)
-        return response.code == "200" && JSON.parse(response.body).has_key?("url") && JSON.parse(response.body)["url"] != "not registered!"
+        url = Dsnns.new.url(authorized_email)
+        return  url && url != "not registered!"
     end
 end
 
