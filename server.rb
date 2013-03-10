@@ -101,6 +101,10 @@ helpers do
         url = Dsnns.new.url(authorized_email)
         return  url && url != "not registered!"
     end
+
+    def unreadMessages
+        Database.new.unreadMessagesCount
+    end
 end
 
 def loadConfiguration()

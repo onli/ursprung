@@ -4,7 +4,7 @@
         <li><a href="/">Blog</a></li>
         <li><a href="/stream">Stream</a></li>
         <% if isAdmin? %>
-            <li><a href="/messageControl">Messages</a></li>
+            <li><a href="/messageControl">Messages</a><%= "<span id='unreadMessages' title='unread messages'>#{unreadMessages}</span>" if unreadMessages > 0 %></li>
         <% end %>
     </ul>
 </nav>

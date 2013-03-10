@@ -423,5 +423,13 @@ class Database
             puts "getMessengers: #{error}"
         end
     end
+
+    def unreadMessagesCount()
+        begin
+            return @@db.execute("SELECT COUNT(id) FROM messages WHERE read == 0 ")[0]["COUNT(id)"]
+        rescue => error
+            puts "unreadMessagesCount: #{error}"
+        end
+    end
     
 end

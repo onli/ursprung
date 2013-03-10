@@ -381,3 +381,18 @@ textarea[name="content"] {
 .activeMessenger {
     border-style: inset;
 }
+
+#unreadMessages {
+    margin-left: 0.2em;
+    font-size: 0.8em;
+    vertical-align: middle;
+    position: relative;
+    bottom: 0.15em;
+}
+#unreadMessages:before {
+    content: "(";
+}
+
+#unreadMessages:after {
+    content: ")";
+}
