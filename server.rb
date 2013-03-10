@@ -124,22 +124,22 @@ end
 #
 ####
 
-#before do
-    #@cacheContent = nil
-    #if request.request_method == "GET"
-        #@cacheContent = Database.new.getCache("#{request.path_info}#{isAdmin?}")
-    #end
-#end
-#
-#after do
-    #if @cacheContent == nil && request.request_method == "GET"
-        #Database.new.cache("#{request.path_info}#{isAdmin?}", body)
-    #else
-        #if request.request_method == "POST"
-            #Database.new.invalidateCache
-        #end
-    #end
-#end
+before do
+    @cacheContent = nil
+    if request.request_method == "GET"
+        @cacheContent = Database.new.getCache("#{request.path_info}#{authorized_email}")
+    end
+end
+
+after do
+    if @cacheContent == nil && request.request_method == "GET"
+        Database.new.cache("#{request.path_info}#{authorized_email}", body)
+    else
+        if request.request_method == "POST"
+            Database.new.invalidateCache
+        end
+    end
+end
 
 get '/' do
     serveIndex(-1)
@@ -349,7 +349,10 @@ get %r{/setOption/([\w]+)} do |name|
 end
 
 get %r{/search} do
-    erb :search, :locals => {:entries => Database.new.searchEntries(params[:keyword]), :keyword => params[:keyword]}
+    if @cacheContent != nil
+        return @cacheContent
+    end
+    body erb :search, :locals => {:entries => Database.new.searchEntries(params[:keyword]), :keyword => params[:keyword]}
 end
 
 post '/preview' do
@@ -368,7 +371,10 @@ post %r{/([0-9]+)/setEntryModeration} do |id|
 end
 
 get '/stream' do
-    erb :stream, :locals => { :stream => Database.new.getStream }
+    if @cacheContent != nil
+        return @cacheContent
+    end
+    body erb :stream, :locals => { :stream => Database.new.getStream }
 end
 
 get '/testMessage' do
@@ -378,12 +384,18 @@ end
 
 get '/messageControl' do
     protected!
-    erb :messageControl, :locals => {:messengers => Database.new.getMessengers}
+    if @cacheContent != nil
+        return @cacheContent
+    end
+    body erb :messageControl, :locals => {:messengers => Database.new.getMessengers}
 end
 
 get '/messageList' do
+    if @cacheContent != nil
+        return @cacheContent
+    end
     Database.new.setMessagesRead(params[:participant]);
-    erb :messageList, :locals => {:messages => Database.new.getMessages(params[:participant])}
+    body erb :messageList, :locals => {:messages => Database.new.getMessages(params[:participant])}
 end
 
 # A Page (entry with comments)
