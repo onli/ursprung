@@ -390,6 +390,7 @@ get '/messageControl' do
 end
 
 get '/messageList' do
+    Database.new.setMessagesRead(params[:participant]);
     erb :messageList, :locals => {:messages => Database.new.getMessages(params[:participant])}
 end
 

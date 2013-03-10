@@ -382,7 +382,8 @@ class Database
 
     def addMessage(message)
         begin
-            @@db.execute("INSERT INTO messages(content, key, author, recipient) VALUES(?, ?, ?, ?);", message.content, message.key, message.from, message.to)
+            read = message.from == self.getAdminMail ? 1 : 0
+            @@db.execute("INSERT INTO messages(content, key, author, recipient, read) VALUES(?, ?, ?, ?, ?);", message.content, message.key, message.from, message.to, read)
         rescue => error
             puts error
         end
@@ -429,6 +430,14 @@ class Database
             return @@db.execute("SELECT COUNT(id) FROM messages WHERE read == 0 ")[0]["COUNT(id)"]
         rescue => error
             puts "unreadMessagesCount: #{error}"
+        end
+    end
+
+    def setMessagesRead(id)
+        begin
+            @@db.execute("UPDATE messages SET read = 1 WHERE author == ?", id)
+        rescue => error
+            puts "setMessagesRead: #{error}"
         end
     end
     

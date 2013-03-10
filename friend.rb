@@ -73,7 +73,6 @@ class Friend
 
     # notify friend-blog of new message on this blog and send the key
     def send(message)
-        puts self.url
         uri = URI.parse(self.url + '/message')
         http = Net::HTTP.new(uri.host, uri.port)    # TODO: Use SSL
         http_request = Net::HTTP::Post.new(uri.request_uri)
