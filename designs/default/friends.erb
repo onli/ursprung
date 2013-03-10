@@ -1,6 +1,7 @@
 <%# -*- encoding : utf-8 -*- %>
 <% if friends.length > 0 %>
-    <ul>
+    <h3>Friends</h3>
+    <ul id="friendList">
         <% friends.each do |friend| %>
             <li><a href="<%= friend.url %>"><%= friend.name %></a></li>
         <% end %>

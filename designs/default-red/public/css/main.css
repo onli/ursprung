@@ -58,6 +58,10 @@ summary {
     right: 3em;
 }
 
+#friendList {
+    list-style-type: none;
+}
+
 #mainNav {
     float: left;
     position: relative;
