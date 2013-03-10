@@ -15,8 +15,8 @@
             <h2>Messages</h2>
 
             <ol id="messengers">
-            <% friends.each do |friend| %>
-                <li><button class="messenger" data-name="<%= friend.name %>"><%= friend.name %></button></li>
+            <% messengers.each do |messenger| %>
+                <li><button class="messenger" data-name="<%= messenger.name %>"><%= messenger.name %></button></li>
             <% end %>
             </ol>
 
