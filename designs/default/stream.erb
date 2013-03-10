@@ -19,7 +19,7 @@
                         <header>
                             <h2><a href="<%= entry["url"] %>"><%= entry["title"] %></a></h2>
                         </header>
-                        <div itemprop="articleBody"><%= entry["body"] %></div>
+                        <div itemprop="articleBody"><%= u entry["body"] %></div>
                         <footer>
                             Written by <span itemprop="articleAuthor"><%= entry["author"] %></span>, <time itemprop="datePublished" datetime="<%= Time.at(entry["date"].to_i).iso8601 %>"><%= Time.at(entry["date"].to_i).strftime("%d.%m.%Y") %></time>
                         </footer>

@@ -25,6 +25,7 @@ set :protection, :except => [:http_origin, :remote_token]
 helpers do
     include Rack::Utils
     alias_method :h, :escape
+    alias_method :u, :unescape
 
     def isAdmin?
         if authorized?
