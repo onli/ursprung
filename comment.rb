@@ -17,12 +17,11 @@ class Comment
     attr_accessor :validTrackback
 
     def initialize(*args)
-        puts args[0].class
         if args.length == 1 && args[0].respond_to?("even?")
             initializeFromID(args[0])
         else
             if args[0].respond_to?("merge")
-                puts "creating comment from hash"
+                # creating comment from hash
                 params = args[0]
                 request = args[1]
                 commentAuthor = CommentAuthor.new
@@ -44,7 +43,6 @@ class Comment
                 self.subscribe = 1 if params[:subscribe] != nil
                 self.type = params[:type] if params[:type] != nil
                 if self.type == "trackback"
-                    puts "getting pingback data"
                     name = getPingbackData(request)
                     if name
                         if self.body == ""
@@ -66,7 +64,6 @@ class Comment
     end
 
     def initializeFromID(id)
-        puts "initialize comment fromID"
         db = Database.new
         commentData = db.getCommentData(id)
         self.id = id
@@ -99,7 +96,6 @@ class Comment
     end
 
     def delete()
-        puts "deleting comment"
         db = Database.new
         db.deleteComment(self)
     end
@@ -200,9 +196,7 @@ class Comment
         title = doc.title
         
         doc.css("a").map do |link|
-            puts link
             if (href = link.attr("href")) && href.match(/#{self.entry.link(request)}.*/)
-                puts "returning title"
                 return title
             end
         end.compact

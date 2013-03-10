@@ -30,7 +30,6 @@ class Entry
             self.author = Database.new.getAdmin
             self.save
             remainingLinks = self.sendTrackbacks(request)
-            puts remainingLinks.to_s
             if remainingLinks.length >= 1
                 self.sendPingbacks(request, remainingLinks)
             end
@@ -39,7 +38,6 @@ class Entry
     end
     
     def initializeFromID(id)
-        puts "creating entry from id: #{id}"
         db = Database.new
         entryData = db.getEntryData(id)
         self.id = id
@@ -62,23 +60,17 @@ class Entry
     end
 
     def delete()
-        puts "deleting entry"
         db = Database.new
         db.deleteEntry(self.id)
     end
 
     def sendTrackbacks(request)
-    
-        puts "sending trackback"
-        
         uris = self.links()
         if uris.length == 0
             return uris
         end
-        puts "found links"
         
         # check links for trackback-urls
-
         trackbackLinks  = []
         uris.each do |uri|
             http = Net::HTTP.new(uri.host, uri.port)
@@ -86,7 +78,6 @@ class Entry
 
             response = http.request(http_request)
             headLink = Nokogiri::HTML(response.body).css("link").map do |link|
-                puts link
                 if (href = link.attr("href")) && link.attr("rel") == "trackback" && href.match(/^https?:/)
                     href
                 end
@@ -95,12 +86,9 @@ class Entry
             if headLink.length > 0
                 trackbackLinks.push(headLink[0])
                 uris.delete(uri)
-                puts "found headLink: #{headLink}"
             else
-                puts uri
                 rdfLink = response.body.scan(/<rdf:Description[^>]*trackback:ping="([^"]*)"[^>]*dc:identifier="#{Regexp.escape(uri.to_s)}"/)
                 if rdfLink.length > 0
-                    puts "found rdfLink: #{rdfLink}"
                     trackbackLinks.push(rdfLink[0])
                     uris.delete(uri)
                 end
@@ -109,11 +97,8 @@ class Entry
         
         # if there are trackback-enabled links, gather data
         if trackbackLinks.length == 0
-            puts "no trackback-enabled links"
             return uris
         end
-
-        puts "gathering data"
 
         data = {"title" => self.title,
                 "url" => self.link(request),
@@ -122,7 +107,6 @@ class Entry
                 }
                 
         trackbackLinks.each do |link|
-            puts "sending to #{link}"
             uri = URI.parse(link.to_s.strip)
             req = Net::HTTP::Post.new("#{uri.path}?#{uri.query}")
             req.set_form_data(data)
@@ -134,11 +118,7 @@ class Entry
                 response = http.request(req)
                 doc = Nokogiri::XML(response.body)
                 error = doc.xpath("/response/error")
-                if error == 0
-                    uris.delete(uri)
-                else
-                    puts response.body
-                end
+                uris.delete(uri)  if error == 0
             rescue Exception => error
                 puts error
             end
@@ -147,8 +127,6 @@ class Entry
     end
 
     def sendPingbacks(request, remainingLinks = nil)
-        puts "sending pingbacks"
-        
         uris = remainingLinks
         if uris == nil
             uris = self.links()
@@ -157,7 +135,6 @@ class Entry
         if uris.length == 0
             return false
         end
-        puts "found links"
 
         # check for pingback-url
         pingbackLinks  = []
@@ -174,7 +151,6 @@ class Entry
             
             if headLink.length > 0
                 pingbackLinks.push({ :target => uri, :server => headLink[0] })
-                puts "found headLink: #{headLink}"
             end
         end
         
@@ -190,7 +166,6 @@ class Entry
             rescue Exception => error
                 puts error
             end
-            puts result
         end
         
     end
@@ -204,7 +179,6 @@ class Entry
         end.compact
         uris = []
         links.each do |link|
-            puts link
             uris.push(URI.parse(link))
         end
         return uris

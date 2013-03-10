@@ -127,7 +127,6 @@ end
 #before do
     #@cacheContent = nil
     #if request.request_method == "GET"
-        #puts "requesting cache for #{request.path_info}#{isAdmin?}"
         #@cacheContent = Database.new.getCache("#{request.path_info}#{isAdmin?}")
     #end
 #end
@@ -193,8 +192,6 @@ end
 
 post '/addMessage' do
     protected!
-    puts params[:to]
-    puts params[:content]
     Message.new(params[:to], params[:content]).send
     redirect "/messageControl"
 end
@@ -206,7 +203,6 @@ post '/addEntry' do
 end
 
 post %r{/([0-9]+)/addTrackback} do |id|
-    puts "adding trackback"
     paramsNew = {:name => params[:blog_name], :body => params[:excerpt], :entryId => id, :type => 'trackback', :url => params[:url]}
     trackback = Comment.new(paramsNew, request)
     if trackback.validTrackback
@@ -225,7 +221,6 @@ end
 
 # solely used to handle pingbacks
 post '/xmlrpc' do
-    puts "xmlrpc called"
     xml = request.body.read
  
     if(xml.empty?)
@@ -236,7 +231,6 @@ post '/xmlrpc' do
     method, arguments = XMLRPC::Marshal.load_call(xml)
 
     if method == 'pingback.ping'
-        puts "adding pingback!"
         source = arguments[0]
         target = arguments[1]
         id = target.gsub(/http:\/\/.*\/([0-9]*)\/.*/, '\1')
@@ -264,7 +258,6 @@ end
 get %r{/([0-9]+)/editComment} do |id|
     protected!
     comment = Comment.new(id.to_i)
-    puts comment.replyToEntry
     entry = Entry.new(comment.replyToEntry)
     erb :editComment, :locals => {:comment => comment, :entry => entry}
 end
@@ -351,7 +344,6 @@ end
 
 get %r{/setOption/([\w]+)} do |name|
     protected!
-    puts "setting option"
     session[:origin] = back
     erb :editOption, :locals => {:name => name, :value => Database.new.getOption(name)}
 end
@@ -396,9 +388,7 @@ end
 
 # A Page (entry with comments)
 get  %r{/([0-9]+)/([\w]+)} do |id, title|
-    puts "serving page"
     if @cacheContent != nil
-        puts "returning cache"
         return @cacheContent
     end
     entry = Entry.new(id.to_i)
