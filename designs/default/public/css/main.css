@@ -389,10 +389,45 @@ textarea[name="content"] {
     position: relative;
     bottom: 0.15em;
 }
+
 #unreadMessages:before {
     content: "(";
 }
 
 #unreadMessages:after {
     content: ")";
+}
+
+.unreadMessage {
+    animation: highlightBox 500ms ease-out forwards;
+    -moz-animation: highlightBox 500ms ease-out forwards;
+    -ms-animation: highlightBox 500ms ease-out forwards;
+    -o-animation: highlightBox 500ms ease-out forwards;
+    -webkit-animation: highlightBox 500ms ease-out forwards;
+    background-color: #f7fbd8;
+}
+
+@-moz-keyframes highlightBox {
+  0% { background-color: #f7fbd8;}
+  100% { background-color: white; }
+}
+
+@-o-keyframes highlightBox {
+  0% { background-color: #f7fbd8;}
+  100% { background-color: white; }
+}
+
+@-webkit-keyframes highlightBox {
+  0% { background-color: #f7fbd8;}
+  100% { background-color: white; }
+}
+
+@-ms-keyframes highlightBox {
+  0% { background-color: #f7fbd8;}
+  100% { background-color: white; }
+}
+
+@keyframes highlightBox {
+    0% { background-color: #f7fbd8; }
+    100% { background-color: white; }
 }
