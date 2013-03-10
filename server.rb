@@ -397,7 +397,6 @@ get  %r{/([0-9]+)/([\w]+)} do |id, title|
 end
 
 get '/logout' do
-    protected!
     logout!
     redirect '/'
 end
