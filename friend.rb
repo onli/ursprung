@@ -85,11 +85,6 @@ class Friend
     end
 
     def save()
-        Database.new.addFriend(self)
+        return Database.new.addFriend(self)
     end
-
-    def subscribe()
-        Dsnns.new.subscribe(self.name)
-    end
-    
 end

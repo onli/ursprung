@@ -317,7 +317,7 @@ end
 post %r{/people/(.+)/([\w]+)} do |userid, groupid|
     protected!
     friend = Friend.new(userid)
-    friend.save and friend.subscribe
+    friend.save and friend.hasUpdate
     redirect to('/')
 end
 

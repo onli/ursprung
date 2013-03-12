@@ -262,9 +262,11 @@ class Database
     
     def addFriend(friend)
         begin
-            mail = @@db.execute("INSERT INTO friends(name) VALUES(?);", friend.name)
+            @@db.execute("INSERT INTO friends(name) VALUES(?);", friend.name)
+            return true
         rescue => error
             puts error
+            return false
         end
     end
 
