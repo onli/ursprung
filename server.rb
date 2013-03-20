@@ -104,7 +104,7 @@ helpers do
     end
 
     def unreadMessages
-        Database.new.unreadMessagesCount
+        return Database.new.unreadMessagesCount
     end
 end
 
@@ -151,7 +151,7 @@ get %r{/archive/([0-9]+)} do |page|
 end
 
 def serveIndex(page)
-    if @cacheContent != nil
+    if @cacheContent != nil && ! Database.new.firstUse?
         return @cacheContent
     end
     db = Database.new
