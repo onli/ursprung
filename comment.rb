@@ -161,11 +161,15 @@ class Comment
 
     def mailOwner()
         db = Database.new
-        Pony.mail(:to => db.getAdminMail,
+        begin
+            Pony.mail(:to => db.getAdminMail,
                   :from => db.getOption("fromMail"),
                   :subject => "#{db.getOption("blogTitle")}: #{self.author.name} commented on #{Entry.new(self.replyToEntry).title}",
                   :body => "He wrote: #{self.body}"
                   )
+        rescue Errno::ECONNREFUSED => e
+            puts "Error mailing owner: #{e}"
+        end
     end
 
     def mailSubscribers()
@@ -175,11 +179,15 @@ class Comment
         if fromMail && fromMail != "" 
             db.getCommentsForEntry(Entry.new(self.replyToEntry)).each do |comment|
                 if comment.subscribe && comment.author.mail && comment != self
-                    Pony.mail(:to => comment.author.mail,
+                    begin
+                        Pony.mail(:to => comment.author.mail,
                               :from => fromMail,
                               :subject => "#{blogTitle}: #{self.author.name} commented on #{Entry.new(self.replyToEntry).title}",
                               :body => "He wrote: #{self.body}"
                               )
+                    rescue Errno::ECONNREFUSED => e
+                        puts "Error mailing subscribers: #{e}"
+                    end
                 end
             end
         end
