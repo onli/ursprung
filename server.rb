@@ -43,7 +43,7 @@ helpers do
     end
 
     def blogOwner
-        return Database.new.getAdmin
+		return Database.new.getAdmin
     end
 
     def blogOwnerMail
