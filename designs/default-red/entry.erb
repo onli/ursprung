@@ -3,7 +3,7 @@
     <header>
         <h2><a href="<%= entry.link(request) %>"><%= entry.title %></a></h2>
     </header>
-    <div itemprop="articleBody"><%= autotitle(RedCloth.new(entry.body).to_html) %></div>
+    <div itemprop="articleBody"><%= autotitle(RedCloth.new(htmlentities(entry.body).gsub("&quot;", '"')).to_html) %></div>
     <footer>
         <time itemprop="datePublished" datetime="<%= Time.parse(entry.date).iso8601 %>"><%= Time.parse(entry.date).strftime("%d.%m.%Y") %></time>
         <% if isAdmin? %>
