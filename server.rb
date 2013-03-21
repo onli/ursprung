@@ -108,12 +108,13 @@ helpers do
         return Database.new.unreadMessagesCount
     end
 
-    def loadConfiguration()
-        design = Database.new.getOption("design")
-        settings.design_root = File.join(File.dirname(settings.app_file), "designs")
-        settings.views = File.join(settings.design_root, design)
-        settings.public_folder = File.join(settings.views, 'public')
-    end
+end
+
+def loadConfiguration()
+    design = Database.new.getOption("design")
+    settings.design_root = File.join(File.dirname(settings.app_file), "designs")
+    settings.views = File.join(settings.design_root, design)
+    settings.public_folder = File.join(settings.views, 'public')
 end
 
 
