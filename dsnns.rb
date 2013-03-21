@@ -5,8 +5,7 @@ class Dsnns
     attr_accessor :friendManagerUrl
 
     def initialize()
-        self.friendManagerUrl = "http://localhost:4200/"
-        self.friendManagerUrl = "http://nanooq.org:45678/" if production?
+        self.friendManagerUrl = "http://onli.no-ip.org:45678/" 
         puts "initialized dsnns being served by #{self.friendManagerUrl}"
     end 
 

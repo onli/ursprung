@@ -17,10 +17,11 @@ require 'json'
 include ERB::Util
 require 'sinatra/browserid'
 set :sessions, true
+set :bind, '0.0.0.0'
 set :browserid_login_button, "/img/browserid.png"
 
 set :static_cache_control, [:public, max_age: 31536000]
-set :protection, :except => [:http_origin, :remote_token]
+disable :protection   # finer: set :protection, :except => [:http_origin, :remote_token]
 
 helpers do
     include Rack::Utils
@@ -106,17 +107,22 @@ helpers do
     def unreadMessages
         return Database.new.unreadMessagesCount
     end
+
+    def loadConfiguration()
+        design = Database.new.getOption("design")
+        settings.design_root = File.join(File.dirname(settings.app_file), "designs")
+        settings.views = File.join(settings.design_root, design)
+        settings.public_folder = File.join(settings.views, 'public')
+    end
 end
 
-def loadConfiguration()
+
+
+configure do
     design = Database.new.getOption("design")
     set(:design_root) { File.join(File.dirname(app_file), "designs") }
     set(:views) { File.join(design_root, design) }
     set(:public_folder) { File.join(views, 'public') }
-end
-
-configure do
-   loadConfiguration
 end
 
 ####
