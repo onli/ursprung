@@ -119,6 +119,10 @@ snack.ready(function() {
                     data[evt.target.elements[i].name] = evt.target.elements[i].value;
                 }
             }
+            var activity = document.createElement("progress");
+            var sendText = document.querySelector("#messageEditor button span");
+            activity.style['width'] = sendText.offsetWidth + 'px';
+            document.querySelector("#messageEditor button").replaceChild(activity, sendText);
             var options = {
                 method: evt.target.method,
                 url: evt.target.action,
@@ -130,7 +134,13 @@ snack.ready(function() {
                     return;
                 }
                 evt.target.querySelector('textarea').value = "";
+                document.querySelector("#messageEditor button").replaceChild(sendText, activity);
+                // now the new message has also be displayed in the me4ssage-list, so refresh
+                var event = document.createEvent("HTMLEvents");
+                event.initEvent("click", true, true);    
+                document.querySelector(".activeMessenger").dispatchEvent(event);
             });
+            
         });
     }
 
