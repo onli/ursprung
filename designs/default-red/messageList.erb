@@ -1,9 +1,0 @@
-<%# -*- encoding : utf-8 -*- %>
-<ol id="messageList">
-    <% messages.each do |message| %>
-        <li class="message <%= message.from == blogOwnerMail ? "messageOwn" : "messageIncoming" %> <%= "unreadMessage" if message.read == 0 %>" >
-            <div class="content"><%= message.decryptContent %></div>
-            <span class="author">From <%= message.from %></span>
-        </li>
-    <% end %>
-</ol>

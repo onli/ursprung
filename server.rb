@@ -5,8 +5,6 @@ require './database.rb'
 require './entry.rb'
 require './comment.rb'
 require './commentauthor.rb'
-require './friend.rb'
-require './message.rb'
 
 require 'sinatra'
 require 'RedCloth'
@@ -186,24 +184,6 @@ get '/feed' do
     body erb :feed, :locals => {:entries => entries}
 end
 
-post '/entry' do
-    Friend.new(params[:id]).hasUpdate
-end
-
-post '/message' do
-    Friend.new(params[:id]).hasMessage(params[:mid], params[:key])
-end
-
-get '/message' do
-    Message.new(params[:id]).content
-end
-
-post '/addMessage' do
-    protected!
-    Message.new(params[:to], params[:content]).send
-    redirect "/messageControl"
-end
-
 post '/addEntry' do
     protected!
     entry = Entry.new(params, request)
@@ -321,13 +301,6 @@ get '/commentFeed' do
     body erb :commentFeed, :locals => {:comments => comments}
 end
 
-post %r{/people/(.+)/([\w]+)} do |userid, groupid|
-    protected!
-    friend = Friend.new(userid)
-    friend.save and friend.hasUpdate
-    redirect to('/')
-end
-
 post '/addAdmin' do
     db = Database.new
     if db.firstUse? && ! authorized_email.empty?
@@ -377,34 +350,6 @@ post %r{/([0-9]+)/setEntryModeration} do |id|
     Database.new.setEntryModeration(id, params[:value])
     redirect back if ! request.xhr?
     "Done"
-end
-
-get '/stream' do
-    if @cacheContent != nil
-        return @cacheContent
-    end
-    body erb :stream, :locals => { :stream => Database.new.getStream }
-end
-
-get '/testMessage' do
-    protected!
-    Message.new(params[:id]).decryptContent
-end
-
-get '/messageControl' do
-    protected!
-    if @cacheContent != nil
-        return @cacheContent
-    end
-    body erb :messageControl, :locals => {:messengers => Database.new.getMessengers}
-end
-
-get '/messageList' do
-    if @cacheContent != nil
-        return @cacheContent
-    end
-    Database.new.setMessagesRead(params[:participant]);
-    body erb :messageList, :locals => {:messages => Database.new.getMessages(params[:participant])}
 end
 
 # A Page (entry with comments)
