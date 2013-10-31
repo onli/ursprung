@@ -1,39 +1,34 @@
-A basic, pre-alpha implementation of a distributed social network blog system.
+A small blogengine, using ruby, sinatra, browserid.
 
-The aim is to have a blog system which supports all the basics of a
-normal blog, but adding functionality which is common in social 
-networks, like adding friends, listing them and writing them a message.
+Originally, this was a basic, pre-alpha implementation of a distributed social network blog system,
+created as an assessed assignment for the lecture [Security in Online Social Networks](http://www.uni-siegen.de/fb5/itsec/lehre/ss12/sec-osn-ss12/index.html), Siegen, summer semester 2012.
 
-The blog itself shall have some special capabilities, especially pure
-frontend-administration and a complete caching of all pages.
+# Features
 
-Using Open Social as the target-api, plugins for other blog engines like
-wordpress could enable them to be a part of the network as well.
+ * Frontend-Administration
+ * Pingbacks and Trackbacks
+ * Bayesian spamfilter
+ * Autotitle (for links in entries)
+ * Minimal design
+ * Uses a template language, fully customizable
+ * Integrated design selector
+ * Cached
 
-Created as an assessed assignment for the lecture [Security in Online Social Networks](http://www.uni-siegen.de/fb5/itsec/lehre/ss12/sec-osn-ss12/index.html), Siegen, summer semester 2012.
+# Installation
 
-Using ruby, sinatra, browserid.
+If you have ruby installed, make sure that the `bundle` gem is installed. Then, run
 
-Dependencies
+    bundle install
 
- * General:
-  * ruby
-  * libxml2-dev (used by sanitize) 
-  * libxslt1-dev (used by sanitize)
-  * libgsl-ruby1.9.1 (used by classifier, or install the gem gsl. optional)
+to install the needed gems, and
 
- * gems:
-  * sinatra
-  * sinatra-browserid (the one in the repo is currently defunct ruby 1.9.x, see http://40hourworkweek.blogspot.de/2012/06/i-have-been-playing-with-mozillas.html for a solution)
-  * json
-  * sqlite3
-  * sanitize
-  * nokogiri
-  * mechanize
-  * madeleine
-  * pony 
-  * htmlentities
-  * classifier
-  * RedCloth
-  * crypt (to work in ruby 1.9.x, change @key[keypos] to @key[keypos].ord in the file *blowfish.rb* in line 47, see http://www.ruby-forum.com/topic/203985)
+    bundle exec ruby server.rb
 
+to start the blog.
+
+
+## Dependencies
+
+ * ruby (1.9.3 or 2.0)
+ * libxml2-dev 
+ * libxslt1-dev
