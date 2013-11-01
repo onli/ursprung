@@ -74,7 +74,7 @@ summary {
     padding: 0;
 }
 
-#editor {
+.editor {
     width: 40em;
 }
 
@@ -327,82 +327,7 @@ summary {
     background-size: 100% 100%;
 }
 
-#messages, #messengers {
-    display: inline-block;
-    vertical-align: top;
-    list-style-type: none;
-    padding: 0;
-}
-
-#messages {
-    padding-left: 1em;
-}
-
-#messageList {
-    list-style-type: none;
-    padding: 0;
-    max-width: 30em;
-}
-
-.message {
-    margin-bottom: 1em;
-}
-
-.messageIncoming {
-    margin-right: 2em;
-    margin-left: 0em;
-}
-
-.messageOwn {
-    margin-right: 0em;
-    margin-left: 2em;
-}
-
-.messageOwn:after {
-    content: "»";
-}
-
-.message .author {
-    font-size: 0.8em;
-    text-align: right;
-    font-style: italic;
-}
-
-#messageEditor {
-    opacity: 0;
-}
-
-textarea[name="content"] {
-    width: 30em;
-    height: 4em;
-    display: block;
-}
-
-#messageEditor button {
-    margin-left: 27em;
-}
-
-.activeMessenger {
-    border-style: inset;
-}
-
-#unreadMessages {
-    margin-left: 0.2em;
-    font-size: 0.8em;
-    vertical-align: middle;
-    position: relative;
-    bottom: 0.15em;
-}
-
-#unreadMessages:before {
-    content: "(";
-}
-
-#unreadMessages:after {
-    content: ")";
-}
-
-.unreadMessage {
+.highlight {
     animation: highlightBox 500ms ease-out forwards;
     -moz-animation: highlightBox 500ms ease-out forwards;
     -ms-animation: highlightBox 500ms ease-out forwards;

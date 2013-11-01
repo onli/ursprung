@@ -21,38 +21,8 @@ snack.ready(function() {
                 var form = document.createElement();
             }
             form.innerHTML = res;
-            var original = parent;
+            form.querySelector('form').className += ' highlight';
             parent.parentNode.replaceChild(form, parent);
-
-
-            /* TODO: Find a way to use this and to get the new content afterwards */
-            /*var params = {
-                node: form.firstChild,
-                event: 'submit'
-            }
-            
-            snack.listener(params, function(evt) {
-                snack.preventDefault(evt)
-                elements = evt.srcElement.elements;
-                var data = {};
-                for(var i=0;i < elements.length; i++) {
-                    if (elements[i].name != "") {
-                        data[elements[i].name] = elements[i].value;
-                    }
-                }
-                var options = {
-                    method: 'post',
-                    url: evt.srcElement.action,
-                }
-                options["data"] = data;
-                snack.request(options, function (err, res){
-                     if (err) {
-                        alert('error setting option');
-                        return;
-                    }
-                    evt.srcElement.parentNode.replaceChild(original, evt.srcElement);
-                });
-            })*/
         });
     });
 
@@ -82,67 +52,6 @@ snack.ready(function() {
             });
         });
     }
-    if (snack.wrap('.messenger')[0].addEventListener != undefined) {
-        snack.wrap('.messenger').attach('click', function(evt) {
-            snack.wrap('.messenger').removeClass("activeMessenger");
-            snack.wrap(evt.target).addClass("activeMessenger");
-            var options = {
-                    method: 'get',
-                    url: "/messageList",
-                    data: {
-                        participant: evt.target.dataset["name"]
-                    }
-                }
-            snack.request(options, function(err,res) {
-                if (navigator.userAgent.match(/.*Firefox.*/)) {
-                    // detect firefox here, because in firefox you cant create an empty element and chrome can't add the form as inner/outerhtml without errors
-                    var list = document.createElement("ul");
-                } else {
-                    var list = document.createElement();
-                }
-                list.innerHTML = res;
-                if (document.querySelector('#messageList') != null) {
-                    document.querySelector('#messages').replaceChild(list, document.querySelector('#messageEditor').previousSibling);
-                } else {
-                    document.querySelector('#messages').insertBefore(list, document.querySelector('#messageEditor'));
-                }
-                
-                snack.wrap('#messageEditor').addClass("fadein");
-                document.querySelector('#to').value = evt.target.dataset["name"]
-            });
-        });
-        snack.wrap('#messageEditor').attach('submit', function(evt) {
-            snack.preventDefault(evt);
-            var data = {};
-            for (var i=0; i < evt.target.length; i++) {
-                if (evt.target.elements[i].name) {
-                    data[evt.target.elements[i].name] = evt.target.elements[i].value;
-                }
-            }
-            var activity = document.createElement("progress");
-            var sendText = document.querySelector("#messageEditor button span");
-            activity.style['width'] = sendText.offsetWidth + 'px';
-            document.querySelector("#messageEditor button").replaceChild(activity, sendText);
-            var options = {
-                method: evt.target.method,
-                url: evt.target.action,
-                data: data
-            }
-            snack.request(options, function (err, res) {
-                if (err) {
-                    alert('error sending message: ' + err);
-                    return;
-                }
-                evt.target.querySelector('textarea').value = "";
-                document.querySelector("#messageEditor button").replaceChild(sendText, activity);
-                // now the new message has also be displayed in the me4ssage-list, so refresh
-                var event = document.createEvent("HTMLEvents");
-                event.initEvent("click", true, true);    
-                document.querySelector(".activeMessenger").dispatchEvent(event);
-            });
-            
-        });
-    }
 
     // preview-button
     var publish;
@@ -169,6 +78,7 @@ snack.ready(function() {
                 var entry = document.createElement('div');
                 entry.innerHTML = res;
                 entry['id'] = "preview";
+                entry.className += ' highlight';
                 var preview;
                 if ((preview = document.getElementById("preview")) != null) {
                     publish.parentNode.replaceChild(entry, preview);
