@@ -1,32 +1,34 @@
 snack.ready(function() {
-    
-    snack.wrap('.edit').attach('click', function(evt) {
-        snack.preventDefault(evt)
-
-        var options = {
-            method: 'get',
-            url: evt.target.parentNode.href,
-        }
-        snack.request(options, function(err, res){
-            if (err) {
-                alert('error fetching option: ' + err);
-                return;
-            }
-            var parent = getParent(evt.target, 'container')
-
-            if (navigator.userAgent.match(/.*Firefox.*/)) {
-                // detect firefox here, because in firefox you cant create an empty element and chrome can't add the form as inner/outerhtml without errors
-                var form = document.createElement("form");
-            } else {
-                var form = document.createElement();
-            }
-            form.innerHTML = res;
-            form.querySelector('form').className += ' highlight';
-            parent.parentNode.replaceChild(form, parent);
-        });
-    });
 
     // if it finds no element, it finds a NodeList, resulting in an error which breaks all following js
+    if (snack.wrap('.edit')[0].addEventListener != undefined) {
+        snack.wrap('.edit').attach('click', function(evt) {
+            snack.preventDefault(evt)
+
+            var options = {
+                method: 'get',
+                url: evt.target.parentNode.href,
+            }
+            snack.request(options, function(err, res){
+                if (err) {
+                    alert('error fetching option: ' + err);
+                    return;
+                }
+                var parent = getParent(evt.target, 'container')
+
+                if (navigator.userAgent.match(/.*Firefox.*/)) {
+                     //detect firefox here, because in firefox you cant create an empty element and chrome can't add the form as inner/outerhtml without errors
+                    var form = document.createElement("form");
+                } else {
+                    var form = document.createElement();
+                }
+                form.innerHTML = res;
+                form.querySelector('form').className += ' highlight';
+                parent.parentNode.replaceChild(form, parent);
+            });
+        });
+    }
+    
     if (snack.wrap('.delete')[0].addEventListener != undefined) {
         snack.wrap('.delete').attach('click', function(evt) {
             snack.preventDefault(evt)
