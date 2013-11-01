@@ -104,21 +104,11 @@ class Comment
         m = SnapshotMadeleine.new("bayes_data") {
             Classifier::Bayes.new "Spam", "Ham"
         }
-        begin
-            m.system.train_spam self.body
-        rescue
-        end
-        begin
-            m.system.train_spam self.author.name
-        rescue
-        end
-        begin
-            m.system.train_spam self.author.mail
-        rescue 
-        end
-        begin
-            m.system.train_spam self.author.url
-        rescue
+        [self.body, self.author.name, self.author.mail, self.author.url].each do |commentPart|
+            begin
+                m.system.train_spam commentPart
+            rescue
+            end
         end
         m.take_snapshot
     end
@@ -128,21 +118,11 @@ class Comment
         m = SnapshotMadeleine.new("bayes_data") {
             Classifier::Bayes.new "Spam", "Ham"
         }
-        begin
-            m.system.train_ham self.body
-        rescue
-        end
-        begin
-            m.system.train_ham self.author.name
-        rescue
-        end
-        begin
-            m.system.train_ham self.author.mail
-        rescue
-        end
-        begin
-            m.system.train_ham self.author.url
-        rescue
+        [self.body, self.author.name, self.author.mail, self.author.url].each do |commentPart|
+            begin
+                m.system.train_ham commentPart
+            rescue
+            end
         end
         m.take_snapshot
         self.save
