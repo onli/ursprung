@@ -13,6 +13,7 @@ class Entry
     attr_accessor :date
     attr_accessor :author
     attr_accessor :moderate
+    attr_accessor :tags
 
     def initialize(*args)
         case args.length
@@ -25,6 +26,7 @@ class Entry
             self.body = params[:body]
             self.title = params[:title]
             self.id = params[:id] if params[:id] != nil
+            self.tags = params[:tags].split(",") if params[:tags] != nil
             # NOTE: That way, only one-user-blogs are possible:
             self.author = Database.new.getAdmin
             self.save
@@ -44,6 +46,7 @@ class Entry
         self.date = entryData["date"]
         self.author = entryData["author"]
         self.moderate = entryData["moderate"]
+        self.tags = entryData["tags"]
     end
 
     def save()

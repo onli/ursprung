@@ -6,6 +6,7 @@
     <div itemprop="articleBody"><%= autotitle(entry.format) %></div>
     <footer>
         <time itemprop="datePublished" datetime="<%= Time.parse(entry.date).iso8601 %>"><%= Time.parse(entry.date).strftime("%d.%m.%Y") %></time>
+        <%= entry.tags.join(", ") if entry.tags != nil %>
         <% if isAdmin? %>
             <div class="adminOptions">
                 <a href="/<%= entry.id %>/editEntry"><button type="submit" class="edit adminAction" title="edit">&#9998;</button></a>

@@ -78,8 +78,8 @@ snack.ready(function() {
                 method: 'post',
                 url: '/preview',
                 data: {
-                    body: document.getElementById('entryInput').value,
-                    title: document.getElementById('entryTitleInput').value
+                    body: document.querySelector('.entryInput').value,
+                    title: document.querySelector('.entryTitleInput').value
                 }
             }
             snack.request(options, function (err, res) {

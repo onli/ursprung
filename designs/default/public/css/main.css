@@ -80,19 +80,21 @@ summary {
     text-align: right;
 }
 
-#entryTitleInput {
+.entryTitleInput {
     margin-top: 1em;
     margin-bottom: 1em;
-    min-width: 36em;
-    margin-left: 1em;
+    width: 100%;
 }
-#entryInput {
-    min-width: 100%;
-    #border-top-right-radius: 5px;
+.entryInput {
+    width: 100%;
 }
 
 .editorSubmitButtons {
     display: inline-block;
+}
+
+.entryTagInput {
+    float: left;
 }
 
 .entryPublish, #previewButton {
@@ -166,6 +168,10 @@ summary {
 .entry footer {
     font-style: italic;
     font-size: 0.9em;
+}
+
+.entry footer time {
+    margin-right: 1em;
 }
 
 #entryModerationToggle {

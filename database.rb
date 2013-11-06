@@ -51,6 +51,12 @@ class Database
                                 date INTEGER DEFAULT CURRENT_TIMESTAMP,
                                 FOREIGN KEY (author) REFERENCES authors(name) ON UPDATE CASCADE
                                 );"
+                @@db.execute "CREATE TABLE IF NOT EXISTS tags(
+                                tag TEXT,
+                                entryId INTEGER,
+                                FOREIGN KEY (entryId) REFERENCES entries(id) ON UPDATE CASCADE
+                );"
+                @@db.execute "CREATE INDEX IF NOT EXISTS tags_tag_index ON tags(tag)"
                 begin
                     @@db.execute 'CREATE VIRTUAL TABLE search
                                     USING fts4(content="entries", body, title);'
@@ -122,7 +128,15 @@ class Database
         rescue => error
             puts error
         end
-        return @@db.last_insert_row_id()
+        id = @@db.last_insert_row_id()
+        begin
+            entry.tags.each do |tag|
+                @@db.execute("INSERT INTO tags(tag, entryId) VALUES(?, ?);", tag, id)
+            end
+        rescue => error
+            puts error
+        end
+        return id
     end
 
     def editEntry(entry)
@@ -145,10 +159,16 @@ class Database
 
     def getEntryData(id)
         begin
-            return @@db.execute("SELECT title, body, author, date, moderate FROM entries WHERE id == ?;", id)[0]
+            entryData = @@db.execute("SELECT title, body, author, date, moderate FROM entries WHERE id == ?;", id)[0]
+            tags = []
+            @@db.execute("SELECT tag FROM tags WHERE entryId == ?;", id) do |row|
+                tags.push(row["tag"])
+            end
+            entryData["tags"] = tags
         rescue => error
             puts "getEntryData: #{error}"
         end
+        return entryData
     end
 
     def setEntryModeration(id, value)
