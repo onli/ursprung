@@ -152,6 +152,10 @@ class Database
     def editEntry(entry)
         begin
             @@db.execute("UPDATE entries SET title = ?, body = ? WHERE id = ?;", entry.title, entry.body, entry.id)
+            @@db.execute("DELETE FROM tags WHERE entryId = ?;", entry.id)
+            entry.tags.each do |tag|
+                @@db.execute("INSERT INTO tags(tag, entryId) VALUES(?, ?);", tag, entry.id)
+            end
         rescue => error
             puts error
             return false
@@ -162,6 +166,7 @@ class Database
     def deleteEntry(id)
         begin
             @@db.execute("DELETE FROM entries WHERE id = ?", id)
+            @@db.execute("DELETE FROM tags WHERE entryId = ?;", id)
         rescue => error
             puts "error in deleting entries: #{error}"
         end
