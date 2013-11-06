@@ -26,7 +26,7 @@ class Entry
             self.body = params[:body]
             self.title = params[:title]
             self.id = params[:id] if params[:id] != nil
-            self.tags = params[:tags].split(",") if params[:tags] != nil
+            self.tags = params[:tags].split(",").map!{ |tag| tag.strip }.uniq() if params[:tags] != nil
             # NOTE: That way, only one-user-blogs are possible:
             self.author = Database.new.getAdmin
             self.save

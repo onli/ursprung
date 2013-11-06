@@ -84,14 +84,9 @@ class Database
         end
     end
 
-    def getEntries(page, amount)
+    def getEntries(page, amount, tag)
         entries = []
-        begin
-            totalEntries = @@db.execute("SELECT COUNT(id) from entries")[0]["COUNT(id)"]
-        rescue => error
-            puts "getEntries count: #{error}"
-        end
-        totalPages = (totalEntries.to_f / amount).ceil;
+        totalPages, totalEntries = self.getTotalPages(amount, tag)
         totalPages = totalPages <= 0 ? 1 : totalPages
         case page
             when -1 then
@@ -106,9 +101,16 @@ class Database
                 limit = amount
         end
         begin
-            @@db.execute("SELECT id FROM entries ORDER BY date DESC LIMIT ?,?;", offset, limit) do |row|
-                entry = Entry.new(row["id"])
-                entries.push(entry)
+            if tag == nil
+                @@db.execute("SELECT id FROM entries ORDER BY date DESC LIMIT ?,?;", offset, limit) do |row|
+                    entry = Entry.new(row["id"])
+                    entries.push(entry)
+                end
+            else
+                @@db.execute("SELECT entryId FROM tags WHERE tag = ? LIMIT ?,?;", tag, offset, limit) do |row|
+                    entry = Entry.new(row["entryId"])
+                    entries.push(entry)
+                end
             end
         rescue => error
             puts "getEntries: #{error}"
@@ -116,10 +118,18 @@ class Database
         return entries
     end
 
-    def getTotalPages()
-        amount = 5
-        totalEntries = @@db.execute("SELECT COUNT(id) from entries")[0]["COUNT(id)"]
+    def getTotalPages(amount, tag)
+        begin
+            if tag == nil
+                totalEntries = @@db.execute("SELECT COUNT(id) from entries")[0]["COUNT(id)"]
+            else
+                totalEntries = @@db.execute("SELECT COUNT(DISTINCT entryId) from tags WHERE tag = ?", tag)[0]["COUNT(DISTINCT entryId)"]
+            end
+        rescue => error
+             puts "getEntries count: #{error}"
+        end
         totalPages = (totalEntries.to_f / amount).ceil;
+        return totalPages, totalEntries
     end
 
     def addEntry(entry)

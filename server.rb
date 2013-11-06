@@ -146,14 +146,18 @@ after do
 end
 
 get '/' do
-    serveIndex(-1)
+    serveIndex(-1, nil)
+end
+
+get %r{/archive/([0-9]+)/([\w]+)} do |page, tag|
+    serveIndex(page.to_i, tag)
 end
 
 get %r{/archive/([0-9]+)} do |page|
-    serveIndex(page.to_i)
+    serveIndex(page.to_i, nil)
 end
 
-def serveIndex(page)
+def serveIndex(page, tag)
     if @cacheContent != nil && ! Database.new.firstUse?
         return @cacheContent
     end
@@ -161,15 +165,16 @@ def serveIndex(page)
     if db.firstUse?
         erb :installer
     else
-        entries = db.getEntries(page, 5)
-        totalPages = db.getTotalPages
+        amount = 5
+        entries = db.getEntries(page, amount, tag)
+        totalPages, _ = db.getTotalPages(amount, tag)
         page = totalPages if page == -1
         friends = db.getFriends
         designs = Dir.new(settings.design_root).entries.reject{|design| design == "." || design == ".." }
         design = db.getOption("design")
             
         body erb :index, :locals => {:entries => entries, :page => page, :totalPages => totalPages, :friends => friends,
-                                :designs => designs, :design => design}
+                                :designs => designs, :design => design, :tag => tag}
     end
 end
 
