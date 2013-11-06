@@ -149,6 +149,11 @@ summary {
     top: 1px;
 }
 
+.imgButtonInput {
+    position: absolute;
+    left: -9999em
+}
+
 .buttonBar {
     display: block;
     text-align: left;

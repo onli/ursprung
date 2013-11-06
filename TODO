@@ -42,14 +42,17 @@ Caching DONE
 Have a way to include images
  * locally?
  * use flickr, picasa, ... instead?
-Add tags
+Add tags DONE
 Add custom markup language (multiple options?)
 Target Cache invalidation
 improve ham/spam buttons
 improve workflow of ham/spam
 Ajaxify ham/spam buttons
 Improve Design:
- * Whitespace between elements
+ * Whitespace between elements DONE -> ongoing
  * Make it prettier
+   * Markup-Buttons
+   * All Buttons
  * Focus current textarea (when editing entries) better DONE
 comment moderation list
+Improve design fallbacks

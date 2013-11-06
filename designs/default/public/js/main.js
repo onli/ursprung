@@ -159,9 +159,20 @@ snack.ready(function() {
         linkButton["alt"] = "Link";
         linkButton["src"] = "/img/link.png";
         linkButton.className = "markupButton linkButton";
+        var imgButton = document.createElement("span");
+        imgButton.innerHTML = "IMG";
+        imgButton.className = "markupButton imgButton";
+        var imgButtonInput = document.createElement("input");
+        imgButtonInput.className = "imgButtonInput";
+        imgButtonInput.type = "file";
+        imgButtonInput.multiple = "multiple";
+        imgButtonInput.names = "images";
+        imgButtonInput.accept = "image";
         buttonBar.innerHTML += boldButton.outerHTML;
         buttonBar.innerHTML += italicButton.outerHTML;
         buttonBar.innerHTML += linkButton.outerHTML;
+        buttonBar.innerHTML += imgButton.outerHTML;
+        buttonBar.innerHTML += imgButtonInput.outerHTML;
         editor.parentNode.insertBefore(buttonBar, editor);
         snack.wrap('.boldButton').attach('click', function(evt) {
             var sel = getTextSelection(editor);
@@ -178,6 +189,16 @@ snack.ready(function() {
             var replace = '[http:// '+sel+']';
             replaceSelection(editor, replace);
         });
+        snack.wrap('.imgButton').attach('click', function(evt) {
+            imgButtonInput.click();
+        });
+        snack.wrap(imgButtonInput).attach('change', function() {
+            var files = imgButtonInput.files
+            for (var i = 0, f; f = files[i]; i++) {
+                alert(f.name);
+            }       
+        });
+        
     }
 
     /* toggle-slider-button */
