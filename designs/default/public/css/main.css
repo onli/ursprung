@@ -17,6 +17,7 @@ body {
     margin-bottom: 1em;
     margin-top: 2em;
 	width: 50em;
+    line-height: 1.4;
 }
 
 a {
@@ -47,6 +48,10 @@ input, textarea, button {
 
 article {
     max-width: 50em;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    -ms-hyphens: auto;
+    hyphens: auto;
 }
 
 summary {
@@ -159,6 +164,8 @@ summary {
 
 .entryTitle {
     clear: both;
+    margin-top: 2em;
+    margin-bottom: 0.83em;
 }
 
 .entry p {
@@ -168,6 +175,7 @@ summary {
 .entry footer {
     font-style: italic;
     font-size: 0.9em;
+    margin-top: 0.83em;
 }
 
 .entry footer time {
