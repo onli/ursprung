@@ -145,8 +145,8 @@ snack.ready(function() {
     }
 
     // markup-buttons
-    if (document.getElementById('entryInput') != null) {
-        var editor = document.getElementById('entryInput');
+    if (document.querySelector('.entryInput') != null) {
+        var editor = document.querySelector('.entryInput');
         var buttonBar = document.createElement("div");
         buttonBar.className = "buttonBar";
         var boldButton = document.createElement("span");
