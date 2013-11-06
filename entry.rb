@@ -186,4 +186,19 @@ class Entry
         return "http://#{request.host_with_port}/#{self.id}/#{URI.escape(title)}"
     end
 
+    def format()
+        formattedBody = self.body
+        formattedBody = formattedBody.gsub(/\*\*(.*?)\*\*/, '<strong>\1</strong>')
+        formattedBody = formattedBody.gsub(/\*(.*?)\*/, '<em>\1</em>')
+        # images
+        formattedBody = formattedBody.gsub(/\[\[([^ ]*?)\]\]/, '<img src="\1" \/>')
+        # link without name:
+        formattedBody = formattedBody.gsub(/\[([^ ]*?)\]/, '<a href="\1">\1</a>')
+        # link with title: [url "title" name]
+        formattedBody = formattedBody.gsub(/\[([^ ]*?) "(.*?)" (.*?)\]/, '<a href="\1" title="\2">\3</a>')
+        # link: [url name]
+        formattedBody = formattedBody.gsub(/\[(.*?) (.*?)\]/, '<a href="\1">\2</a>')
+        return formattedBody
+    end
+
 end

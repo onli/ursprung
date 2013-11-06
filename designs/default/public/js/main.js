@@ -17,13 +17,23 @@ snack.ready(function() {
                 var parent = getParent(evt.target, 'container')
 
                 if (navigator.userAgent.match(/.*Firefox.*/)) {
-                     //detect firefox here, because in firefox you cant create an empty element and chrome can't add the form as inner/outerhtml without errors
+                    // detect firefox here, because in firefox you cant create an empty element and chrome can't add the form as inner/outerhtml without errors
                     var form = document.createElement("form");
                 } else {
                     var form = document.createElement();
                 }
                 form.innerHTML = res;
                 form.querySelector('form').className += ' highlight';
+
+                var cancelButton = document.createElement('button');
+                cancelButton.innerHTML = "Cancel";
+                cancelButton.setAttribute('type', 'button');
+                cancelButton.className = "cancel";
+                form.querySelector('.editorSubmitButtons').parentNode.insertBefore(cancelButton, form.querySelector('button').parentNode);
+                snack.wrap(cancelButton).attach('click', function(evt) {
+                    form.parentNode.replaceChild(parent, form);
+                });
+    
                 parent.parentNode.replaceChild(form, parent);
             });
         });
@@ -57,7 +67,7 @@ snack.ready(function() {
 
     // preview-button
     var publish;
-    if ((publish = document.getElementById('entryPublish')) != null) {
+    if ((publish = document.querySelector('.entryPublish')) != null) {
         var previewButton = document.createElement('button');
         previewButton.innerHTML = "Preview";
         previewButton['id'] = "previewButton";
@@ -83,9 +93,9 @@ snack.ready(function() {
                 entry.className += ' highlight';
                 var preview;
                 if ((preview = document.getElementById("preview")) != null) {
-                    publish.parentNode.replaceChild(entry, preview);
+                    publish.parentNode.parentNode.replaceChild(entry, preview);
                 } else {
-                    publish.parentNode.appendChild(entry);
+                    publish.parentNode.parentNode.appendChild(entry);
                 }
                 preview = document.getElementById("preview");
                 var adminOptions = preview.querySelectorAll('.adminOptions')[0];
@@ -155,17 +165,17 @@ snack.ready(function() {
         editor.parentNode.insertBefore(buttonBar, editor);
         snack.wrap('.boldButton').attach('click', function(evt) {
             var sel = getTextSelection(editor);
-            var replace = "*"+sel+"*";
+            var replace = "**"+sel+"**";
             replaceSelection(editor, replace);
         });
         snack.wrap('.italicButton').attach('click', function(evt) {
             var sel = getTextSelection(editor);
-            var replace = "_"+sel+"_";
+            var replace = "*"+sel+"*";
             replaceSelection(editor, replace);
         });
         snack.wrap('.linkButton').attach('click', function(evt) {
             var sel = getTextSelection(editor);
-            var replace = '"'+sel+'":http://';
+            var replace = '[http:// '+sel+']';
             replaceSelection(editor, replace);
         });
     }

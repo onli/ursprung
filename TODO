@@ -6,8 +6,8 @@ Have an external (web?) installer which then installs a blog on a free heroku-in
 = Blog = 
 Frontpage DONE
 Editor
- * Preview
- * Marup buttons
+ * Preview DONE
+ * Markup buttons DONE
  * Decide wether to use a markup-language or raw html, or both DONE (added textile)
 Browsing DONE
 Pagination / Infinite Scroll
@@ -15,45 +15,41 @@ Article view DONE
 Edit Entries DONE
  * Ajaxify
 Delete Entries DONE
- * Ajaxify deletion
+ * Ajaxify deletion DONE
 
 Kommentare DONE
  * Rework comment to either work with the separate comment_authors or include them DONE
 Trackbacks/Pingbacks DONE (Trackbacks)
 Test trackbacks with serendipity DONE
-Test trackbacks with wordpress
+Test trackbacks with wordpress ODNE
 Moderation
  * Delete comment DONE
   * Ajaxify deletion
  * Edit comment DONE
-  * Ajaxify
- * have a toggle to let comments be moderated by default
+  * Ajaxify 
+ * have a toggle to let comments be moderated by default DONE
  * approve comments DONE (via ham)
 
 Plugin-API?
 Plugin: Bayesfilter DONE (integrated)
 Plugin: autotitle DONE (integrated)
 
-Enable designs
+Enable designs DONE
 Build good enough default design
 
-Caching
+Caching DONE
 
 Have a way to include images
  * locally?
  * use flickr, picasa, ... instead?
-
-= Social Network Features =
-
-Register with dsnblog-friendmanager on install
-
-Be able to add friends DONE (basic)
-Improve friend widget
-
-Send a friend a message (mail or own protocol?)
-
-Have a stream of friend-activities
- * Basic: Last posted entries
- * See last comments
-
-Have a Like-Button (save locally? how to verify -> signature-approach?)
+Add tags
+Add custom markup language (multiple options?)
+Target Cache invalidation
+improve ham/spam buttons
+improve workflow of ham/spam
+Ajaxify ham/spam buttons
+Improve Design:
+ * Whitespace between elements
+ * Make it prettier
+ * Focus current textarea (when editing entries) better DONE
+comment moderation list

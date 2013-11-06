@@ -11,11 +11,9 @@
     <body>
         
         <aside id="friendWidget">
-            <% if authorized? %>
+            <% if isAdmin? %>
                 <div id="welcome">Welcome <%= authorized_email %> (<a href="/logout">Logout</a>)</div>
-                <% if isAdmin? %>
-                    <%= erb :designs, :locals => {:design => design, :designs => designs} %>
-                <% end %>
+                <%= erb :designs, :locals => {:design => design, :designs => designs} %>
             <% else %>
                 <%= render_login_button %>
             <% end %>

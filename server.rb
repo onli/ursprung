@@ -15,11 +15,9 @@ require 'json'
 include ERB::Util
 require 'sinatra/browserid'
 set :sessions, true
-set :bind, '0.0.0.0'
 set :browserid_login_button, "/img/browserid.png"
 
 set :static_cache_control, [:public, max_age: 31536000]
-disable :protection   # finer: set :protection, :except => [:http_origin, :remote_token]
 
 helpers do
     include Rack::Utils
