@@ -1,19 +1,17 @@
 <%# -*- encoding : utf-8 -*- %>
-<div class="container">
-    <header>
-        <h2 class="entryTitle"><a href="<%= entry.link(request) %>"><%= entry.title %></a></h2>
-    </header>
-    <div itemprop="articleBody"><%= autotitle(entry.format) %></div>
-    <footer>
-        <time itemprop="datePublished" datetime="<%= Time.parse(entry.date).iso8601 %>"><%= Time.parse(entry.date).strftime("%d.%m.%Y") %></time>
-        <%= entry.tags.map { |tag| '<a href="/archive/1/' + tag + '">'+ tag + '</a>' }.join(" ") if entry.tags != nil %>
-        <% if isAdmin? %>
-            <div class="adminOptions">
-                <a href="/<%= entry.id %>/editEntry"><button type="submit" class="edit adminAction" title="edit">&#9998;</button></a>
-                <form action="/<%= entry.id %>/deleteEntry" method="POST">
-                    <button type="submit" class="delete adminAction" title="delete">&#10005;</button>
-                </form>
-            </div>
-        <% end %>
-    </footer>
-</div>
+<header>
+    <h2 class="entryTitle"><a href="<%= entry.link(request) %>"><%= entry.title %></a></h2>
+</header>
+<div itemprop="articleBody"><%= autotitle(entry.format) %></div>
+<footer>
+    <time itemprop="datePublished" datetime="<%= Time.parse(entry.date).iso8601 %>"><%= Time.parse(entry.date).strftime("%d.%m.%Y") %></time>
+    <%= entry.tags.map { |tag| '<a href="/archive/1/' + tag + '">'+ tag + '</a>' }.join(" ") if entry.tags != nil %>
+    <% if isAdmin? %>
+        <div class="adminOptions">
+            <a href="/<%= entry.id %>/editEntry"><button type="submit" class="edit adminAction" title="edit">&#9998;</button></a>
+            <form action="/<%= entry.id %>/deleteEntry" method="POST">
+                <button type="submit" class="delete adminAction" title="delete">&#10005;</button>
+            </form>
+        </div>
+    <% end %>
+</footer>
