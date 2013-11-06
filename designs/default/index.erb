@@ -2,8 +2,8 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <%= erb :head %>
-        <title><%= blogTitle%></title>
+        <%= erb :head, :locals => {:tag => tag}%>
+        <title><%= blogTitle %></title>
         <link rel="alternate"  type="application/rss+xml" href="/feed" />
         <meta name="description" content="">
     </head>

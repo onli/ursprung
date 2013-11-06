@@ -5,8 +5,11 @@
 <meta name="viewport" content="width=device-width">
 
 <link rel="stylesheet" href="/css/main.css">
-<link rel="alternate"  type="application/rss+xml" href="/feed" title="All Articles">
-<link rel="alternate"  type="application/rss+xml" href="/commentFeed" title="All Comments">
+<link rel="alternate"  type="application/rss+xml" href="/feed" title="<%= blogTitle %> Feed">
+<% if tag != nil %>
+    <link rel="alternate"  type="application/rss+xml" href="/feed<%= "/" + tag %>" title="<%= blogTitle %> <%= tag %> Feed">
+<% end %>
+<link rel="alternate"  type="application/rss+xml" href="/commentFeed" title="%= blogTitle %> Comment Feed">
 <script src="/js/snack-min.js" defer></script>
 <script src="/js/main.js" defer></script>
 <!--[if lt IE 9]>

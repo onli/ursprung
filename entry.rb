@@ -201,7 +201,7 @@ class Entry
         formattedBody = formattedBody.gsub(/\[([^ ]*?) "(.*?)" (.*?)\]/, '<a href="\1" title="\2">\3</a>')
         # link: [url name]
         formattedBody = formattedBody.gsub(/\[(.*?) (.*?)\]/, '<a href="\1">\2</a>')
-        return formattedBody
+        return formattedBody.gsub("\n", "<br>\n")
     end
 
 end

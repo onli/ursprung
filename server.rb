@@ -178,11 +178,21 @@ def serveIndex(page, tag)
     end
 end
 
+get %r{/feed/([\w]+)} do |tag|
+    if @cacheContent != nil
+        return @cacheContent
+    end
+    entries = Database.new.getEntries(-1, 10, tag)
+    headers "Content-Type"   => "application/rss+xml"
+    body erb :feed, :locals => {:entries => entries}
+end
+
+
 get '/feed' do
     if @cacheContent != nil
         return @cacheContent
     end
-    entries = Database.new.getEntries(-1, 10)
+    entries = Database.new.getEntries(-1, 10, nil)
     headers "Content-Type"   => "application/rss+xml"
     body erb :feed, :locals => {:entries => entries}
 end
