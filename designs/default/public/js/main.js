@@ -118,7 +118,11 @@ snack.ready(function() {
                 tagOptions = [];
                 for (var i=0;i < rawTags.options.length;i++) {
                     var newTag = document.createElement('option');
-                    newTag.value = tagInput.value + " " + rawTags.options[i].value;
+                    if (autocompleteOccured) {
+                        newTag.value = tagInput.value + rawTags.options[i].value;
+                    } else {
+                        newTag.value = tagInput.value + " " + rawTags.options[i].value;
+                    }
                     tagOptions[i] = newTag;
                 }
                 while (tags.hasChildNodes()) {
