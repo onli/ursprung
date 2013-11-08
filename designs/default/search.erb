@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <%= erb :head %>
+        <%= erb :head, :locals => {:tag => nil}%>
         <title>search for <%= keyword %> - <%= blogTitle %></title>
         <meta name="description" content="">
     </head>
