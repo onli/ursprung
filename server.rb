@@ -261,9 +261,17 @@ post '/file' do
     ## Write the file to the system
     target = File.join(settings.public_folder, 'upload')
     target = File.join(target, filename)
+    until ! File.exists?(target)
+        if target.scan(".").size > 1
+            # assume the filename is a classical xy.abc
+            target = target.reverse.sub('.','._').reverse
+        else
+            target = target + "_"
+        end
+    end
     file = File.new(target, "w+")
     file.write(decoded_image)
-    "upload/" + filename
+    target.gsub(settings.public_folder, "")
 end
 
 get %r{/([0-9]+)/editEntry} do |id|
