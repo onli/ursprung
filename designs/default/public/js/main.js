@@ -107,8 +107,14 @@ snack.ready(function() {
         var tagInput = document.querySelector('.entryTagInput');
         var rawTags = document.querySelector('#tags').cloneNode();
         var tags = document.querySelector('#tags');
+        var oldTagInputValue = "";
         tagInput.oninput = function(evt) {
-            if (tagInput.value.substr(-1) == ',') {
+            var autocompleteOccured = false;
+            if (tagInput.value.length - oldTagInputValue.length > 1) {
+                autocompleteOccured = true;
+                tagInput.value += ", ";
+            }
+            if (tagInput.value.substr(-1) == ',' || autocompleteOccured) {
                 tagOptions = [];
                 for (var i=0;i < rawTags.options.length;i++) {
                     var newTag = document.createElement('option');
@@ -123,6 +129,7 @@ snack.ready(function() {
                     tags.appendChild(tagOptions[i]);
                 }
             }
+            
             if (tagInput.value == "") {
                 // user has deleted all tags
                 tags.parentNode.appendChild(rawTags);
@@ -130,6 +137,7 @@ snack.ready(function() {
                 tags =  document.querySelector('#tags');
                 rawTags = document.querySelector('#tags').cloneNode();
             }
+            oldTagInputValue = tagInput.value;
         };
     }
 
