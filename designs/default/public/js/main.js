@@ -49,7 +49,7 @@ snack.ready(function() {
             }
             snack.request(options, function(err, res) {
                 if (err) {
-                    alert('error fetching option: ' + err);
+                    alert('error deleting entry: ' + err);
                     return;
                 }
                 var parent = getParent(evt.target, 'entry')
@@ -80,7 +80,8 @@ snack.ready(function() {
                 url: '/preview',
                 data: {
                     body: document.querySelector('.entryInput').value,
-                    title: document.querySelector('.entryTitleInput').value
+                    title: document.querySelector('.entryTitleInput').value,
+                    tags: document.querySelector('.entryTagInput').value
                 }
             }
             snack.request(options, function (err, res) {
@@ -91,7 +92,7 @@ snack.ready(function() {
                 var entry = document.createElement('div');
                 entry.innerHTML = res;
                 entry['id'] = "preview";
-                entry.className += ' highlight';
+                entry.className += ' entry highlight';
                 var preview;
                 if ((preview = document.getElementById("preview")) != null) {
                     publish.parentNode.parentNode.replaceChild(entry, preview);

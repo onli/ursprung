@@ -257,8 +257,6 @@ post '/file' do
     data_index = data.index('base64') + 7
     filedata = data.slice(data_index, data.length)
     decoded_image = Base64.decode64(filedata)
-   
-    ## Write the file to the system
     target = File.join(settings.public_folder, 'upload')
     target = File.join(target, filename)
     until ! File.exists?(target)
@@ -376,9 +374,7 @@ end
 
 post '/preview' do
     protected!
-    entry = Entry.new()
-    entry.body = params[:body]
-    entry.title = params[:title]
+    entry = Entry.new(params.merge({:preview => true}), request)
     entry.date = DateTime.now().to_s
     erb :entry, :locals => {:entry => entry}
 end
