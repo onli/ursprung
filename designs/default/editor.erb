@@ -5,7 +5,10 @@
     <% if entry %>
         <input name="id" type="hidden" value="<%= entry.id %>"/>
     <% end %>
-    <label><input class="entryTagInput" type="text" name="tags" placeholder="tag1, tag2, …" value="<%= entry.tags.join(", ") if entry != nil && entry.tags != nil%>"></input></label>
+    <label>
+        <input class="entryTagInput" type="text" list="tags" name="tags" placeholder="tag1, tag2, …" value="<%= entry.tags.join(", ") if entry != nil && entry.tags != nil%>">
+        </input>
+    </label>
     <div class="editorSubmitButtons">
         <button type="submit" class="entryPublish">Publish</button>
     </div>

@@ -25,6 +25,9 @@
             
             <% if isAdmin? && (page.to_i == 0 || page.to_i == totalPages) && tag == nil %>
                 <%= erb :editor, :locals => {:entry => nil} %>
+                <datalist id="tags">
+                    <%= allTags.map { |tag| '<option value="' + tag + '">'}.join(" ") %>
+                </datalist>
             <% end %>
 
             <% entries.each do |entry| %>

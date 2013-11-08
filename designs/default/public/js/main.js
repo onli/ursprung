@@ -65,9 +65,10 @@ snack.ready(function() {
         });
     }
 
-    // preview-button
+    // editor is loaded
     var publish;
     if ((publish = document.querySelector('.entryPublish')) != null) {
+        // preview-button
         var previewButton = document.createElement('button');
         previewButton.innerHTML = "Preview";
         previewButton['id'] = "previewButton";
@@ -102,6 +103,34 @@ snack.ready(function() {
                 adminOptions.parentNode.removeChild(adminOptions);
             });
         });
+        // tags autocomplete
+        var tagInput = document.querySelector('.entryTagInput');
+        var rawTags = document.querySelector('#tags').cloneNode();
+        var tags = document.querySelector('#tags');
+        tagInput.oninput = function(evt) {
+            if (tagInput.value.substr(-1) == ',') {
+                tagOptions = [];
+                for (var i=0;i < rawTags.options.length;i++) {
+                    var newTag = document.createElement('option');
+                    newTag.value = tagInput.value + " " + rawTags.options[i].value;
+                    tagOptions[i] = newTag;
+                }
+                while (tags.hasChildNodes()) {
+                    tags.removeChild(tags.lastChild);
+                }
+                console.log(tagOptions.length);
+                for (var i=0;i < tagOptions.length;i++) {
+                    tags.appendChild(tagOptions[i]);
+                }
+            }
+            if (tagInput.value == "") {
+                // user has deleted all tags
+                tags.parentNode.appendChild(rawTags);
+                tags.parentNode.removeChild(tags);
+                tags =  document.querySelector('#tags');
+                rawTags = document.querySelector('#tags').cloneNode();
+            }
+        };
     }
 
     // support for the hover-menu, dont vanish directly

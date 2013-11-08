@@ -118,6 +118,18 @@ class Database
         return entries
     end
 
+    def getAllTags()
+        begin
+            tags = []
+            @@db.execute("SELECT DISTINCT tag FROM tags") do |row|
+                tags.push(row["tag"])
+            end
+            return tags
+        rescue => error
+            uts "getAllTags: #{error}"
+        end
+    end
+
     def getTotalPages(amount, tag)
         begin
             if tag == nil

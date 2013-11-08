@@ -174,7 +174,7 @@ def serveIndex(page, tag)
         design = db.getOption("design")
             
         body erb :index, :locals => {:entries => entries, :page => page, :totalPages => totalPages, :friends => friends,
-                                :designs => designs, :design => design, :tag => tag}
+                                :designs => designs, :design => design, :tag => tag, :allTags => db.getAllTags}
     end
 end
 
