@@ -52,11 +52,11 @@ snack.ready(function() {
                     alert('error fetching option: ' + err);
                     return;
                 }
-                var parent = getParent(evt.target, 'container')
+                var parent = getParent(evt.target, 'entry')
 
                 events = ["animationend", "webkitAnimationEnd", "oanimationend", "MSAnimationEnd"];
                 events.forEach(function(event) {
-                    snack.wrap(parent.parentNode).addClass("fadeout").attach(event, function() {
+                    snack.wrap(parent).addClass("fadeout").attach(event, function() {
                         parent.parentNode.removeChild(parent);
                     });
                 });
