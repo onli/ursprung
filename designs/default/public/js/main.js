@@ -193,10 +193,29 @@ snack.ready(function() {
             imgButtonInput.click();
         });
         snack.wrap(imgButtonInput).attach('change', function() {
-            var files = imgButtonInput.files
+            var files = imgButtonInput.files;
             for (var i = 0, f; f = files[i]; i++) {
-                alert(f.name);
-            }       
+                var reader = new FileReader();
+                var file = f;
+                reader.onload = function(event) {  
+                    object = {};
+                    object.filename = file.name;
+                    object.data = event.target.result;
+                    var options = {
+                        method: 'post',
+                        url: '/file',
+                        data: object
+                    }
+                    snack.request(options, function (err, res) {
+                        if (err) {
+                            alert("error uploading file: " + err);
+                        }
+                        replaceSelection(editor, "[["+res+"]]");
+                    });
+                };
+                reader.readAsDataURL(f);
+                
+            }
         });
         
     }

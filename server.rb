@@ -14,7 +14,7 @@ require 'xmlrpc/marshal'
 require 'json'
 include ERB::Util
 require 'sinatra/browserid'
-set :sessions, true
+enable :sessions
 set :browserid_login_button, "/img/browserid.png"
 
 set :static_cache_control, [:public, max_age: 31536000]
@@ -250,6 +250,22 @@ post '/xmlrpc' do
     end
 end
 
+post '/file' do
+    protected!
+    data = params[:data]
+    filename = params[:filename].gsub("..", "")
+    data_index = data.index('base64') + 7
+    filedata = data.slice(data_index, data.length)
+    decoded_image = Base64.decode64(filedata)
+   
+    ## Write the file to the system
+    target = File.join(settings.public_folder, 'upload')
+    target = File.join(target, filename)
+    file = File.new(target, "w+")
+    file.write(decoded_image)
+    "upload/" + filename
+end
+
 get %r{/([0-9]+)/editEntry} do |id|
     protected!
     entry = Entry.new(id.to_i)
@@ -351,6 +367,7 @@ get %r{/search} do
 end
 
 post '/preview' do
+    protected!
     entry = Entry.new()
     entry.body = params[:body]
     entry.title = params[:title]
