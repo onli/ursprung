@@ -20,7 +20,7 @@ class Entry
         when 1
             initializeFromID(args[0])
         when 2
-            # creating entry from params and save in database
+            # creating entry from params 
             params = args[0]
             request = args[1]
             self.body = params[:body]
@@ -29,10 +29,13 @@ class Entry
             self.tags = params[:tags].split(",").map!{ |tag| tag.strip }.uniq() if params[:tags] != nil
             # NOTE: That way, only one-user-blogs are possible:
             self.author = Database.new.getAdmin
-            self.save
-            remainingLinks = self.sendTrackbacks(request)
-            if remainingLinks.length >= 1
-                self.sendPingbacks(request, remainingLinks)
+            # and save in database, if not a preview
+            if not params[:preview]
+                self.save
+                remainingLinks = self.sendTrackbacks(request)
+                if remainingLinks.length >= 1
+                    self.sendPingbacks(request, remainingLinks)
+                end
             end
         end
     end
