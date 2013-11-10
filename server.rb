@@ -255,13 +255,11 @@ post '/file' do
     filedata = Base64.decode64(params[:data].slice(params[:data].index('base64') + 7, params[:data].length))
     target = File.join(settings.public_folder, 'upload', params[:filename].gsub("..", ""))
     until ! File.exists?(target)
-        puts "file exists: " + target
         return target.gsub(settings.public_folder, "") if Digest::MD5.hexdigest(filedata) == Digest::MD5.hexdigest(File.open(target).read())
         # assume the filename is a classical xy.abc, but dont forget the leading ./ of settings.public_folder
         target = target.reverse.sub('.','._').reverse if target.scan(".").size > 1
         target = target + "_" if target.scan(".").size <= 1
     end
-    puts "target resolved"
     File.new(target, "w+").write(filedata)
     target.gsub(settings.public_folder, "")
 end
