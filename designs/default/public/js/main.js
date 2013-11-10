@@ -109,7 +109,7 @@ snack.ready(function() {
         var rawTags = document.querySelector('#tags').cloneNode();
         var tags = document.querySelector('#tags');
         var oldTagInputValue = "";
-        tagInput.oninput = function(evt) {
+        tagInput.addEventListener('input', function(evt) {
             var autocompleteOccured = false;
             if (tagInput.value.length - oldTagInputValue.length > 1) {
                 autocompleteOccured = true;
@@ -129,7 +129,6 @@ snack.ready(function() {
                 while (tags.hasChildNodes()) {
                     tags.removeChild(tags.lastChild);
                 }
-                console.log(tagOptions.length);
                 for (var i=0;i < tagOptions.length;i++) {
                     tags.appendChild(tagOptions[i]);
                 }
@@ -143,7 +142,24 @@ snack.ready(function() {
                 rawTags = document.querySelector('#tags').cloneNode();
             }
             oldTagInputValue = tagInput.value;
-        };
+        });
+
+        // file upload using drag & drop
+        document.querySelector('.entryInput').addEventListener("dragenter", function(evt) {
+            evt.stopPropagation();
+            evt.preventDefault();
+        });
+        document.querySelector('.entryInput').addEventListener("dragover", function(evt) {
+            evt.stopPropagation();
+            evt.preventDefault();
+        });
+        document.querySelector('.entryInput').addEventListener("drop", function(evt) {
+            evt.stopPropagation();
+            evt.preventDefault();
+
+            var dt = evt.dataTransfer;
+            uploadFiles(dt.files);
+        });
     }
 
     // support for the hover-menu, dont vanish directly
@@ -231,33 +247,11 @@ snack.ready(function() {
             var replace = '[http:// '+sel+']';
             replaceSelection(editor, replace);
         });
-        snack.wrap('.imgButton').attach('click', function(evt) {
+        document.querySelector('.imgButton').addEventListener('click', function(evt) {
             imgButtonInput.click();
         });
-        snack.wrap(imgButtonInput).attach('change', function() {
-            var files = imgButtonInput.files;
-            for (var i = 0, f; f = files[i]; i++) {
-                var reader = new FileReader();
-                var file = f;
-                reader.onload = function(event) {  
-                    object = {};
-                    object.filename = file.name;
-                    object.data = event.target.result;
-                    var options = {
-                        method: 'post',
-                        url: '/file',
-                        data: object
-                    }
-                    snack.request(options, function (err, res) {
-                        if (err) {
-                            alert("error uploading file: " + err);
-                        }
-                        replaceSelection(editor, "[["+res+"]]");
-                    });
-                };
-                reader.readAsDataURL(f);
-                
-            }
+        imgButtonInput.addEventListener('change', function() {
+            uploadFiles(imgButtonInput.files);
         });
         
     }
@@ -305,13 +299,36 @@ snack.ready(function() {
         editor.value =  editor.value.substring(0,start) + text + editor.value.substring(end,len);
         editor.selectionEnd = start + text.length;
     }
-    
 
     function getParent(start, classname) {
         while (! start.className.match(new RegExp('\\b'+classname+'\\b'))) {
             var start = start.parentNode;
         }
         return start
+    }
+
+    function uploadFiles(files) {
+        for (var i = 0, f; f = files[i]; i++) {
+            var reader = new FileReader();
+            var file = f;
+            reader.onload = function(event) {  
+                object = {};
+                object.filename = file.name;
+                object.data = event.target.result;
+                var options = {
+                    method: 'post',
+                    url: '/file',
+                    data: object
+                }
+                snack.request(options, function (err, res) {
+                    if (err) {
+                        alert("error uploading file: " + err);
+                    }
+                    replaceSelection(editor, "[["+res+"]]");
+                });
+            };
+            reader.readAsDataURL(f); 
+        }
     }
     
 });
