@@ -147,18 +147,31 @@ snack.ready(function() {
         // file upload using drag & drop
         document.querySelector('.entryInput').addEventListener("dragenter", function(evt) {
             evt.stopPropagation();
-            evt.preventDefault();
+            snack.preventDefault(evt);
         });
         document.querySelector('.entryInput').addEventListener("dragover", function(evt) {
             evt.stopPropagation();
-            evt.preventDefault();
+            snack.preventDefault(evt);
         });
         document.querySelector('.entryInput').addEventListener("drop", function(evt) {
             evt.stopPropagation();
-            evt.preventDefault();
+            snack.preventDefault(evt);
 
             var dt = evt.dataTransfer;
             uploadFiles(dt.files);
+        });
+
+        // Prevent sending the form with Enter while in an input-element
+        tagInput.addEventListener("keypress", function(evt) {
+            if (evt.which == 13) {
+                snack.preventDefault(evt);
+            }
+        });
+
+        document.querySelector('.entryTitleInput').addEventListener("keypress", function(evt) {
+            if (evt.which == 13) {
+                snack.preventDefault(evt);
+            }
         });
     }
 
