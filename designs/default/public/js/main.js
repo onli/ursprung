@@ -34,7 +34,7 @@ snack.ready(function() {
                     form.querySelector('.editorSubmitButtons').parentNode.insertBefore(cancelButton, form.querySelector('button').parentNode);
                 } catch (e) {
                     form.querySelector('input[type="text"]').addEventListener("blur", function(evt) {
-                        if (evt.relatedTarget.type == undefined || evt.relatedTarget.type != "submit") {
+                        if (typeof evt.relatedTarget != null || evt.relatedTarget.type == undefined || evt.relatedTarget.type != "submit") {
                             form.parentNode.replaceChild(parent, form);
                         }
                     });
