@@ -33,7 +33,11 @@ snack.ready(function() {
                     // this is in a try because the edit-functionailty is shared for entries and options, and options have no .editorSubmitButtons
                     form.querySelector('.editorSubmitButtons').parentNode.insertBefore(cancelButton, form.querySelector('button').parentNode);
                 } catch (e) {
-                    console.log(e);
+                    form.querySelector('input[type="text"]').addEventListener("blur", function(evt) {
+                        if (evt.relatedTarget.type == undefined || evt.relatedTarget.type != "submit") {
+                            form.parentNode.replaceChild(parent, form);
+                        }
+                    });
                 }
                 snack.wrap(cancelButton).attach('click', function(evt) {
                     form.parentNode.replaceChild(parent, form);
