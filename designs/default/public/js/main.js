@@ -308,12 +308,13 @@ snack.ready(function() {
     }
 
     function uploadFiles(files) {
-        for (var i = 0, f; f = files[i]; i++) {
+        var readerCounter = 0;
+        for (var i = 0; i < files.length; i++) {
             var reader = new FileReader();
-            var file = f;
-            reader.onload = function(event) {  
+            reader.addEventListener("load", function(event) {
                 object = {};
-                object.filename = file.name;
+                object.filename = files[readerCounter].name;
+                readerCounter++;
                 object.data = event.target.result;
                 var options = {
                     method: 'post',
@@ -324,10 +325,10 @@ snack.ready(function() {
                     if (err) {
                         alert("error uploading file: " + err);
                     }
-                    replaceSelection(editor, "[["+res+"]]");
+                    editor.value += "[["+res+"]]\n";
                 });
-            };
-            reader.readAsDataURL(f); 
+            });
+            reader.readAsDataURL(files[i]); 
         }
     }
     
