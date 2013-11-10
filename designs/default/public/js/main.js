@@ -29,7 +29,12 @@ snack.ready(function() {
                 cancelButton.innerHTML = "Cancel";
                 cancelButton.setAttribute('type', 'button');
                 cancelButton.className = "cancel";
-                form.querySelector('.editorSubmitButtons').parentNode.insertBefore(cancelButton, form.querySelector('button').parentNode);
+                try {
+                    // this is in a try because the edit-functionailty is shared for entries and options, and options have no .editorSubmitButtons
+                    form.querySelector('.editorSubmitButtons').parentNode.insertBefore(cancelButton, form.querySelector('button').parentNode);
+                } catch (e) {
+                    console.log(e);
+                }
                 snack.wrap(cancelButton).attach('click', function(evt) {
                     form.parentNode.replaceChild(parent, form);
                 });

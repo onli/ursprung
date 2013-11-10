@@ -31,7 +31,7 @@
             <% end %>
 
             <% entries.each do |entry| %>
-                <article class="entry" itemscope itemtype="http://schema.org/BlogPosting">
+                <article class="entry container" itemscope itemtype="http://schema.org/BlogPosting">
                     <%= erb :entry, :locals => {:entry => entry} %>
                 </article>
             <% end %>
