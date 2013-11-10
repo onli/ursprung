@@ -260,6 +260,10 @@ post '/file' do
     target = File.join(settings.public_folder, 'upload')
     target = File.join(target, filename)
     until ! File.exists?(target)
+        if Digest::MD5.hexdigest(decoded_image) == Digest::MD5.hexdigest(File.open(target).read())
+            return target.gsub(settings.public_folder, "")
+        end
+                
         if target.scan(".").size > 1
             # assume the filename is a classical xy.abc
             target = target.reverse.sub('.','._').reverse
