@@ -252,27 +252,14 @@ end
 
 post '/file' do
     protected!
-    data = params[:data]
-    filename = params[:filename].gsub("..", "")
-    data_index = data.index('base64') + 7
-    filedata = data.slice(data_index, data.length)
-    decoded_image = Base64.decode64(filedata)
-    target = File.join(settings.public_folder, 'upload')
-    target = File.join(target, filename)
+    filedata = Base64.decode64(params[:data].slice(params[:data].index('base64') + 7, params[:data].length))
+    target = File.join(settings.public_folder, 'upload', params[:filename].gsub("..", ""))
     until ! File.exists?(target)
-        if Digest::MD5.hexdigest(decoded_image) == Digest::MD5.hexdigest(File.open(target).read())
-            return target.gsub(settings.public_folder, "")
-        end
-                
-        if target.scan(".").size > 1
-            # assume the filename is a classical xy.abc
-            target = target.reverse.sub('.','._').reverse
-        else
-            target = target + "_"
-        end
+        return target.gsub(settings.public_folder, "") if Digest::MD5.hexdigest(filedata) == Digest::MD5.hexdigest(File.open(target).read())
+        # assume the filename is a classical xy.abc
+        target = target.reverse.sub('.','._').reverse if target.scan(".").size > 1 or target = target + "_"
     end
-    file = File.new(target, "w+")
-    file.write(decoded_image)
+    File.new(target, "w+").write(filedata)
     target.gsub(settings.public_folder, "")
 end
 
