@@ -308,27 +308,28 @@ snack.ready(function() {
     }
 
     function uploadFiles(files) {
-        var readerCounter = 0;
         for (var i = 0; i < files.length; i++) {
-            var reader = new FileReader();
-            reader.addEventListener("load", function(event) {
-                object = {};
-                object.filename = files[readerCounter].name;
-                readerCounter++;
-                object.data = event.target.result;
-                var options = {
-                    method: 'post',
-                    url: '/file',
-                    data: object
-                }
-                snack.request(options, function (err, res) {
-                    if (err) {
-                        alert("error uploading file: " + err);
+            var f = files[i];
+            (function(f) {
+                var reader = new FileReader();
+                reader.addEventListener("load", function(event) {
+                    object = {};
+                    object.filename = f.name;
+                    object.data = event.target.result;
+                    var options = {
+                        method: 'post',
+                        url: '/file',
+                        data: object
                     }
-                    editor.value += "[["+res+"]]\n";
+                    snack.request(options, function (err, res) {
+                        if (err) {
+                            alert("error uploading file: " + err);
+                        }
+                        editor.value += "[["+res+"]]\n";
+                    });
                 });
-            });
-            reader.readAsDataURL(files[i]); 
+                reader.readAsDataURL(f); 
+            })(f);
         }
     }
     
