@@ -1,77 +1,121 @@
 snack.ready(function() {
 
-    // if it finds no element, it finds a NodeList, resulting in an error which breaks all following js
-    if (snack.wrap('.edit')[0].addEventListener != undefined) {
-        snack.wrap('.edit').attach('click', function(evt) {
-            snack.preventDefault(evt)
+    initEditElements();
+    initDeleteElements();
 
-            var options = {
-                method: 'get',
-                url: evt.target.parentNode.href,
-            }
-            snack.request(options, function(err, res){
-                if (err) {
-                    alert('error fetching option: ' + err);
-                    return;
+    function initEditElements() {
+        // if it finds no element, it finds a NodeList, resulting in an error which breaks all following js
+        if (snack.wrap('.edit')[0].addEventListener != undefined) {
+            snack.wrap('.edit').attach('click', function(evt) {
+                snack.preventDefault(evt)
+
+                var options = {
+                    method: 'get',
+                    url: evt.target.parentNode.href,
                 }
-                var parent = getParent(evt.target, 'container')
+                snack.request(options, function(err, res){
+                    if (err) {
+                        alert('error fetching option: ' + err);
+                        return;
+                    }
+                    var parent = getParent(evt.target, 'container')
 
-                if (navigator.userAgent.match(/.*Firefox.*/)) {
-                    // detect firefox here, because in firefox you cant create an empty element and chrome can't add the form as inner/outerhtml without errors
-                    var form = document.createElement("form");
-                } else {
-                    var form = document.createElement();
-                }
-                form.innerHTML = res;
-                form.querySelector('form').className += ' highlight';
+                    if (navigator.userAgent.match(/.*Firefox.*/)) {
+                        // detect firefox here, because in firefox you cant create an empty element and chrome can't add the form as inner/outerhtml without errors
+                        var form = document.createElement("form");
+                    } else {
+                        var form = document.createElement();
+                    }
+                    form.innerHTML = res;
+                    form.querySelector('form').className += ' highlight';
 
-                var cancelButton = document.createElement('button');
-                cancelButton.innerHTML = "Cancel";
-                cancelButton.setAttribute('type', 'button');
-                cancelButton.className = "cancel";
-                try {
-                    // this is in a try because the edit-functionailty is shared for entries and options, and options have no .editorSubmitButtons
-                    form.querySelector('.editorSubmitButtons').parentNode.insertBefore(cancelButton, form.querySelector('button').parentNode);
-                } catch (e) {
-                    form.querySelector('input[type="text"]').addEventListener("blur", function(evt) {
-                        if (typeof evt.relatedTarget != null || evt.relatedTarget.type == undefined || evt.relatedTarget.type != "submit") {
-                            form.parentNode.replaceChild(parent, form);
-                        }
+                    var cancelButton = document.createElement('button');
+                    cancelButton.innerHTML = "Cancel";
+                    cancelButton.setAttribute('type', 'button');
+                    cancelButton.className = "cancel";
+                    try {
+                        // this is in a try because the edit-functionailty is shared for entries and options, and options have no .editorSubmitButtons
+                        form.querySelector('.editorSubmitButtons').parentNode.insertBefore(cancelButton, form.querySelector('button').parentNode);
+                    } catch (e) {
+                        form.querySelector('input[type="text"]').addEventListener("blur", function(evt) {
+                            if (typeof evt.relatedTarget != null || evt.relatedTarget.type == undefined || evt.relatedTarget.type != "submit") {
+                                form.parentNode.replaceChild(parent, form);
+                            }
+                        });
+                    }
+                    snack.wrap(cancelButton).attach('click', function(evt) {
+                        form.parentNode.replaceChild(parent, form);
                     });
-                }
-                snack.wrap(cancelButton).attach('click', function(evt) {
-                    form.parentNode.replaceChild(parent, form);
+        
+                    parent.parentNode.replaceChild(form, parent);
                 });
-    
-                parent.parentNode.replaceChild(form, parent);
             });
-        });
+        }
     }
-    
-    if (snack.wrap('.delete')[0].addEventListener != undefined) {
-        snack.wrap('.delete').attach('click', function(evt) {
-            snack.preventDefault(evt)
-            
-            var options = {
-                method: 'post',
-                url: evt.target.parentNode.action,
-            }
-            snack.request(options, function(err, res) {
-                if (err) {
-                    alert('error deleting entry: ' + err);
-                    return;
-                }
-                var parent = getParent(evt.target, 'entry')
 
-                events = ["animationend", "webkitAnimationEnd", "oanimationend", "MSAnimationEnd"];
-                events.forEach(function(event) {
-                    snack.wrap(parent).addClass("fadeout").attach(event, function() {
-                        parent.parentNode.removeChild(parent);
-                    });
-                });
+    function initDeleteElements() {
+    
+        if (snack.wrap('.delete')[0].addEventListener != undefined) {
+            snack.wrap('.delete').attach('click', function(evt) {
+                snack.preventDefault(evt);
                 
+                var options = {
+                    method: 'post',
+                    url: evt.target.parentNode.action,
+                }
+                var entryId = evt.target.parentNode.dataset["entryid"];
+                snack.request(options, function(err, res) {
+                    if (err) {
+                        alert('error deleting entry: ' + err);
+                        return;
+                    }
+                    var parent = getParent(evt.target, 'container')
+                    
+
+                    events = ["animationend", "webkitAnimationEnd", "oanimationend", "MSAnimationEnd"];
+                    events.forEach(function(event) {
+                        snack.wrap(parent).addClass("fadeout").attach(event, function() {
+                            parent.removeEventListener(event, arguments.callee, false);
+                            var entry = parent.cloneNode();
+                            while (parent.hasChildNodes()) {
+                                parent.removeChild(parent.lastChild);
+                            }
+                            var undo = document.createElement("form");
+                            undo.action = "/" + entryId + "/restoreEntry"
+                            undo.method = "POST";
+                            undo.id = "undo";
+                            undo.className = "highlight";
+                            var submitButton = document.createElement("button");
+                            submitButton.type = "submit";
+                            submitButton.innerHTML = "undo";
+                            undo.appendChild(submitButton);
+                            snack.wrap(parent).removeClass("fadeout");
+                            snack.wrap(entry).removeClass("fadeout");
+                            
+                            undo.addEventListener("submit", function(evt) {
+                                snack.preventDefault(evt);
+                                var options = {
+                                    method: evt.target.method,
+                                    url: evt.target.action
+                                }
+                                snack.request(options, function(err, res) {
+                                    if (err) {
+                                        alert('error restoring entry: ' + err);
+                                        return;
+                                    }
+                                });
+                                parent.parentNode.replaceChild(entry, parent);
+                                initEditElements();
+                                initDeleteElements();
+                                
+                            });
+                            parent.appendChild(undo);
+                        });
+                    });
+                    
+                });
             });
-        });
+        }
     }
 
     // editor is loaded

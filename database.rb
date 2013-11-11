@@ -54,9 +54,12 @@ class Database
                 @@db.execute "CREATE TABLE IF NOT EXISTS tags(
                                 tag TEXT,
                                 entryId INTEGER,
-                                FOREIGN KEY (entryId) REFERENCES entries(id) ON UPDATE CASCADE
+                                FOREIGN KEY (entryId) REFERENCES entries(id) ON UPDATE CASCADE ON DELETE CASCADE
                 );"
                 @@db.execute "CREATE INDEX IF NOT EXISTS tags_tag_index ON tags(tag)"
+                @@db.execute "CREATE TABLE IF NOT EXISTS entries_recycler
+                                AS
+                                SELECT * from entries WHERE id == -1;"
                 begin
                     @@db.execute 'CREATE VIRTUAL TABLE search
                                     USING fts4(content="entries", body, title);'
@@ -163,6 +166,8 @@ class Database
 
     def editEntry(entry)
         begin
+            # The INSERT-line makes it possible to make this function to restore entries (with id)
+            @@db.execute("INSERT OR IGNORE INTO entries(id, title, body, author) VALUES(?, ?, ?, ?);", entry.id, entry.title, entry.body, entry.author)
             @@db.execute("UPDATE entries SET title = ?, body = ? WHERE id = ?;", entry.title, entry.body, entry.id)
             @@db.execute("DELETE FROM tags WHERE entryId = ?;", entry.id)
             entry.tags.each do |tag|
@@ -184,9 +189,26 @@ class Database
         end
     end
 
-    def getEntryData(id)
+    def deleteEntrySoft(id)
         begin
-            entryData = @@db.execute("SELECT title, body, author, date, moderate FROM entries WHERE id == ?;", id)[0]
+            @@db.execute("INSERT INTO entries_recycler SELECT * from entries WHERE id = ?;", id)
+            Entry.new(id).delete()
+        rescue => error
+            puts "error in deleting entries: #{error}"
+        end
+    end
+
+    def deleteRecycler()
+        @@db.execute("DELETE FROM entries_recycler;")
+    end
+
+    def getEntryData(id, deleted)
+        begin
+            if deleted
+                entryData = @@db.execute("SELECT title, body, author, date, moderate FROM entries_recycler WHERE id == ?;", id)[0]
+            else
+                entryData = @@db.execute("SELECT title, body, author, date, moderate FROM entries WHERE id == ?;", id)[0]
+            end
             tags = []
             @@db.execute("SELECT tag FROM tags WHERE entryId == ?;", id) do |row|
                 tags.push(row["tag"])

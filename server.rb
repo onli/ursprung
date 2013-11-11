@@ -307,7 +307,13 @@ end
 
 post %r{/([0-9]+)/deleteEntry} do |id|
     protected!
-    Entry.new(id.to_i).delete
+    Entry.new(id.to_i).deleteSoft
+    "Done"
+end
+
+post %r{/([0-9]+)/restoreEntry} do |id|
+    protected!
+    Entry.new(id, nil, {:deleted => true}).save()
     "Done"
 end
 
@@ -372,6 +378,7 @@ post '/preview' do
     protected!
     entry = Entry.new(params.merge({:preview => true}), request)
     entry.date = DateTime.now().to_s
+    Database.new.deleteRecycler     # this has nothing to do with the preview
     erb :entry, :locals => {:entry => entry}
 end
 

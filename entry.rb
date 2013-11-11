@@ -18,7 +18,7 @@ class Entry
     def initialize(*args)
         case args.length
         when 1
-            initializeFromID(args[0])
+            initializeFromID(args[0], false)
         when 2
             # creating entry from params 
             params = args[0]
@@ -37,12 +37,15 @@ class Entry
                     self.sendPingbacks(request, remainingLinks)
                 end
             end
+        when 3
+            # get the entry from the recycler
+            initializeFromID(args[0], true)
         end
     end
     
-    def initializeFromID(id)
+    def initializeFromID(id, deleted)
         db = Database.new
-        entryData = db.getEntryData(id)
+        entryData = db.getEntryData(id, deleted)
         self.id = id
         self.body = entryData["body"]
         self.title = entryData["title"]
@@ -56,11 +59,16 @@ class Entry
         db = Database.new
         if self.id == nil
             id = db.addEntry(self)
-            initializeFromID(id)   # to get data added by the database, like the date
+            initializeFromID(id, false)   # to get data added by the database, like the date
         else
             db.editEntry(self)
-            initializeFromID(self.id)
+            initializeFromID(self.id, false)
         end
+    end
+
+    def deleteSoft()
+        db = Database.new
+        db.deleteEntrySoft(self.id)
     end
 
     def delete()

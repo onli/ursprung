@@ -9,7 +9,7 @@
     <% if isAdmin? %>
         <div class="adminOptions">
             <a href="/<%= entry.id %>/editEntry"><button type="button" class="edit adminAction" title="edit">&#9998;</button></a>
-            <form action="/<%= entry.id %>/deleteEntry" method="POST">
+            <form action="/<%= entry.id %>/deleteEntry" method="POST" data-entryid="<%= entry.id %>">
                 <button type="submit" class="delete adminAction" title="delete">&#10005;</button>
             </form>
         </div>
