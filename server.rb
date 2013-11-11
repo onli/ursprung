@@ -378,7 +378,7 @@ post '/preview' do
     protected!
     entry = Entry.new(params.merge({:preview => true}), request)
     entry.date = DateTime.now().to_s
-    Database.new.deleteRecycler     # this has nothing to do with the preview
+    Database.new.deleteStoredEntries()    # this has nothing to do with the preview, it just need to be somewhere
     erb :entry, :locals => {:entry => entry}
 end
 
