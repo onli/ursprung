@@ -357,11 +357,15 @@ get %r{/setOption/([\w]+)} do |name|
     erb :editOption, :locals => {:name => name, :value => Database.new.getOption(name)}
 end
 
-get %r{/search} do
+get %r{/search/([\w]+)} do |keyword|
     if @cacheContent != nil
         return @cacheContent
     end
-    body erb :search, :locals => {:entries => Database.new.searchEntries(params[:keyword]), :keyword => params[:keyword]}
+    body erb :search, :locals => {:entries => Database.new.searchEntries(keyword), :keyword => keyword}
+end
+
+get '/search' do
+    redirect '/search/'+params[:keyword]
 end
 
 post '/preview' do
