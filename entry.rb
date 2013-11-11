@@ -183,7 +183,7 @@ class Entry
 
     # get list of links 
     def links()
-        links = Nokogiri::HTML(RedCloth.new(self.body).to_html).css("a").map do |link|
+        links = Nokogiri::HTML(self.format).css("a").map do |link|
             if (href = link.attr("href")) && href.match(/^https?:/)
                 href
             end

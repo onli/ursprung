@@ -7,7 +7,6 @@ require './comment.rb'
 require './commentauthor.rb'
 
 require 'sinatra'
-require 'RedCloth'
 require 'sanitize'
 require 'htmlentities'
 require 'xmlrpc/marshal'
