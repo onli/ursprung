@@ -2,7 +2,6 @@ require './database.rb'
 require 'net/http'
 require 'uri'
 require 'sanitize'
-require 'RedCloth'
 require 'xmlrpc/client'
 
 class Entry
