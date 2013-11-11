@@ -109,13 +109,13 @@ class Database
         end
         begin
             if tag == nil
-                @@db.execute("SELECT id FROM entries ORDER BY date DESC LIMIT ?,?;", offset, limit) do |row|
+                @@db.execute("SELECT id FROM entries WHERE deleted != 1 ORDER BY date DESC LIMIT ?,?;", offset, limit) do |row|
                     entry = Entry.new(row["id"])
                     entries.push(entry)
                 end
             else
-                @@db.execute("SELECT entryId FROM tags WHERE tag = ? LIMIT ?,?;", tag, offset, limit) do |row|
-                    entry = Entry.new(row["entryId"])
+                @@db.execute("SELECT id FROM entries WHERE deleted != 1 AND id IN (SELECT entryId FROM tags WHERE tag = ?) LIMIT ?,?;", tag, offset, limit) do |row|
+                    entry = Entry.new(row["id"])
                     entries.push(entry)
                 end
             end
@@ -193,14 +193,18 @@ class Database
 
     def deleteEntrySoft(id)
         begin
-            @@db.execute("UPDATE entries SET deleted = 1 WHERE id = ?;", id)
+            @@db.execute("UPDATE entries SET deleted = 1 WHERE id == ?;", id)
         rescue => error
             puts "error in deleting entries: #{error}"
         end
     end
 
     def deleteStoredEntries()
-        @@db.execute("DELETE FROM entries WHERE deleted == 1;")
+        begin
+            @@db.execute("DELETE FROM entries WHERE deleted == 1;")
+        rescue => error
+            puts "error deleting stored entries: #{error}"
+        end
     end
 
     def getEntryData(id, deleted)
@@ -254,8 +258,6 @@ class Database
     end
 
     def deleteComment(comment)
-        puts "database comment delete"
-        puts "id: #{comment.id}"
         begin
             @@db.execute("DELETE FROM comments WHERE id = ?", comment.id)
         rescue => error
