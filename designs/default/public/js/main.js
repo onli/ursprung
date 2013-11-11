@@ -1,5 +1,4 @@
 snack.ready(function() {
-
     initEditElements();
     initDeleteElements();
 
