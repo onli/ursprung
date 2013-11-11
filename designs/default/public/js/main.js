@@ -376,6 +376,7 @@ snack.ready(function() {
     }
 
     function uploadFiles(files) {
+        Pace.restart();
         for (var i = 0; i < files.length; i++) {
             var f = files[i];
             (function(f) {
