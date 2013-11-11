@@ -45,7 +45,7 @@
                 <% end %>  
             </nav>
             <footer>
-                <%= erb :searchWidget %>
+                <%= erb :searchWidget, :locals => {:keyword => "" }%>
             </footer>
         </div>
     </body>

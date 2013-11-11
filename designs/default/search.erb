@@ -9,7 +9,7 @@
     <body>
         <div id="content">
             <%= erb :header, :locals => {:blogTitle => blogTitle} %>
-            <h2>Searchresults for <em><%= keyword %></em></h2>
+            <h2>Searchresults for <%= erb :searchWidget, :locals => {:keyword => keyword }%></h2>
             <ol>
             <% entries.each do |entry| %>
                 <li>
