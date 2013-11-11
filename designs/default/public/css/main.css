@@ -30,14 +30,6 @@ a:visited {
     color: #8496bc;
 }
 
-#title a:visited {
-    color: #3B5998;
-}
-
-#title h1 {
-    display: inline;
-}
-
 label {
     display: block;
 }
@@ -46,6 +38,17 @@ input, textarea, button {
     font-family: inherit;
     font-size: inherit;
 }
+
+button {
+    cursor: pointer;
+    margin-left: 0;
+    background-color: #8496bc;
+    color: #fdfdfd;
+    border: 0;
+    padding-bottom: 3px;
+    padding-top: 2px;
+}
+
 
 article {
     max-width: 50em;
@@ -59,31 +62,31 @@ summary {
     cursor: pointer;
 }
 
-#friendWidget {
+#widget {
     float: right;
     position: relative;
     right: 3em;
 }
 
-#friendList {
-    list-style-type: none;
+#title a:visited {
+    color: #3B5998;
 }
 
-#mainNav {
-    float: left;
-    position: relative;
-    left: 3em;
+#title h1 {
+    display: inline;
 }
 
-#mainNav ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
+#title .adminAction {
+    vertical-align: text-bottom;
+}
+
+#title .adminAction button {
+    vertical-align: text-bottom;
 }
 
 .editor {
-    width: 40em;
-    max-width: 90%;
+    width: 50em;
+    max-width: 95%;
     text-align: right;
 }
 
@@ -337,6 +340,19 @@ summary {
 
 #search {
     margin-top: 3em;
+}
+
+#search input {
+    margin-right: 0;
+    border-right: 0;
+    
+}
+
+#search button {
+    padding-bottom: 2px;
+    padding-top: 3px;
+    position: relative;
+    right: 5px;
 }
 
 /* checkoxes from http://www.chrisnorstrom.com/2012/11/invention-multiple-choice-windowed-slider-ui/ */

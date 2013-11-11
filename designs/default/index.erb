@@ -10,7 +10,7 @@
 
     <body>
         
-        <aside id="friendWidget">
+        <aside id="widget">
             <% if isAdmin? %>
                 <div id="welcome">Welcome <%= authorized_email %> (<a href="/logout">Logout</a>)</div>
                 <%= erb :designs, :locals => {:design => design, :designs => designs} %>
