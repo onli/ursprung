@@ -8,7 +8,7 @@
     <%= entry.tags.map { |tag| '<a href="/archive/1/' + tag + '">'+ tag + '</a>' }.join(" ") if entry.tags != nil %>
     <% if isAdmin? %>
         <div class="adminOptions">
-            <a href="/<%= entry.id %>/editEntry"><button type="submit" class="edit adminAction" title="edit">&#9998;</button></a>
+            <a href="/<%= entry.id %>/editEntry"><button type="button" class="edit adminAction" title="edit">&#9998;</button></a>
             <form action="/<%= entry.id %>/deleteEntry" method="POST">
                 <button type="submit" class="delete adminAction" title="delete">&#10005;</button>
             </form>
