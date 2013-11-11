@@ -390,11 +390,13 @@ snack.ready(function() {
                         url: '/file',
                         data: object
                     }
-                    snack.request(options, function (err, res) {
-                        if (err) {
-                            alert("error uploading file: " + err);
-                        }
-                        editor.value += "[["+res+"]]\n";
+                    Pace.track(function() {
+                        snack.request(options, function (err, res) {
+                            if (err) {
+                                alert("error uploading file: " + err);
+                            }
+                            editor.value += "[["+res+"]]\n";
+                        });
                     });
                 });
                 reader.readAsDataURL(f); 
