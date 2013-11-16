@@ -25,9 +25,9 @@ class Comment
                 params = args[0]
                 request = args[1]
                 commentAuthor = CommentAuthor.new
-                commentAuthor.name = params[:name]
-                commentAuthor.mail = params[:mail]
-                commentAuthor.url = params[:url]
+                commentAuthor.name = Sanitize.clean(params[:name])
+                commentAuthor.mail = Sanitize.clean(params[:mail])
+                commentAuthor.url = Sanitize.clean(params[:url])
 
                 begin
                     self.replyToComment = params[:replyToComment].empty? ? nil : params[:replyToComment]
@@ -35,7 +35,7 @@ class Comment
                     self.replyToComment = nil
                 end
                 self.replyToEntry = params[:entryId]
-                self.body = params[:body]
+                self.body = HTMLEntities.new.encode(params[:body])
                 self.author = commentAuthor
                 self.id = params[:id] if params[:id] != nil
                 self.status = "approved"
@@ -199,5 +199,18 @@ class Comment
         else
             return nil
         end
+    end
+
+    def format
+        def format()
+        formattedBody = self.body
+        formattedBody = formattedBody.gsub(/\*\*(.*?)\*\*/, '<strong>\1</strong>')
+        formattedBody = formattedBody.gsub(/\*(.*?)\*/, '<em>\1</em>')
+        # link without name:
+        formattedBody = formattedBody.gsub(/\[([^ ]*?)\]/, '<a href="\1">\1</a>')
+        # link: [url name]
+        formattedBody = formattedBody.gsub(/\[(.*?) (.*?)\]/, '<a href="\1">\2</a>')
+        return formattedBody.gsub("\n", "<br>\n")
+    end
     end
 end
