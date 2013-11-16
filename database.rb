@@ -8,7 +8,6 @@ class Database
         rescue
             @@db = SQLite3::Database.new "dsnblog.db"
             begin
-                puts "creating Database"
                 @@db.execute "CREATE TABLE IF NOT EXISTS authors(
                                 name TEXT PRIMARY KEY,
                                 mail TEXT UNIQUE
@@ -69,7 +68,7 @@ class Database
                                     USING fts4(content="entries", body, title);'
                 rescue => error
                     # if not exists should work here, but doesn't, so this always throws an error if table exists
-                    puts "Creating search-table: #{error}"
+                    warn "Creating search-table: #{error}"
                 end
                 @@db.execute 'CREATE TRIGGER IF NOT EXISTS entries_ai AFTER INSERT ON entries BEGIN
                                 INSERT INTO search(docid, body, title) VALUES(new.rowid, new.body, new.title);
@@ -86,7 +85,7 @@ class Database
                 @@db.execute "PRAGMA foreign_keys = ON;"
                 @@db.results_as_hash = true
             rescue => error
-                puts "error creating tables: #{error}"
+                warn "error creating tables: #{error}"
             end
         end
     end
@@ -120,7 +119,7 @@ class Database
                 end
             end
         rescue => error
-            puts "getEntries: #{error}"
+            warn "getEntries: #{error}"
         end
         return entries
     end
@@ -133,7 +132,7 @@ class Database
             end
             return tags
         rescue => error
-            uts "getAllTags: #{error}"
+            warn "getAllTags: #{error}"
         end
     end
 
@@ -145,7 +144,7 @@ class Database
                 totalEntries = @@db.execute("SELECT COUNT(DISTINCT entryId) from tags WHERE tag = ?", tag)[0]["COUNT(DISTINCT entryId)"]
             end
         rescue => error
-             puts "getEntries count: #{error}"
+            warn"getEntries count: #{error}"
         end
         totalPages = (totalEntries.to_f / amount).ceil;
         return totalPages, totalEntries
@@ -155,7 +154,7 @@ class Database
         begin
             @@db.execute("INSERT INTO entries(title, body, author) VALUES(?, ?, ?);", entry.title, entry.body, entry.author)
         rescue => error
-            puts error
+            warn "addEntry1: #{error}"
         end
         id = @@db.last_insert_row_id()
         begin
@@ -163,7 +162,7 @@ class Database
                 @@db.execute("INSERT INTO tags(tag, entryId) VALUES(?, ?);", tag, id)
             end
         rescue => error
-            puts error
+            warn "addEntry2: #{error}"
         end
         return id
     end
@@ -176,7 +175,7 @@ class Database
                 @@db.execute("INSERT INTO tags(tag, entryId) VALUES(?, ?);", tag, entry.id)
             end
         rescue => error
-            puts error
+            warn "editEntry: #{error}"
             return false
         end
         return true
@@ -187,7 +186,7 @@ class Database
             @@db.execute("DELETE FROM entries WHERE id = ?", id)
             @@db.execute("DELETE FROM tags WHERE entryId = ?;", id)
         rescue => error
-            puts "error in deleting entries: #{error}"
+            warn "deleteEntry: #{error}"
         end
     end
 
@@ -195,7 +194,7 @@ class Database
         begin
             @@db.execute("UPDATE entries SET deleted = 1 WHERE id == ?;", id)
         rescue => error
-            puts "error in deleting entries: #{error}"
+            warn "deleteEntrySoft: #{error}"
         end
     end
 
@@ -203,7 +202,7 @@ class Database
         begin
             @@db.execute("DELETE FROM entries WHERE deleted == 1;")
         rescue => error
-            puts "error deleting stored entries: #{error}"
+            warn "deleteStoredEntries: #{error}"
         end
     end
 
@@ -220,7 +219,7 @@ class Database
             end
             entryData["tags"] = tags
         rescue => error
-            puts "getEntryData: #{error}"
+            warn "getEntryData: #{error}"
         end
         return entryData
     end
@@ -231,7 +230,7 @@ class Database
             value = 0 if value == "false"
             return @@db.execute("UPDATE entries SET moderate = ? WHERE id = ?;", value, id)
         rescue => error
-            puts "setEntryOption: #{error}"
+            warn "setEntryModeration: #{error}"
         end
     end
 
@@ -242,7 +241,7 @@ class Database
                             comment.replyToEntry, comment.replyToComment, comment.body, comment.type, comment.status,
                             comment.title, comment.author.name, comment.author.mail, comment.author.url, comment.subscribe)
         rescue => error
-            puts "error in inserting comment: #{error}"
+            warn "addComment: #{error}"
         end
     end
 
@@ -251,7 +250,7 @@ class Database
             @@db.execute("UPDATE comments SET title = ?, body = ?, name = ?, url = ?, mail = ?, replyToComment = ?, status = ?, subscribe = ? WHERE id = ?;",
                         comment.title, comment.body, comment.author.name, comment.author.url, comment.author.mail, comment.replyToComment, comment.status, comment.subscribe, comment.id)
         rescue => error
-            puts error
+            warn "editComment: #{error}"
             return false
         end
         return true
@@ -261,7 +260,7 @@ class Database
         begin
             @@db.execute("DELETE FROM comments WHERE id = ?", comment.id)
         rescue => error
-            puts "error in deleting comment: #{error}"
+            warn "deleteComment: #{error}"
         end
     end
 
@@ -272,7 +271,7 @@ class Database
                 comments.push(Comment.new(row["id"]))
             end
         rescue => error
-            puts error
+            warn "getCommentsForEntry #{error}"
         end
         return comments
     end
@@ -283,7 +282,7 @@ class Database
                                 FROM comments
                                 WHERE comments.id == ?;", id)[0]
         rescue => error
-            puts error
+            warn "getCommentData #{error}"
         end
     end
 
@@ -291,7 +290,7 @@ class Database
         begin
             return @@db.execute("SELECT mail FROM authors;")
         rescue => error
-            puts error
+            warn "getMails: #{error}"
         end
     end
 
@@ -299,7 +298,7 @@ class Database
         begin
             mail = @@db.execute("SELECT mail FROM authors;")
         rescue => error
-            puts error
+            warn "firstUse?: #{error}"
         end
         return mail.empty?
     end
@@ -308,7 +307,7 @@ class Database
         begin
             mail = @@db.execute("INSERT INTO authors(name, mail) VALUES(?, ?);", name, mail)
         rescue => error
-            puts error
+            warn "addUser: #{error}"
         end
     end
     
@@ -317,7 +316,7 @@ class Database
             @@db.execute("INSERT INTO friends(name) VALUES(?);", friend.name)
             return true
         rescue => error
-            puts error
+            warn "addFried: #{error}"
             return false
         end
     end
@@ -331,7 +330,7 @@ class Database
                 friends.push(friend)
             end
         rescue => error
-            puts error
+            warn "getFriends: #{error}"
         end
         return friends
     end
@@ -340,7 +339,7 @@ class Database
         begin
             return @@db.execute("SELECT value FROM options WHERE name = ? LIMIT 1;", name)[0]['value']
         rescue => error
-            puts "error getting option: #{error}"
+            warn "getOption: #{error}"
             return "default" if name == "design"
         end
     end
@@ -350,7 +349,7 @@ class Database
             @@db.execute("INSERT OR IGNORE INTO options(name, value) VALUES(?, ?)", name, value)
             @@db.execute("UPDATE options SET value = ? WHERE name = ?", value, name)
         rescue => error
-            puts error
+            warn "setOption: #{error}"
         end
     end
 
@@ -359,7 +358,7 @@ class Database
             @@db.execute("INSERT OR IGNORE INTO cache(key, value) VALUES(?, ?)", key, value)
             @@db.execute("UPDATE cache SET value = ?, ttl = (strftime('%s','now') + 604800) WHERE key = ?", value, key)
         rescue => error
-            puts error
+            warn "cache: #{error}"
         end
     end
 
@@ -367,7 +366,7 @@ class Database
         begin
             return @@db.execute("SELECT value FROM cache WHERE key = ? AND ttl > strftime('%s','now') LIMIT 1;", key)[0]['value']
         rescue => error
-            puts error
+            warn "getCache: #{error}"
         end
     end
 
@@ -376,7 +375,7 @@ class Database
         begin
             return @@db.execute("DELETE FROM cache WHERE key LIKE '/%'")
         rescue => error
-            puts error
+            warn "invalidateCache: #{error}"
         end
     end
     
@@ -384,7 +383,7 @@ class Database
         begin
             return @@db.execute("SELECT name FROM authors LIMIT 1;")[0]['name']
         rescue => error
-            puts error
+            warn "getAdmin: #{error}"
         end
     end
 
@@ -393,7 +392,7 @@ class Database
             admin = self.getAdmin()
             return @@db.execute("SELECT mail FROM authors WHERE name = ? LIMIT 1;", admin)[0]['mail']
         rescue => error
-            puts error
+            warn "getAdminMail: #{error}"
         end
     end
 
@@ -405,7 +404,7 @@ class Database
                 comments.push(Comment.new(row["id"]))
             end
         rescue => error
-            puts error
+            warn "getComments: #{error}"
         end
         return comments
     end
@@ -416,83 +415,6 @@ class Database
             entries.push(Entry.new(row["docid"]))
         end
         return entries
-    end
-
-    def fillStream(body, title, author, date, url, guid)
-        begin
-            @@db.execute("INSERT INTO stream(body, title, author, date, url, guid) VALUES(?, ?, ?, ?, ?, ?)", body, title, author, date, url, guid)
-        rescue => error
-            puts error
-        end
-    end
-
-    def getStream()
-        begin
-            return @@db.execute("SELECT body, title, author, date, url, guid FROM stream ORDER BY date DESC")
-        rescue => error
-            puts error
-        end
-    end
-
-    def addMessage(message)
-        begin
-            read = message.from == self.getAdminMail ? 1 : 0
-            @@db.execute("INSERT INTO messages(content, key, author, recipient, read) VALUES(?, ?, ?, ?, ?);", message.content, message.key, message.from, message.to, read)
-        rescue => error
-            puts error
-        end
-        return @@db.last_insert_row_id()
-    end
-
-    def getMessageData(id)
-        begin
-            return @@db.execute("SELECT id, content, key, author, recipient, read FROM messages WHERE id == ?;", id)[0]
-        rescue => error
-            puts "getMessageData: #{error}"
-        end
-    end
-
-    def getMessages(participant)
-        begin
-            messages = []
-            @@db.execute("SELECT id FROM messages WHERE author == ? OR recipient == ?", participant, participant) do |row|
-                messages.push(Message.new(row["id"]));
-            end
-            return messages
-        rescue => error
-            puts "getMessages: #{error}"
-        end
-    end
-
-    def getMessengers()
-        messengers = self.getFriends()
-        begin
-            @@db.execute("SELECT DISTINCT messenger FROM
-                            (SELECT author as messenger FROM messages
-                                UNION ALL
-                            SELECT recipient as messenger from messages);") do |row|
-                messengers.push(Friend.new(row['messenger'])) if row['messenger'] != self.getAdminMail
-            end
-            return messengers.uniq{ |friend| friend.name }
-        rescue => error
-            puts "getMessengers: #{error}"
-        end
-    end
-
-    def unreadMessagesCount()
-        begin
-            return @@db.execute("SELECT COUNT(id) FROM messages WHERE read == 0 ")[0]["COUNT(id)"]
-        rescue => error
-            puts "unreadMessagesCount: #{error}"
-        end
-    end
-
-    def setMessagesRead(id)
-        begin
-            @@db.execute("UPDATE messages SET read = 1 WHERE author == ?", id)
-        rescue => error
-            puts "setMessagesRead: #{error}"
-        end
     end
     
 end
