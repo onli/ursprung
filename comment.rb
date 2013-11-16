@@ -201,8 +201,7 @@ class Comment
         end
     end
 
-    def format
-        def format()
+    def format()
         formattedBody = self.body
         formattedBody = formattedBody.gsub(/\*\*(.*?)\*\*/, '<strong>\1</strong>')
         formattedBody = formattedBody.gsub(/\*(.*?)\*/, '<em>\1</em>')
@@ -211,6 +210,5 @@ class Comment
         # link: [url name]
         formattedBody = formattedBody.gsub(/\[(.*?) (.*?)\]/, '<a href="\1">\2</a>')
         return formattedBody.gsub("\n", "<br>\n")
-    end
     end
 end
