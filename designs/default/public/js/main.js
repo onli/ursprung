@@ -350,7 +350,16 @@ snack.ready(function() {
                                                 });
         });
         moderationForm.removeChild(saveButton);
-    } 
+    }
+
+    if  (document.getElementById('commentFormUrl') != null) {
+        var urlInput = document.getElementById('commentFormUrl');
+        urlInput.addEventListener('change', function() {
+            if (urlInput.value != "" && ! (urlInput.value.substr(0,7) == "http://" || urlInput.value.substr(0,8) == "https://")) {
+                urlInput.value = "http://" + urlInput.value;
+            }
+        });
+    }
 
     function getTextSelection(textarea){
         var startPos = textarea.selectionStart;
