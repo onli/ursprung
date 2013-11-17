@@ -6,14 +6,14 @@
         <% if comment.author.mail %>
             <img class="avatar" src="<%= comment.avatar %>" />
         <% end %>
-        <div class="commentBody">
+        <div class="commentBody" itemprop="commentText">
             <%= comment.format %><%='...' if comment.type == 'trackback' %>
         </div>
         <footer>From
             <% if comment.author.url != "" %>
-                <a href="<%= comment.author.url %>"><%= comment.author.name %></a>
+                <a href="<%= comment.author.url %>" itemprop="creator"><%= comment.author.name %></a>
             <% else %>
-                <%= comment.author.name %>
+                <span itemprop="creator"><%= comment.author.name %></span>
             <% end %>
             <% if comment.author.mail != "" && isAdmin? %>
                 (<a href="mailto:<%= comment.author.mail %>"><%= comment.author.mail %></a>)
