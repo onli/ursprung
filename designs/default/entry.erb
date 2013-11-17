@@ -1,11 +1,11 @@
 <%# -*- encoding : utf-8 -*- %>
 <header>
-    <h2 class="entryTitle"><a href="<%= entry.link(request) %>"><%= entry.title %></a></h2>
+    <h2 class="entryTitle"><a href="<%= entry.link(request) %>" itemprop="headline"><%= entry.title %></a></h2>
 </header>
 <div itemprop="articleBody"><%= autotitle(entry.format) %></div>
 <footer>
     <time itemprop="datePublished" datetime="<%= Time.parse(entry.date).iso8601 %>"><%= Time.parse(entry.date).strftime("%d.%m.%Y") %></time>
-    <%= entry.tags.map { |tag| '<a href="/archive/1/' + tag + '">'+ tag + '</a>' }.join(" ") if entry.tags != nil %>
+    <span itemprop="keywords"><%= entry.tags.map { |tag| '<a href="/archive/1/' + tag + '">'+ tag + '</a>' }.join(" ") if entry.tags != nil %></span>
     <% if isAdmin? %>
         <div class="adminOptions">
             <a href="/<%= entry.id %>/editEntry"><button type="button" class="edit adminAction" title="edit">&#9998;</button></a>
