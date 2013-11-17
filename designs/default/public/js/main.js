@@ -33,7 +33,7 @@ snack.ready(function() {
                     cancelButton.setAttribute('type', 'button');
                     cancelButton.className = "cancel";
                     try {
-                        // this is in a try because the edit-functionailty is shared for entries and options, and options have no .editorSubmitButtons
+                        // this is in a try because the edit-functionality is shared for entries and options, and options have no .editorSubmitButtons
                         form.querySelector('.editorSubmitButtons').parentNode.insertBefore(cancelButton, form.querySelector('button').parentNode);
                     } catch (e) {
                         form.querySelector('input[type="text"]').addEventListener("blur", function(evt) {
