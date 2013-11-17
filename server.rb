@@ -385,7 +385,6 @@ post %r{/([0-9]+)/setEntryModeration} do |id|
     protected!
     Database.new.setEntryModeration(id, params[:value])
     redirect back if ! request.xhr?
-    "Done"
 end
 
 # A Page (entry with comments)

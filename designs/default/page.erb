@@ -29,10 +29,17 @@
 
                  <% if isAdmin? %>
                     <form id="entryModerationToggle" action="/<%= entry.id %>/setEntryModeration" method="POST" >
-                        <label>Moderate Comments:
-                            <input type="checkbox" name="value" <%= "checked" if entry.moderate == "moderate" %>/>
-                        </label>
-                        <button type="submit" class="save">OK</button>
+                        
+                        <div>
+                        <span>Comments are:</span>
+                        <input class="moderationStatus" type="radio" name="moderationStatus" id="moderationStatusOpen" value="open" <%= 'checked="checked"' if entry.moderate == "open" %> />
+                        <label class="moderationStatusLabel" for="moderationStatusOpen">Open</label>
+                        <input class="moderationStatus" type="radio" name="moderationStatus" id="moderationStatusModerated" value="moderated" <%= 'checked="checked"' if entry.moderate == "moderated" %> />
+                        <label class="moderationStatusLabel" for="moderationStatusModerated">Moderated</label>
+                        <input class="moderationStatus" type="radio" name="moderationStatus" id="moderationStatusClosed" value="closed" <%= 'checked="checked"' if entry.moderate == "closed" %> />
+                        <label class="moderationStatusLabel" for="moderationStatusClosed">Closed</label>
+                        <button type="submit">OK</button>
+                        </div>
                     </form>
                 <% end %>
 

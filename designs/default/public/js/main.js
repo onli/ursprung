@@ -233,46 +233,6 @@ snack.ready(function() {
         });
     }
 
-    // support for the hover-menu, dont vanish directly
-    if (snack.wrap('.adminOptionsMoreSign').length > 1) {
-        // start this only on a page with comments, else snack throws errors
-        var fadeouts = {};
-        snack.wrap('.adminOptionsMoreSign').attach('mouseover', function(evt) {
-            var parent = evt.target.parentNode.querySelectorAll(".adminOptionsMoreOptions")[0];
-            parent.style["display"] = "block";
-            snack.wrap(parent).removeClass("fadeout");
-            clearTimeout(fadeouts[parent.innerHTML]);
-            if (! navigator.userAgent.match(/.*Firefox.*/)) {
-                // detect firefox here, because in firefox the animation leads to the menu vanishing immediately
-                snack.wrap(evt.target.parentNode.querySelectorAll(".adminOptionsMoreOptions")[0]).addClass("fadein");
-            }
-        });
-
-        snack.wrap('.adminOptionsMoreSign').attach('mouseout', function(evt) {
-            var parent = evt.target.parentNode.querySelectorAll(".adminOptionsMoreOptions")[0];
-            fadeOutMenut(parent);
-        });
-        
-        snack.wrap('.adminOptionsMoreOptions').attach('mouseout', function(evt) {
-            var parent = getParent(evt.target, 'adminOptionsMoreOptions'); 
-            fadeOutMenut(parent);
-        });
-
-        function fadeOutMenut(parent) {
-            var fadeout = setTimeout(function() {
-                                    snack.wrap(parent).removeClass("fadein");
-                                    snack.wrap(parent).addClass("fadeout");
-                                    clearTimeout(fadeout);
-                                }, 300);
-            fadeouts[parent.innerHTML] = fadeout
-        }
-
-        snack.wrap('.adminOptionsMoreOptions').attach('mouseover', function(evt) {
-            var parent = getParent(evt.target, 'adminOptionsMoreOptions'); 
-            clearTimeout(fadeouts[parent.innerHTML]);
-        });
-    }
-
     // markup-buttons
     if (document.querySelector('.entryInput') != null) {
         var editor = document.querySelector('.entryInput');
@@ -333,18 +293,21 @@ snack.ready(function() {
     /* toggle-slider-button */
     if  (document.getElementById('entryModerationToggle') != null) {
         var moderationForm = document.getElementById('entryModerationToggle');
-        var saveButton = moderationForm.querySelectorAll('.save')[0];
-        var toggle = moderationForm.querySelectorAll('input[type="checkbox"]')[0];
-        toggle.parentNode.insertBefore(document.createElement('span'), toggle.nextSibling);
-        // the css will make a toggle-button out of the span, so the checkbox is no longer needed, as a click on the span triggers the label which triggers the checkbox
-        toggle.style['display'] = 'none';
+        var saveButton = moderationForm.querySelector('button');
+        var toggle = moderationForm.querySelectorAll('.moderationStatus');
        
         snack.wrap(toggle).attach('change', function() {
                                                 var options = {
                                                     method: 'post',
                                                     url: moderationForm.action,
                                                     data: {
-                                                        value: toggle.checked
+                                                        value: (function() {
+                                                                    for (var i = 0; i < toggle.length; i++) {
+                                                                        if (toggle[i].checked) {
+                                                                            return toggle[i].value
+                                                                        }
+                                                                    }   
+                                                                })()
                                                     }
                                                     
                                                 }
@@ -355,7 +318,7 @@ snack.ready(function() {
                                                     }
                                                 });
         });
-        moderationForm.removeChild(saveButton);
+        saveButton.parentNode.removeChild(saveButton);
     }
 
     if  (document.getElementById('commentFormUrl') != null) {

@@ -2,7 +2,7 @@
 html {
     font-family: ubuntu, helvetica, arial, sans-serif;
     font-weight: 400;
-    background-color: #fdfdfd;
+    background-color: #F7F7F7;
     color: #333;
 }
 
@@ -49,6 +49,7 @@ textarea {
     -webkit-appearance: textfield;
 }
 
+.moderationStatusLabel,
 button {
     cursor: pointer;
     margin-left: 0;
@@ -58,8 +59,10 @@ button {
     padding-bottom: 3px;
     padding-top: 2px;
     margin-top: 2px;
+    display: inline-block;
 }
 
+.moderationStatusLabel:hover,
 button:hover {
     background-color: #3B5998;
 }
@@ -211,11 +214,35 @@ summary {
 }
 
 #entryModerationToggle {
-    margin: 1em;
+    margin-top: 1em;
+    margin-bottom: 2em;
 }
 
-#entryModerationToggle label {
-    display: inline;
+#entryModerationToggle div {
+    display: inline-block;
+    background-color: #8496bc;
+    border: 2px solid #8496bc;
+    padding-left: 0.1em;
+}
+
+#entryModerationToggle div span {
+    background-color: #F7F7F7;
+    padding: 0.3em;
+}
+
+.moderationStatus {
+    display: none;
+    visibility: hidden;
+    margin: 0;
+}
+
+.moderationStatusLabel {
+    padding-left: 0.3em;
+    padding-right: 0.3em;
+}
+
+.moderationStatus:checked + .moderationStatusLabel {
+    border: 2px inset white;
 }
 
 .comment_moderate .commentBody, .comment_moderate footer  {
@@ -342,37 +369,6 @@ summary {
     display: inline-block;
 }
 
-/* hover-menu: */
-.adminOptionsMore {
-    display: inline-block;
-    z-index: 1;
-}
-
-.adminOptionsMoreOptions {
-    display: none;
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-    position: absolute;
-    background: white;
-    padding-top: 0;
-}
-
-.adminOptionsMoreOptions li, .adminMoreOption {
-    display: block;
-    width: 100%;
-    margin: 0;
-}
-
-.adminOptionsMoreSign {
-    cursor: default;
-    vertical-align: top;
-}
-
-.adminOptionsMoreSign:hover + .adminOptionsMoreOptions, .adminOptionsMoreOptions:hover {
-    display: block;
-}
-
 footer #search {
     margin-top: 3em;
 }
@@ -394,35 +390,6 @@ footer #search {
     position: relative;
     right: 5px;
     bottom: 1px;
-}
-
-/* checkoxes from http://www.chrisnorstrom.com/2012/11/invention-multiple-choice-windowed-slider-ui/ */
-#entryModerationToggle input[type="checkbox"] + span {
-    width: 84px;
-    height: 26px;
-    display: inline-block;
-    vertical-align: middle;
-    padding: 0px;
-	margin: 0px;
-    margin-left: 1em;
-}
-
-#entryModerationToggle input[type="checkbox"] + span:before {
-    content:"";
-    display:inline-block;
-    width: 100%;
-    height: 100%;
-    background: url("/img/off.jpg") no-repeat 0 0;
-    background-size: 100% 100%;
-}
-
-#entryModerationToggle input[type="checkbox"]:checked + span:before {
-    content:"";
-    display:inline-block;
-    width: 100%;
-    height: 100%;
-    background: url("/img/on.jpg") no-repeat 0 0;
-    background-size: 100% 100%;
 }
 
 .highlight {
