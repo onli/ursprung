@@ -17,48 +17,48 @@ class Comment
     attr_accessor :validTrackback
 
     def initialize(*args)
-        if args.length == 1 && args[0].respond_to?("even?")
+        case args.length
+        when 1
             initializeFromID(args[0])
-        else
-            if args[0].respond_to?("merge")
-                # creating comment from hash
-                params = args[0]
-                request = args[1]
-                commentAuthor = CommentAuthor.new
-                commentAuthor.name = Sanitize.clean(params[:name])
-                commentAuthor.mail = Sanitize.clean(params[:mail])
-                commentAuthor.url = Sanitize.clean(params[:url])
+        when 2
+            # creating comment from hash
+            params = args[0]
+            request = args[1]
+            commentAuthor = CommentAuthor.new
+            commentAuthor.name = Sanitize.clean(params[:name].strip)
+            commentAuthor.name = "Anonymous" if commentAuthor.name == ""
+            commentAuthor.mail = Sanitize.clean(params[:mail].strip)
+            commentAuthor.url = Sanitize.clean(params[:url].strip)
 
-                begin
-                    self.replyToComment = params[:replyToComment].empty? ? nil : params[:replyToComment]
-                rescue
-                    self.replyToComment = nil
-                end
-                self.replyToEntry = params[:entryId]
-                self.body = HTMLEntities.new.encode(params[:body])
-                self.author = commentAuthor
-                self.id = params[:id] if params[:id] != nil
-                self.status = "approved"
-                self.status = "moderate" if self.isSpam? or self.entry.moderate
-                self.subscribe = 1 if params[:subscribe] != nil
-                self.type = params[:type] if params[:type] != nil
-                if self.type == "trackback"
-                    name = getPingbackData(request)
-                    if name
-                        if self.body == ""
-                            # it is a pingback, which needs to use the additional data
-                            commentAuthor.name = name
-                            self.author = commentAuthor
-                        end
-                        self.save
-                        self.validTrackback = true
-                    else
-                        self.validTrackback = false
+            begin
+                self.replyToComment = params[:replyToComment].empty? ? nil : params[:replyToComment]
+            rescue
+                self.replyToComment = nil
+            end
+            self.replyToEntry = params[:entryId]
+            self.body = HTMLEntities.new.encode(params[:body])
+            self.author = commentAuthor
+            self.id = params[:id] if params[:id] != nil
+            self.status = "approved"
+            self.status = "moderate" if self.isSpam? or self.entry.moderate
+            self.subscribe = 1 if params[:subscribe] != nil
+            self.type = params[:type] if params[:type] != nil
+            if self.type == "trackback"
+                name = getPingbackData(request)
+                if name
+                    if self.body == ""
+                        # it is a pingback, which needs to use the additional data
+                        commentAuthor.name = name
+                        self.author = commentAuthor
                     end
-                else
                     self.save
                     self.validTrackback = true
+                else
+                    self.validTrackback = false
                 end
+            else
+                self.save
+                self.validTrackback = true
             end
         end
     end
