@@ -6,18 +6,13 @@
     <% end %>
     <input type="hidden" name="replyToComment" value="<%= comment.replyToComment if comment != nil %>"/>
         
-    <label><span>Name</span><input name="name" required value="<%= comment.author.name if comment != nil %>"></input></label>
-    <label><span>Email</span><input name="mail" type="email" value="<%= comment.author.mail if comment != nil %>"></input></label>
-    <label><span>Homepage</span><input name="url" type="url" value="<%= comment.author.url if comment != nil %>" /></input></label>
-
-    <label><textarea name="body"><%= comment.body if comment != nil %></textarea></label>
-
-
-    <label class="container">Notify me for new comments <input type="checkbox" name="subscribe" checked /> <% if isAdmin? %>
+    <input name="name" value="<%= comment.author.name if comment != nil %>" placeholder="Name" />
+    <div id="commentFormMail"><input name="mail" type="email" value="<%= comment.author.mail if comment != nil %>" placeholder="Email" /><label class="container" id="subscribe"><input type="checkbox" name="subscribe" checked /><span>Subscribe</span> <% if isAdmin? %>
         <a href="/setOption/fromMail" class="adminAction"><button class="edit" title="edit">&#9998;</button></a>
-    <% end %>
-    </label>
+    <% end %></label></div>
+    <input name="url" type="url" value="<%= comment.author.url if comment != nil %>" placeholder="Homepage" />
     
-    
-    <button type="submit">comment</button>
+    <label><textarea name="body" required><%= comment.body if comment != nil %></textarea></label>
+
+    <button type="submit">Comment</button>
 </form>

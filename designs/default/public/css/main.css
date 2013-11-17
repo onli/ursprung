@@ -43,6 +43,12 @@ input, textarea, button {
     font-size: inherit;
 }
 
+textarea {
+    /* textarea-borders else might differ from input-boxes in chrome */
+    -moz-appearance: textfield;
+    -webkit-appearance: textfield;
+}
+
 button {
     cursor: pointer;
     margin-left: 0;
@@ -59,7 +65,7 @@ button:hover {
 }
 
 button::-moz-focus-inner {
-    /* makes buttons  have the same size in chroem and ff */
+    /* makes buttons  have the same size in chrome and ff */
     border:0;padding:0;margin:0;
 }
 
@@ -113,8 +119,6 @@ summary {
     width: 100%;
     max-width: 100%;
     margin-top: 0;
-    -moz-appearance: textfield;
-    -webkit-appearance: textfield;
 }
 
 .editorSubmitButtons {
@@ -219,27 +223,42 @@ summary {
     opacity: 0.7;
 }
 
-#commentForm span {
-    width: 6em;
-    display: inline-block;
+#commentForm {
+    margin-top: 2em;
 }
 
-#commentForm input {
-    width: 15em;
+#commentForm > input,
+#commentFormMail > input {
+    width: 22em;    
+}
+
+#commentForm > input {
+    display: block;
 }
 
 #commentForm textarea {
-    width: 21em;
-    min-height: 6em;
+    width: 33em;
+    min-height: 8em;
 }
 
-#commentForm button {
-    margin-left: 16em;
+#commentForm > button {
+    margin-left: 28em;
+    min-width: 5em;
 }
 
-#commentForm .adminAction button {
-    margin-left: 0;
+#subscribe {
+    display: inline;
+    margin-left: 1em;
 }
+
+#subscribe span {
+    font-size: 90%;
+}
+
+#subscribe span,
+#subscribe input {
+    vertical-align: text-bottom;
+} 
 
 #browser {
     margin-top: 1em;
