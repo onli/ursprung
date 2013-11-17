@@ -33,14 +33,20 @@ snack.ready(function() {
                     cancelButton.setAttribute('type', 'button');
                     cancelButton.className = "cancel";
                     try {
-                        // this is in a try because the edit-functionality is shared for entries and options, and options have no .editorSubmitButtons
+                        // is it an entry?
                         form.querySelector('.editorSubmitButtons').parentNode.insertBefore(cancelButton, form.querySelector('button').parentNode);
                     } catch (e) {
-                        form.querySelector('input[type="text"]').addEventListener("blur", function(evt) {
-                            if (typeof evt.relatedTarget != null || evt.relatedTarget.type == undefined || evt.relatedTarget.type != "submit") {
-                                form.parentNode.replaceChild(parent, form);
-                            }
-                        });
+                        try {
+                            // is it an option?
+                            form.querySelector('input[type="text"]').addEventListener("blur", function(evt) {
+                                if (typeof evt.relatedTarget != null || evt.relatedTarget.type == undefined || evt.relatedTarget.type != "submit") {
+                                    form.parentNode.replaceChild(parent, form);
+                                }
+                            });
+                        } catch (e) {
+                            // it is a comment!
+                            form.querySelector('.commentFormSubmit').parentNode.insertBefore(cancelButton, form.querySelector('.commentFormSubmit'));
+                        }
                     }
                     snack.wrap(cancelButton).attach('click', function(evt) {
                         form.parentNode.replaceChild(parent, form);

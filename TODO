@@ -51,8 +51,11 @@ Ajaxify ham/spam buttons
 Improve Design:
  * Whitespace between elements DONE -> ongoing
  * Make it prettier
-   * Markup-Buttons
-   * All Buttons
+   * Markup-Buttons DONE
+   * All Buttons DONE
  * Focus current textarea (when editing entries) better DONE
 comment moderation list
 Improve design fallbacks
+Fix comment edit
+add option to close comments
+redesign moderate-toggle

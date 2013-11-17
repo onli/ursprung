@@ -226,8 +226,8 @@ class Database
 
     def setEntryModeration(id, value)
         begin
-            value = 1 if value == "true"
-            value = 0 if value == "false"
+            value = "moderate" if value == "true"
+            value = "open" if value == "false"
             return @@db.execute("UPDATE entries SET moderate = ? WHERE id = ?;", value, id)
         rescue => error
             warn "setEntryModeration: #{error}"

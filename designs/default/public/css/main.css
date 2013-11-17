@@ -137,7 +137,6 @@ summary {
 
 .cancel {
     width: 5em;
-    margin-left: 0.5em;
     margin-right: 0.5em;
 }
 
@@ -241,9 +240,14 @@ summary {
     min-height: 8em;
 }
 
-#commentForm > button {
+.commentFormSubmit {
     margin-left: 28em;
     min-width: 5em;
+    margin-bottom: 1em;
+}
+
+.cancel + .commentFormSubmit {
+    margin-left: 22.5em;
 }
 
 #subscribe {

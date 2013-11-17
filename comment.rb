@@ -40,7 +40,7 @@ class Comment
             self.author = commentAuthor
             self.id = params[:id] if params[:id] != nil
             self.status = "approved"
-            self.status = "moderate" if self.isSpam? or self.entry.moderate
+            self.status = "moderate" if self.isSpam? or self.entry.moderate == "moderate"
             self.subscribe = 1 if params[:subscribe] != nil
             self.type = params[:type] if params[:type] != nil
             if self.type == "trackback"
