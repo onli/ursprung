@@ -36,11 +36,14 @@ class Comment
                 self.replyToComment = nil
             end
             self.replyToEntry = params[:entryId]
+            if self.entry.moderate == "closed"
+                return
+            end
             self.body = HTMLEntities.new.encode(params[:body])
             self.author = commentAuthor
             self.id = params[:id] if params[:id] != nil
             self.status = "approved"
-            self.status = "moderate" if self.isSpam? or self.entry.moderate == "moderate"
+            self.status = "moderate" if self.isSpam? || self.entry.moderate == "moderate"
             self.subscribe = 1 if params[:subscribe] != nil
             self.type = params[:type] if params[:type] != nil
             if self.type == "trackback"
