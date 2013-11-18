@@ -17,7 +17,8 @@
             <% end %>
             <% if comment.author.mail != "" && isAdmin? %>
                 (<a href="mailto:<%= comment.author.mail %>"><%= comment.author.mail %></a>)
-            <% end %>
+            <% end %>,
+            <time itemprop="datePublished" datetime="<%= Time.parse(comment.date).iso8601 %>"><%= Time.parse(comment.date).strftime("%d.%m.%Y") %></time>
         </footer>
     <% end %>
     <% if isAdmin? %>
