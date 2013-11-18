@@ -9,7 +9,7 @@
         <div class="commentBody" itemprop="commentText">
             <%= comment.format %><%='...' if comment.type == 'trackback' %>
         </div>
-        <footer>From
+        <footer>
             <% if comment.author.url != "" %>
                 <a href="<%= comment.author.url %>" itemprop="creator"><%= comment.author.name %></a>
             <% else %>
