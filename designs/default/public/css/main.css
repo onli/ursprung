@@ -72,6 +72,15 @@ button::-moz-focus-inner {
     border:0;padding:0;margin:0;
 }
 
+img, iframe, object {
+    border: 0;
+    max-width: 90% !important;    
+}
+
+img {
+    height: auto !important;
+}
+
 article {
     max-width: 50em;
     -moz-hyphens: auto;
@@ -184,10 +193,6 @@ summary {
     font-size: 0.9em;
 }
 
-.comment {
-    margin-bottom: 1em;
-}
-
 .avatar {
     float: left;
     margin-right: 0.5em;
@@ -211,6 +216,11 @@ summary {
 
 .entry footer time {
     margin-right: 1em;
+}
+
+.tags {
+    float: right;
+    padding-right: 1em;
 }
 
 #entryModerationToggle {
@@ -259,6 +269,15 @@ summary {
     list-style-type: none;
     margin-top: 3em;
     margin-bottom: 1em;
+}
+
+.comment {
+    margin-bottom: 1em;
+    margin-top: 2em;
+}
+
+.comment footer {
+    margin-top: 0.3em;
 }
 
 .comment_moderate .commentBody, .comment_moderate footer  {
@@ -414,41 +433,32 @@ footer #search {
     -ms-animation: highlightBox 500ms ease-out forwards;
     -o-animation: highlightBox 500ms ease-out forwards;
     -webkit-animation: highlightBox 500ms ease-out forwards;
-    background-color: #f7fbd8;
+    background-color: #97bc84;
 }
 
 @-moz-keyframes highlightBox {
-  0% { background-color: #f7fbd8;}
-  100% { background-color: white; }
+  0% { background-color: #b6e3a0;}
+  100% { background-color: #F7F7F7; }
 }
 
 @-o-keyframes highlightBox {
-  0% { background-color: #f7fbd8;}
-  100% { background-color: white; }
+  0% { background-color: #b6e3a0;}
+  100% { background-color: #F7F7F7; }
 }
 
 @-webkit-keyframes highlightBox {
-  0% { background-color: #f7fbd8;}
-  100% { background-color: white; }
+  0% { background-color: #b6e3a0;}
+  100% { background-color: #F7F7F7; }
 }
 
 @-ms-keyframes highlightBox {
-  0% { background-color: #f7fbd8;}
-  100% { background-color: white; }
+  0% { background-color: #b6e3a0;}
+  100% { background-color: #F7F7F7; }
 }
 
 @keyframes highlightBox {
-    0% { background-color: #f7fbd8; }
-    100% { background-color: white; }
-}
-
-img, iframe, object {
-    border: 0;
-    max-width: 90% !important;    
-}
-
-img {
-    height: auto !important;
+    0% { background-color: #b6e3a0; }
+    100% { background-color: #F7F7F7; }
 }
 
 .pace .pace-progress {
