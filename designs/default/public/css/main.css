@@ -239,10 +239,19 @@ summary {
 .moderationStatusLabel {
     padding-left: 0.3em;
     padding-right: 0.3em;
+    border: 2px solid #8496bc;
+}
+
+.moderationStatusLabel:hover {
+    border: 2px inset grey;
 }
 
 .moderationStatus:checked + .moderationStatusLabel {
     border: 2px inset white;
+}
+
+.moderationStatus:checked + .moderationStatusLabel:hover {
+    border: 2px inset grey;
 }
 
 #comments {
