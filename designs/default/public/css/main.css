@@ -215,7 +215,6 @@ summary {
 
 #entryModerationToggle {
     margin-top: 1em;
-    margin-bottom: 2em;
     text-align: center;
 }
 
@@ -227,7 +226,7 @@ summary {
 }
 
 #entryModerationToggle div span {
-    background-color: #F7F7F7;
+    background-color: #EAECF1;
     padding: 0.3em;
 }
 
@@ -249,7 +248,7 @@ summary {
 #comments {
     padding: 0;
     list-style-type: none;
-    margin-top: 1em;
+    margin-top: 3em;
     margin-bottom: 1em;
 }
 
