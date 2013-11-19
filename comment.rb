@@ -24,17 +24,16 @@ class Comment
             # creating comment from hash
             params = args[0]
             request = args[1]
-            return if params[:tel] != "" # the honeypot
-            
+            return if params[:tel] && params[:tel] != "" # the honeypot
             commentAuthor = CommentAuthor.new
             commentAuthor.name = Sanitize.clean(params[:name].strip)
             commentAuthor.name = "Anonymous" if commentAuthor.name == ""
             commentAuthor.mail = Sanitize.clean(params[:mail].strip)
             commentAuthor.url = Sanitize.clean(params[:url].strip)
-
             begin
                 self.replyToComment = params[:replyToComment].empty? ? nil : params[:replyToComment]
             rescue
+                # this can happen if we are getting a track/pingback
                 self.replyToComment = nil
             end
             self.replyToEntry = params[:entryId]
@@ -43,11 +42,11 @@ class Comment
             end
             self.body = HTMLEntities.new.encode(params[:body])
             self.author = commentAuthor
-            self.id = params[:id] if params[:id] != nil
+            self.id = params[:id]
             self.status = "approved"
             self.status = "moderate" if self.isSpam? || self.entry.moderate == "moderate"
             self.subscribe = 1 if params[:subscribe] != nil
-            self.type = params[:type] if params[:type] != nil
+            self.type = params[:type]
             if self.type == "trackback"
                 name = getPingbackData(request)
                 if name

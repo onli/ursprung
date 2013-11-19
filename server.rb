@@ -203,7 +203,7 @@ post '/addEntry' do
 end
 
 post %r{/([0-9]+)/addTrackback} do |id|
-    paramsNew = {:name => params[:blog_name], :body => params[:excerpt], :entryId => id, :type => 'trackback', :url => params[:url]}
+    paramsNew = {:name => params[:blog_name], :body => params[:excerpt], :entryId => id, :type => 'trackback', :url => params[:url], :mail => ""}
     trackback = Comment.new(paramsNew, request)
     if trackback.validTrackback
         '<?xml version="1.0" encoding="utf-8"?>
@@ -235,7 +235,7 @@ post '/xmlrpc' do
         target = arguments[1]
         id = target.gsub(/http:\/\/.*\/([0-9]*)\/.*/, '\1')
 
-        paramsNew = {:name => "", :body => "", :entryId => id, :type => 'trackback', :url => source}
+        paramsNew = {:name => "", :body => "", :entryId => id, :type => 'trackback', :url => source, :mail => ""}
         comment = Comment.new(paramsNew, request)
         content_type("text/xml", :charset => "utf-8")
         if comment.validTrackback
