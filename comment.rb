@@ -1,6 +1,7 @@
 require 'classifier'
 require 'madeleine'
 require 'pony'
+require 'kramdown'
 
 class Comment
     attr_accessor :author
@@ -206,14 +207,14 @@ class Comment
     end
 
     def format()
-        formattedBody = self.body
-        formattedBody = formattedBody.gsub(/\*\*(.*?)\*\*/, '<strong>\1</strong>')
-        formattedBody = formattedBody.gsub(/\*(.*?)\*/, '<em>\1</em>')
-        # link without name:
-        formattedBody = formattedBody.gsub(/\[([^ ]*?)\]/, '<a href="\1">\1</a>')
-        # link: [url name]
-        formattedBody = formattedBody.gsub(/\[(.*?) (.*?)\]/, '<a href="\1">\2</a>')
-        formattedBody = formattedBody.gsub(/&gt;&gt;([0-9]*)/, '<a class="commentReference" href="#c\1">&gt;&gt;\1</a>')
-        return formattedBody.gsub("\n", "<br>\n")
+
+        return Kramdown::Document.new(  self.body.gsub(
+                                            /&gt;&gt;([0-9]*)/,
+                                            '<a class="commentReference" href="#c\1">&gt;&gt;\1</a>  '
+                                        ),
+                                        :auto_ids => false,
+                                        :hard_wrap => true
+                                    ).to_html
+        
     end
 end

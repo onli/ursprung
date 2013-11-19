@@ -3,6 +3,7 @@ require 'net/http'
 require 'uri'
 require 'sanitize'
 require 'xmlrpc/client'
+require 'kramdown'
 
 class Entry
 
@@ -200,18 +201,8 @@ class Entry
     end
 
     def format()
-        formattedBody = self.body
-        formattedBody = formattedBody.gsub(/\*\*(.*?)\*\*/, '<strong>\1</strong>')
-        formattedBody = formattedBody.gsub(/\*(.*?)\*/, '<em>\1</em>')
-        # images
-        formattedBody = formattedBody.gsub(/\[\[([^ ]*?)\]\]/, '<img src="\1" \/>')
-        # link without name:
-        formattedBody = formattedBody.gsub(/\[([^ ]*?)\]/, '<a href="\1">\1</a>')
-        # link with title: [url "title" name]
-        formattedBody = formattedBody.gsub(/\[([^ ]*?) "(.*?)" (.*?)\]/, '<a href="\1" title="\2">\3</a>')
-        # link: [url name]
-        formattedBody = formattedBody.gsub(/\[(.*?) (.*?)\]/, '<a href="\1">\2</a>')
-        return formattedBody.gsub("\n", "<br>\n")
+        # NOTE: :hard_wrap will only work in future versions
+        return Kramdown::Document.new(self.body, :auto_ids => false, :hard_wrap => true).to_html
     end
 
 end
