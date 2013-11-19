@@ -1,5 +1,5 @@
 <%# -*- encoding : utf-8 -*- %>
-<article class="comment container" itemprop="comment" itemscope itemtype="http://schema.org/UserComments">
+<article class="comment container" id="c<%= comment.id %>" itemprop="comment" itemscope itemtype="http://schema.org/UserComments">
     <% if comment.type == 'trackback' && comment.body == "" %>
         <div class="commentBody">Pingback: <a href="<%= comment.author.url %>"><%= comment.author.name %></a></div>
     <% else %>
@@ -21,8 +21,9 @@
             <time itemprop="datePublished" datetime="<%= Time.parse(comment.date).iso8601 %>"><%= Time.parse(comment.date).strftime("%d.%m.%Y") %></time>
         </footer>
     <% end %>
-    <% if isAdmin? %>
-        <div class="adminOptions">
+    
+    <div class="adminOptions" data-id="<%= comment.id %>">
+        <% if isAdmin? %>
             <% if comment.status != "approved" %>
                 <form action="/<%= comment.id %>/ham" method="POST">
                     <button type="submit" title="accept comment">&#10003;</button>
@@ -39,6 +40,7 @@
                     <button type="submit" class="delete" title="delete comment">&#10005;</button>
                 </form>
             <% end %>
-        </div>
-    <% end %>
+        <% end %>
+    </div>
+    
 </article>

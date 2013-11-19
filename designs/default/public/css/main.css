@@ -298,7 +298,7 @@ summary {
     visibility: hidden;
 }
 
-.commentForm textarea {
+.commentInput {
     width: 33em;
     min-height: 8em;
 }

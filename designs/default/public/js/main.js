@@ -330,6 +330,36 @@ snack.ready(function() {
             }
         });
     }
+    if (document.querySelector(".comment .adminOptions") != null) {
+        var replyButton = document.createElement("button");
+        replyButton.type = "button";
+        replyButton.className = "reply";
+        replyButton.title = "reply";
+        replyButton.innerHTML = "&#9094";
+
+
+        if (document.querySelector(".comment .adminOptions .edit") == null ) {
+            // will be easier for visitors, and looks better
+            replyButton.innerHTML = "Reply";
+        }
+        
+        var replyAreas = document.querySelectorAll(".comment .adminOptions");
+        for (var i=0; i < replyAreas.length; i++) {
+            replyAreas[i].appendChild(replyButton.cloneNode(replyButton.cloneNode()));
+        }
+        snack.wrap(".reply").attach("click", function(evt) {
+            var replyToCommentInput = document.querySelector('input[name="replyToComment"]');
+            var replyToComment = evt.target.parentNode.dataset["id"];
+            var commentInput = document.querySelector(".commentInput");
+            replyToCommentInput.value = replyToComment;
+            commentInput.value += ">>" + replyToComment + "\n";
+            commentInput.selectionStart = commentInput.value.length;
+            commentInput.selectionEnd = commentInput.value.length;
+            commentInput.focus();
+            window.location.hash = "commentForm";
+        });
+        
+    }
 
     function getTextSelection(textarea){
         var startPos = textarea.selectionStart;
