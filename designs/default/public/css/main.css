@@ -297,6 +297,11 @@ summary {
     display: block;
 }
 
+.commentFormTel {
+    display: none !important;
+    visibility: hidden;
+}
+
 #commentForm textarea {
     width: 33em;
     min-height: 8em;

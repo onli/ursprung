@@ -24,6 +24,8 @@ class Comment
             # creating comment from hash
             params = args[0]
             request = args[1]
+            return if params[:tel] != "" # the honeypot
+            
             commentAuthor = CommentAuthor.new
             commentAuthor.name = Sanitize.clean(params[:name].strip)
             commentAuthor.name = "Anonymous" if commentAuthor.name == ""
