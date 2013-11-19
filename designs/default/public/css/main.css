@@ -276,6 +276,18 @@ summary {
     margin-top: 0.3em;
 }
 
+#refComment {
+    position: absolute;
+    background-color: #F7F7F7;
+    border: 1px solid #97bc84;
+    padding: 4px;
+}
+
+#refComment .adminOptions {
+    display: none;
+    visibility: hidden;
+}
+
 .comment_moderate .commentBody, .comment_moderate footer  {
     opacity: 0.7;
 }

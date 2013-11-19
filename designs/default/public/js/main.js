@@ -358,8 +358,24 @@ snack.ready(function() {
             commentInput.focus();
             window.location.hash = "commentForm";
         });
+    }
+
+    if (document.querySelector(".commentReference") != null) {
+        snack.wrap(".commentReference").attach("mouseover", function(evt) {
+            var cid = evt.target.innerHTML.substr(8);
+            var refComment = document.querySelector("#c"+cid).cloneNode();
+            refComment.id = "refComment";
+            refComment.style.left = evt.pageX + "px";
+            refComment.style.top = evt.pageY + "px";
+            evt.target.parentNode.appendChild(refComment);
+        });
+
+        snack.wrap(".commentReference").attach("mouseout", function(evt) {
+            evt.target.parentNode.removeChild(evt.target.parentNode.querySelector("#refComment"));
+        });
         
     }
+        
 
     function getTextSelection(textarea){
         var startPos = textarea.selectionStart;

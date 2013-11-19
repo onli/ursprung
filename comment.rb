@@ -213,7 +213,7 @@ class Comment
         formattedBody = formattedBody.gsub(/\[([^ ]*?)\]/, '<a href="\1">\1</a>')
         # link: [url name]
         formattedBody = formattedBody.gsub(/\[(.*?) (.*?)\]/, '<a href="\1">\2</a>')
-        formattedBody = formattedBody.gsub(/&gt;&gt;([0-9]*)/, '<a href="#c\1">&gt;&gt;\1</a>')
+        formattedBody = formattedBody.gsub(/&gt;&gt;([0-9]*)/, '<a class="commentReference" href="#c\1">&gt;&gt;\1</a>')
         return formattedBody.gsub("\n", "<br>\n")
     end
 end
