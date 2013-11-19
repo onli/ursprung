@@ -1,12 +1,12 @@
 <%# -*- encoding : utf-8 -*- %>
-<form id="commentForm" action="/<%= entry.id %>/addComment" method="POST">
+<form class="commentForm" action="/<%= entry.id %>/addComment" method="POST">
     <% if comment != nil %>
         <input type="hidden" name="id" value="<%= comment.id %>"/>
     <% end %>
     <input type="hidden" name="replyToComment" value="<%= comment.replyToComment if comment != nil %>"/>
         
     <input name="name" value="<%= (comment.author.name if comment != nil) or blogOwner if isAdmin? %>" placeholder="Name" />
-    <div id="commentFormMail"><input name="mail" type="email" value="<%= (comment.author.mail if comment != nil) or authorized_email  %>" placeholder="Email" /><label class="container" id="subscribe"><input type="checkbox" name="subscribe" checked /><span>Subscribe</span> <% if isAdmin? %>
+    <div class="commentFormMail"><input name="mail" type="email" value="<%= (comment.author.mail if comment != nil) or authorized_email  %>" placeholder="Email" /><label class="container" id="subscribe"><input type="checkbox" name="subscribe" checked /><span>Subscribe</span> <% if isAdmin? %>
         <a href="/setOption/fromMail" class="adminAction"><button class="edit" title="edit">&#9998;</button></a>
     <% end %></label></div>
     <input class="commentFormUrl" name="url" type="url" value="<%= comment.author.url if comment != nil %>" placeholder="Homepage" />

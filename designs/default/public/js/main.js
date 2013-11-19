@@ -321,8 +321,8 @@ snack.ready(function() {
         saveButton.parentNode.removeChild(saveButton);
     }
 
-    if  (document.getElementById('commentFormUrl') != null) {
-        var urlInput = document.getElementById('commentFormUrl');
+    if  (document.querySelector('.commentFormUrl') != null) {
+        var urlInput = document.querySelector('.commentFormUrl');
         urlInput.addEventListener('change', function() {
             if (urlInput.value != "" && ! (urlInput.value.substr(0,7) == "http://" || urlInput.value.substr(0,8) == "https://")) {
                 urlInput.value = "http://" + urlInput.value;

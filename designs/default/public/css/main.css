@@ -284,16 +284,16 @@ summary {
     opacity: 0.7;
 }
 
-#commentForm {
+.commentForm {
     margin-top: 2em;
 }
 
-#commentForm > input,
-#commentFormMail > input {
+.commentForm > input,
+.commentFormMail > input {
     width: 22em;    
 }
 
-#commentForm > input {
+.commentForm > input {
     display: block;
 }
 
@@ -302,7 +302,7 @@ summary {
     visibility: hidden;
 }
 
-#commentForm textarea {
+.commentForm textarea {
     width: 33em;
     min-height: 8em;
 }
