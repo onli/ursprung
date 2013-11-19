@@ -257,11 +257,7 @@ summary {
 }
 
 .moderationStatus:checked + .moderationStatusLabel {
-    border: 2px inset white;
-}
-
-.moderationStatus:checked + .moderationStatusLabel:hover {
-    border: 2px inset grey;
+    border: 2px inset #97bc84;
 }
 
 #comments {
