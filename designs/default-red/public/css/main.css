@@ -2,13 +2,18 @@
 html {
     font-family: ubuntu, helvetica, arial, sans-serif;
     font-weight: 400;
-    background-color: #fdfdfd;
+    background-color: #F7F7F7;
     color: #333;
+}
+
+*, *:before, *:after {
+    -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
 }
 
 body {
     padding-left: 2em;
     margin: auto;
+    height: 100%;
 }
 
 #content {
@@ -16,6 +21,8 @@ body {
     margin-bottom: 1em;
     margin-top: 2em;
 	width: 50em;
+    max-width: 95%;
+    line-height: 1.4;
 }
 
 a {
@@ -27,14 +34,6 @@ a:visited {
     color: #f87f7f;
 }
 
-#title a:visited {
-    color: #d22323;
-}
-
-#title h1 {
-    display: inline;
-}
-
 label {
     display: block;
 }
@@ -44,54 +43,113 @@ input, textarea, button {
     font-size: inherit;
 }
 
+textarea {
+    /* textarea-borders else might differ from input-boxes in chrome */
+    -moz-appearance: textfield;
+    -webkit-appearance: textfield;
+}
+
+.moderationStatusLabel,
+button {
+    cursor: pointer;
+    margin-left: 0;
+    background-color: #8496bc;
+    color: #fdfdfd;
+    border: 0;
+    padding-bottom: 3px;
+    padding-top: 2px;
+    margin-top: 2px;
+    display: inline-block;
+}
+
+.moderationStatusLabel:hover,
+button:hover {
+    background-color: #3B5998;
+}
+
+button::-moz-focus-inner {
+    /* makes buttons  have the same size in chrome and ff */
+    border:0;padding:0;margin:0;
+}
+
+img, iframe, object {
+    border: 0;
+    max-width: 90% !important;    
+}
+
+img {
+    height: auto !important;
+}
+
 article {
     max-width: 50em;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    -ms-hyphens: auto;
+    hyphens: auto;
 }
 
 summary {
     cursor: pointer;
 }
 
-#friendWidget {
+#widget {
     float: right;
     position: relative;
     right: 3em;
 }
 
-#friendList {
-    list-style-type: none;
+#title a:visited {
+    color: #3B5998;
 }
 
-#mainNav {
-    float: left;
-    position: relative;
-    left: 3em;
+#title h1 {
+    display: inline;
 }
 
-#mainNav ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
+#title .adminAction {
+    vertical-align: text-bottom;
+}
+
+#title .adminAction button {
+    vertical-align: text-bottom;
 }
 
 .editor {
-    width: 40em;
+    width: 50em;
+    max-width: 95%;
+    text-align: right;
 }
 
-#entryTitleInput {
+.entryTitleInput {
     margin-top: 1em;
     margin-bottom: 1em;
-    min-width: 36em;
-    margin-left: 1em;
+    width: 100%;
+    max-width: 100%;
 }
-#entryInput {
-    min-width: 100%;
-    #border-top-right-radius: 5px;
+.entryInput {
+    width: 100%;
+    max-width: 100%;
+    margin-top: 0;
 }
 
-#entryPublish, #previewButton {
-    margin-left: 35em;
+.editorSubmitButtons {
+    display: inline-block;
+}
+
+.entryTagInput {
+    float: left;
+    max-width: 100%;
+}
+
+.entryPublish, #previewButton {
     width: 5em;
+    display: block;
+}
+
+.cancel {
+    width: 5em;
+    margin-right: 0.5em;
 }
 
 #preview {
@@ -100,15 +158,17 @@ summary {
     margin-top: 1em;
     padding-left: 0.2em;
     padding-right: 0.2em;
+    text-align: left;
 }
 
 .markupButton {
     padding-left: 0.5em;
     padding-right: 0.5em;
-    cursor: pointer;
+    margin-right: 2px;
     display: inline-block;
     font-size: 18px;
     font-family: serif;
+    margin-bottom: 0;
 }
 
 .boldButton {
@@ -119,21 +179,18 @@ summary {
     font-style: italic;
 }
 
-.linkButton {
-    position: relative;
-    top: 1px;
+.imgButtonInput {
+    position: absolute;
+    left: -9999em
 }
 
 .buttonBar {
-    display: inline-block;
+    display: block;
+    text-align: left;
 }
 
 #welcome, #designs {
     font-size: 0.9em;
-}
-
-.comment {
-    margin-bottom: 1em;
 }
 
 .avatar {
@@ -141,49 +198,142 @@ summary {
     margin-right: 0.5em;
 }
 
-.entry p {
-    padding-left: 1em;
+.entryTitle {
+    clear: both;
+    margin-top: 2em;
+    margin-bottom: 0.83em;
 }
 
 .entry footer {
     font-style: italic;
     font-size: 0.9em;
+    margin-top: 0.83em;
+}
+
+.entry footer time {
+    margin-right: 1em;
+}
+
+.tags {
+    float: right;
+    padding-right: 1em;
 }
 
 #entryModerationToggle {
-    margin: 1em;
-    
+    margin-top: 1em;
+    text-align: center;
 }
 
-#entryModerationToggle label {
-    display: inline;
+#entryModerationToggle div {
+    display: inline-block;
+    background-color: #8496bc;
+    border: 2px solid #8496bc;
+    padding-left: 0.1em;
+}
+
+#entryModerationToggle div span {
+    background-color: #EAECF1;
+    padding: 0.3em;
+}
+
+.moderationStatus {
+    display: none;
+    visibility: hidden;
+    margin: 0;
+}
+
+.moderationStatusLabel {
+    padding-left: 0.3em;
+    padding-right: 0.3em;
+    border: 2px solid #8496bc;
+}
+
+.moderationStatusLabel:hover {
+    border: 2px inset grey;
+}
+
+.moderationStatus:checked + .moderationStatusLabel {
+    border: 2px inset #97bc84;
+}
+
+#comments {
+    padding: 0;
+    list-style-type: none;
+    margin-top: 3em;
+    margin-bottom: 1em;
+}
+
+.comment {
+    margin-bottom: 1em;
+    margin-top: 2em;
+}
+
+.comment footer {
+    margin-top: 0.3em;
+}
+
+#refComment {
+    position: absolute;
+    background-color: #F7F7F7;
+    border: 1px solid #97bc84;
+    padding: 4px;
+}
+
+#refComment .adminOptions {
+    display: none;
+    visibility: hidden;
 }
 
 .comment_moderate .commentBody, .comment_moderate footer  {
     opacity: 0.7;
 }
 
-#commentForm span {
-    width: 6em;
-    display: inline-block;
+.commentForm {
+    margin-top: 2em;
 }
 
-#commentForm input {
-    width: 15em;
+.commentForm > input,
+.commentFormMail > input {
+    width: 22em;    
 }
 
-#commentForm textarea {
-    width: 21em;
-    min-height: 6em;
+.commentForm > input {
+    display: block;
 }
 
-#commentForm button {
-    margin-left: 16em;
+.commentFormTel {
+    display: none !important;
+    visibility: hidden;
 }
 
-#commentForm .adminAction button {
-    margin-left: 0;
+.commentInput {
+    width: 33em;
+    min-height: 8em;
 }
+
+.commentFormSubmit {
+    margin-left: 28em;
+    min-width: 5em;
+    margin-bottom: 1em;
+}
+
+.cancel + .commentFormSubmit {
+    margin-left: 22.5em;
+}
+
+#subscribe {
+    display: inline;
+    margin-left: 1em;
+}
+
+#subscribe span {
+    font-size: 90%;
+}
+
+#subscribe span,
+#subscribe input {
+    vertical-align: text-bottom;
+} 
 
 #browser {
     margin-top: 1em;
@@ -263,68 +413,27 @@ summary {
     display: inline-block;
 }
 
-/* hover-menu: */
-.adminOptionsMore {
-    display: inline-block;
-    z-index: 1;
-}
-
-.adminOptionsMoreOptions {
-    display: none;
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-    position: absolute;
-    background: white;
-    padding-top: 0;
-}
-
-.adminOptionsMoreOptions li, .adminMoreOption {
-    display: block;
-    width: 100%;
-    margin: 0;
-}
-
-.adminOptionsMoreSign {
-    cursor: default;
-    vertical-align: top;
-}
-
-.adminOptionsMoreSign:hover + .adminOptionsMoreOptions, .adminOptionsMoreOptions:hover {
-    display: block;
-}
-
-#search {
+footer #search {
     margin-top: 3em;
 }
 
-/* checkoxes from http://www.chrisnorstrom.com/2012/11/invention-multiple-choice-windowed-slider-ui/ */
-#entryModerationToggle input[type="checkbox"] + span {
-    width: 84px;
-    height: 26px;
+#search {
     display: inline-block;
-    vertical-align: middle;
-    padding: 0px;
-	margin: 0px;
-    margin-left: 1em;
 }
 
-#entryModerationToggle input[type="checkbox"] + span:before {
-    content:"";
-    display:inline-block;
-    width: 100%;
-    height: 100%;
-    background: url("/img/off.jpg") no-repeat 0 0;
-    background-size: 100% 100%;
+#search input {
+    margin-right: 0;
+    border-right: 0;
+    
 }
 
-#entryModerationToggle input[type="checkbox"]:checked + span:before {
-    content:"";
-    display:inline-block;
-    width: 100%;
-    height: 100%;
-    background: url("/img/on.jpg") no-repeat 0 0;
-    background-size: 100% 100%;
+#search button {
+    box-sizing: boder-box;
+    padding-bottom: 3px;
+    padding-top: 2px;
+    position: relative;
+    right: 5px;
+    bottom: 1px;
 }
 
 .highlight {
@@ -333,30 +442,48 @@ summary {
     -ms-animation: highlightBox 500ms ease-out forwards;
     -o-animation: highlightBox 500ms ease-out forwards;
     -webkit-animation: highlightBox 500ms ease-out forwards;
-    background-color: #f7fbd8;
+    background-color: #97bc84;
 }
 
 @-moz-keyframes highlightBox {
-  0% { background-color: #f7fbd8;}
-  100% { background-color: white; }
+  0% { background-color: #b6e3a0;}
+  100% { background-color: #F7F7F7; }
 }
 
 @-o-keyframes highlightBox {
-  0% { background-color: #f7fbd8;}
-  100% { background-color: white; }
+  0% { background-color: #b6e3a0;}
+  100% { background-color: #F7F7F7; }
 }
 
 @-webkit-keyframes highlightBox {
-  0% { background-color: #f7fbd8;}
-  100% { background-color: white; }
+  0% { background-color: #b6e3a0;}
+  100% { background-color: #F7F7F7; }
 }
 
 @-ms-keyframes highlightBox {
-  0% { background-color: #f7fbd8;}
-  100% { background-color: white; }
+  0% { background-color: #b6e3a0;}
+  100% { background-color: #F7F7F7; }
 }
 
 @keyframes highlightBox {
-    0% { background-color: #f7fbd8; }
-    100% { background-color: white; }
+    0% { background-color: #b6e3a0; }
+    100% { background-color: #F7F7F7; }
+}
+
+.pace .pace-progress {
+    background: #ff7200;
+    position: fixed;
+    z-index: 2000;
+    top: 0;
+    left: 0;
+    height: 2px;
+
+    -webkit-transition: width 1s;
+    -moz-transition: width 1s;
+    -o-transition: width 1s;
+    transition: width 1s;
+}
+
+.pace-inactive {
+    display: none;
 }

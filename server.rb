@@ -90,19 +90,10 @@ helpers do
         return HTMLEntities.new.encode(text)
     end
 
-    def friendManagerUrl
-        return Dsnns.new.friendManagerUrl
+    def find_template(views, name, engine, &block)
+        super(views, name, engine, &block) if File.exists?(File.join(views, name.to_s + ".erb"))
+        super(File.join(settings.design_root, "default"), name, engine, &block)
     end
-
-    def registeredDomain?
-        url = Dsnns.new.url(authorized_email)
-        return  url && url != "not registered!"
-    end
-
-    def unreadMessages
-        return Database.new.unreadMessagesCount
-    end
-
 end
 
 def loadConfiguration()
