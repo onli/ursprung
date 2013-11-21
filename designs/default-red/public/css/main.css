@@ -53,7 +53,7 @@ textarea {
 button {
     cursor: pointer;
     margin-left: 0;
-    background-color: #8496bc;
+    background-color: #E95151;
     color: #fdfdfd;
     border: 0;
     padding-bottom: 3px;
@@ -64,7 +64,7 @@ button {
 
 .moderationStatusLabel:hover,
 button:hover {
-    background-color: #3B5998;
+    background-color: #d22323;
 }
 
 button::-moz-focus-inner {
@@ -100,7 +100,7 @@ summary {
 }
 
 #title a:visited {
-    color: #3B5998;
+    color: #d22323;
 }
 
 #title h1 {
@@ -226,8 +226,8 @@ summary {
 
 #entryModerationToggle div {
     display: inline-block;
-    background-color: #8496bc;
-    border: 2px solid #8496bc;
+    background-color: #E95151;
+    border: 2px solid #E95151;
     padding-left: 0.1em;
 }
 
@@ -245,7 +245,7 @@ summary {
 .moderationStatusLabel {
     padding-left: 0.3em;
     padding-right: 0.3em;
-    border: 2px solid #8496bc;
+    border: 2px solid #E95151;
 }
 
 .moderationStatusLabel:hover {
@@ -253,7 +253,7 @@ summary {
 }
 
 .moderationStatus:checked + .moderationStatusLabel {
-    border: 2px inset #97bc84;
+    border: 2px inset #fffc3e;
 }
 
 #comments {
@@ -442,31 +442,31 @@ footer #search {
     -ms-animation: highlightBox 500ms ease-out forwards;
     -o-animation: highlightBox 500ms ease-out forwards;
     -webkit-animation: highlightBox 500ms ease-out forwards;
-    background-color: #97bc84;
+    background-color: #fffc3e;
 }
 
 @-moz-keyframes highlightBox {
-  0% { background-color: #b6e3a0;}
+  0% { background-color: #fffc3e;}
   100% { background-color: #F7F7F7; }
 }
 
 @-o-keyframes highlightBox {
-  0% { background-color: #b6e3a0;}
+  0% { background-color: #fffc3e;}
   100% { background-color: #F7F7F7; }
 }
 
 @-webkit-keyframes highlightBox {
-  0% { background-color: #b6e3a0;}
+  0% { background-color: #fffc3e;}
   100% { background-color: #F7F7F7; }
 }
 
 @-ms-keyframes highlightBox {
-  0% { background-color: #b6e3a0;}
+  0% { background-color: #fffc3e;}
   100% { background-color: #F7F7F7; }
 }
 
 @keyframes highlightBox {
-    0% { background-color: #b6e3a0; }
+    0% { background-color: #fffc3e; }
     100% { background-color: #F7F7F7; }
 }
 

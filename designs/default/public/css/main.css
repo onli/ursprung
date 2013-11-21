@@ -253,7 +253,7 @@ summary {
 }
 
 .moderationStatus:checked + .moderationStatusLabel {
-    border: 2px inset #97bc84;
+    border: 2px inset #8DCC14;
 }
 
 #comments {
@@ -442,31 +442,31 @@ footer #search {
     -ms-animation: highlightBox 500ms ease-out forwards;
     -o-animation: highlightBox 500ms ease-out forwards;
     -webkit-animation: highlightBox 500ms ease-out forwards;
-    background-color: #97bc84;
+    background-color: #8DCC14;
 }
 
 @-moz-keyframes highlightBox {
-  0% { background-color: #b6e3a0;}
+  0% { background-color: #8DCC14;}
   100% { background-color: #F7F7F7; }
 }
 
 @-o-keyframes highlightBox {
-  0% { background-color: #b6e3a0;}
+  0% { background-color: #8DCC14;}
   100% { background-color: #F7F7F7; }
 }
 
 @-webkit-keyframes highlightBox {
-  0% { background-color: #b6e3a0;}
+  0% { background-color: #8DCC14;}
   100% { background-color: #F7F7F7; }
 }
 
 @-ms-keyframes highlightBox {
-  0% { background-color: #b6e3a0;}
+  0% { background-color: #8DCC14;}
   100% { background-color: #F7F7F7; }
 }
 
 @keyframes highlightBox {
-    0% { background-color: #b6e3a0; }
+    0% { background-color: #8DCC14; }
     100% { background-color: #F7F7F7; }
 }
 
