@@ -123,8 +123,7 @@ end
 
 
 configure do
-    design = Database.new.getOption("design")
-    set(:design_root) { File.join(File.dirname(app_file), "designs") }
+    set(:design_root) { File.join(File.dirname(app_file), "designs") } # need to set that variable here, so sinatra knows it later
     loadConfiguration()
 end
 
