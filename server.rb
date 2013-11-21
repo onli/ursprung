@@ -98,13 +98,12 @@ helpers do
 
     def find_template(views, name, engine, &block)
         super(views, name, engine, &block) if File.exists?(File.join(views, name.to_s + ".erb"))
-        super(File.join(settings.design_root, "default"), name, engine, &block)
+        super(settings.design_default, name, engine, &block)
     end
 end
 
 def loadConfiguration()
     design = Database.new.getOption("design")
-    settings.design_root = File.join(File.dirname(settings.app_file), "designs")
     settings.views = File.join(settings.design_root, design)
     settings.public_folder = File.join(settings.views, 'public')
 
@@ -113,8 +112,8 @@ def loadConfiguration()
     settings.assets.append_path File.join(settings.views, "js")
     settings.assets.append_path File.join(settings.views, "css")
 
-    settings.assets.append_path File.join(File.join(settings.design_root, "default"), "js") if design != "default"
-    settings.assets.append_path File.join(File.join(settings.design_root, "default"), "css") if design != "default"
+    settings.assets.append_path File.join(settings.design_default, "js") if design != "default"
+    settings.assets.append_path File.join(settings.design_default, "css") if design != "default"
 
     settings.assets.js_compressor  = YUI::JavaScriptCompressor.new
     settings.assets.css_compressor = YUI::CssCompressor.new
