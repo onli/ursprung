@@ -360,9 +360,11 @@ class Database
         end
     end
 
+    # get cache content and moment of creation
     def getCache(key)
         begin
-            return @@db.execute("SELECT value FROM cache WHERE key = ? AND ttl > strftime('%s','now') LIMIT 1;", key)[0]['value']
+            cached = @@db.execute("SELECT value, ttl FROM cache WHERE key = ? AND ttl > strftime('%s','now') LIMIT 1;", key)[0]
+            return cached['value'], (cached['ttl'] - 604800)
         rescue => error
             warn "getCache: #{error}"
         end

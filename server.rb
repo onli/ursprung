@@ -60,7 +60,7 @@ helpers do
         db = Database.new
         Nokogiri::HTML(text).css("a").map do |link|
             if (href = link.attr("href")) && link.attr("title") == nil && href.match(/^https?:/)
-                if ((title = db.getCache(href)) == nil)
+                if ((title, _ = db.getCache(href)) == nil)
                     require 'mechanize'
                     agent = Mechanize.new
                     begin
@@ -138,13 +138,22 @@ end
 before do
     @cacheContent = nil
     if request.request_method == "GET"
-        @cacheContent = Database.new.getCache("#{request.path_info}#{authorized_email}")
+        @cacheContent, cacheCreation = Database.new.getCache("#{request.path_info}#{authorized_email}")
+        if @cacheContent != nil
+            last_modified cacheCreation
+            etag Digest::MD5.hexdigest(@cacheContent)
+            content_type "text/css" if request.path_info[0,5] == "/css/"
+            content_type "application/javascript" if request.path_info[0,4] == "/js/"
+            halt @cacheContent
+        end
     end
 end
 
 after do
     if @cacheContent == nil && request.request_method == "GET"
         Database.new.cache("#{request.path_info}#{authorized_email}", body)
+        last_modified Date.to_s
+        etag Digest::MD5.hexdigest(body.to_s)
     else
         if request.request_method == "POST"
             Database.new.invalidateCache
@@ -165,9 +174,6 @@ get %r{/archive/([0-9]+)} do |page|
 end
 
 def serveIndex(page, tag)
-    if @cacheContent != nil && ! Database.new.firstUse?
-        return @cacheContent
-    end
     db = Database.new
     if db.firstUse?
         erb :installer
@@ -186,9 +192,6 @@ def serveIndex(page, tag)
 end
 
 get %r{/feed/([\w]+)} do |tag|
-    if @cacheContent != nil
-        return @cacheContent
-    end
     entries = Database.new.getEntries(-1, 10, tag)
     headers "Content-Type"   => "application/rss+xml"
     body erb :feed, :locals => {:entries => entries}
@@ -196,9 +199,6 @@ end
 
 
 get '/feed' do
-    if @cacheContent != nil
-        return @cacheContent
-    end
     entries = Database.new.getEntries(-1, 10, nil)
     headers "Content-Type"   => "application/rss+xml"
     body erb :feed, :locals => {:entries => entries}
@@ -333,9 +333,6 @@ post %r{/([0-9]+)/addComment} do |id|
 end
 
 get '/commentFeed' do
-    if @cacheContent != nil
-        return @cacheContent
-    end
     comments = Database.new.getComments(30)
     headers "Content-Type"   => "application/rss+xml"
     body erb :commentFeed, :locals => {:comments => comments}
@@ -371,9 +368,6 @@ get %r{/setOption/([\w]+)} do |name|
 end
 
 get %r{/search/([\w]+)} do |keyword|
-    if @cacheContent != nil
-        return @cacheContent
-    end
     body erb :search, :locals => {:entries => Database.new.searchEntries(keyword), :keyword => keyword}
 end
 
@@ -397,9 +391,7 @@ end
 
 # A Page (entry with comments)
 get  %r{/([0-9]+)/([\w]+)} do |id, title|
-    if @cacheContent != nil
-        return @cacheContent
-    end
+    puts "page"
     entry = Entry.new(id.to_i)
     comments = Database.new.getCommentsForEntry(id)
     body erb :page, :locals => {:entry => entry, :comments => comments}
@@ -407,15 +399,15 @@ end
 
 get "/js/:file.js" do
   content_type "application/javascript"
-  settings.assets[params[:file]+".js"]
+  body settings.assets[params[:file]+".js"].to_s
 end
 
 get "/css/:file.css" do
   content_type "text/css"
-  settings.assets[params[:file]+".css"]
+  body settings.assets[params[:file]+".css"].to_s
 end
 
-get '/logout' do
+post '/logout' do
     logout!
     redirect '/'
 end

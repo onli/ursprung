@@ -487,3 +487,7 @@ footer #search {
 .pace-inactive {
     display: none;
 }
+
+#logout {
+    display: inline-block;
+}

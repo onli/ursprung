@@ -12,7 +12,7 @@
         
         <aside id="widget">
             <% if isAdmin? %>
-                <div id="welcome">Welcome <%= authorized_email %> <a href="/logout"><button type="button">Logout</button></a></div>
+                <div id="welcome">Welcome <%= authorized_email %> <form id="logout" action="/logout" method="POST"><button type="submit">Logout</button></form></div>
                 <%= erb :designs, :locals => {:design => design, :designs => designs} %>
             <% else %>
                 <%= render_login_button %>
