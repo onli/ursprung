@@ -13,10 +13,16 @@ require 'xmlrpc/marshal'
 require 'json'
 include ERB::Util
 require 'sinatra/browserid'
+require 'sprockets'
+require 'yui/compressor'
+
+
 enable :sessions
 set :browserid_login_button, "/img/browserid.png"
 
 set :static_cache_control, [:public, max_age: 31536000]
+
+set :assets, Sprockets::Environment.new
 
 helpers do
     include Rack::Utils
@@ -101,6 +107,17 @@ def loadConfiguration()
     settings.design_root = File.join(File.dirname(settings.app_file), "designs")
     settings.views = File.join(settings.design_root, design)
     settings.public_folder = File.join(settings.views, 'public')
+
+    # Configure sprockets
+    settings.assets.append_path File.join(settings.views, "js")
+    settings.assets.append_path File.join(settings.views, "css")
+
+    settings.assets.append_path File.join(File.join(settings.design_root, "default"), "js") if design != "default"
+    settings.assets.append_path File.join(File.join(settings.design_root, "default"), "css") if design != "default"
+
+    settings.assets.js_compressor  = YUI::JavaScriptCompressor.new
+    settings.assets.css_compressor = YUI::CssCompressor.new
+
 end
 
 
@@ -108,8 +125,7 @@ end
 configure do
     design = Database.new.getOption("design")
     set(:design_root) { File.join(File.dirname(app_file), "designs") }
-    set(:views) { File.join(design_root, design) }
-    set(:public_folder) { File.join(views, 'public') }
+    loadConfiguration()
 end
 
 ####
@@ -386,6 +402,16 @@ get  %r{/([0-9]+)/([\w]+)} do |id, title|
     entry = Entry.new(id.to_i)
     comments = Database.new.getCommentsForEntry(id)
     body erb :page, :locals => {:entry => entry, :comments => comments}
+end
+
+get "/js/:file.js" do
+  content_type "application/javascript"
+  settings.assets[params[:file]+".js"]
+end
+
+get "/css/:file.css" do
+  content_type "text/css"
+  settings.assets[params[:file]+".css"]
 end
 
 get '/logout' do
