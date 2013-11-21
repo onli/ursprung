@@ -1,3 +1,6 @@
+//= require snack.js
+//= require pace.js
+
 snack.ready(function() {
     initEditElements();
     initDeleteElements();

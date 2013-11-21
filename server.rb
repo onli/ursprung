@@ -108,7 +108,8 @@ def loadConfiguration()
     settings.views = File.join(settings.design_root, design)
     settings.public_folder = File.join(settings.views, 'public')
 
-    # Configure sprockets
+    settings.assets.clear_paths     # js/css files else stay the same after a design switch
+
     settings.assets.append_path File.join(settings.views, "js")
     settings.assets.append_path File.join(settings.views, "css")
 
@@ -123,7 +124,8 @@ end
 
 
 configure do
-    set(:design_root) { File.join(File.dirname(app_file), "designs") } # need to set that variable here, so sinatra knows it later
+    set(:design_root) { File.join(File.dirname(app_file), "designs") }
+    set(:design_default) { File.join(design_root, "default") }
     loadConfiguration()
 end
 
