@@ -64,11 +64,13 @@ class Entry
             db.editEntry(self)
             initializeFromID(self.id, false)
         end
+        db.invalidateCache(self)
     end
 
     def deleteSoft()
         db = Database.new
         db.deleteEntrySoft(self.id)
+        db.invalidateCache(self)
     end
 
     def delete()
@@ -198,6 +200,13 @@ class Entry
 
     def link(request)
         return "http://#{request.host_with_port}/#{self.id}/#{URI.escape(title)}"
+    end
+
+    # get the number of the archive this article is listed on
+    def archivePage()
+        amount = 5
+        position = Database.new.getAllEntryIds().index({ "id" => self.id.to_f, 0 => self.id.to_f })
+        return (position.to_f / amount).ceil
     end
 
     def format()

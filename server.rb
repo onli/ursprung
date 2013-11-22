@@ -120,8 +120,6 @@ def loadConfiguration()
 
 end
 
-
-
 configure do
     set(:design_root) { File.join(File.dirname(app_file), "designs") }
     set(:design_default) { File.join(design_root, "default") }
@@ -137,7 +135,7 @@ end
 before do
     @cacheContent = nil
     if request.request_method == "GET"
-        @cacheContent, cacheCreation = Database.new.getCache("#{request.path_info}#{authorized_email}")
+        @cacheContent, cacheCreation = Database.new.getCache("#{request.path_info}||==||#{authorized_email}")
         if @cacheContent != nil
             last_modified cacheCreation
             etag Digest::MD5.hexdigest(@cacheContent)
@@ -153,10 +151,6 @@ after do
         Database.new.cache("#{request.path_info}#{authorized_email}", body)
         last_modified Date.to_s
         etag Digest::MD5.hexdigest(body.to_s)
-    else
-        if request.request_method == "POST"
-            Database.new.invalidateCache
-        end
     end
 end
 
@@ -390,7 +384,6 @@ end
 
 # A Page (entry with comments)
 get  %r{/([0-9]+)/([\w]+)} do |id, title|
-    puts "page"
     entry = Entry.new(id.to_i)
     comments = Database.new.getCommentsForEntry(id)
     body erb :page, :locals => {:entry => entry, :comments => comments}

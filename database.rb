@@ -144,10 +144,18 @@ class Database
                 totalEntries = @@db.execute("SELECT COUNT(DISTINCT entryId) from tags WHERE tag = ?", tag)[0]["COUNT(DISTINCT entryId)"]
             end
         rescue => error
-            warn"getEntries count: #{error}"
+            warn "getEntries count: #{error}"
         end
         totalPages = (totalEntries.to_f / amount).ceil;
         return totalPages, totalEntries
+    end
+
+    def getAllEntryIds()
+        begin
+            return @@db.execute("SELECT id from entries")
+        rescue => error
+            warn "getAllEntryIds: #{error}"
+        end
     end
 
     def addEntry(entry)
@@ -234,7 +242,7 @@ class Database
 
     def addComment(comment)
         begin
-             @@db.execute("INSERT INTO comments(replyToEntry, replyToComment, body, type, status, title, name, mail, url, subscribe)
+            @@db.execute("INSERT INTO comments(replyToEntry, replyToComment, body, type, status, title, name, mail, url, subscribe)
                             VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
                             comment.replyToEntry, comment.replyToComment, comment.body, comment.type, comment.status,
                             comment.title, comment.author.name, comment.author.mail, comment.author.url, comment.subscribe)
@@ -371,12 +379,38 @@ class Database
     end
 
     # delete from cache all pages, but not linktitles
-    def invalidateCache()
-        begin
-            return @@db.execute("DELETE FROM cache WHERE key LIKE '/%'")
-        rescue => error
-            warn "invalidateCache: #{error}"
+    def invalidateCache(origin)
+        case origin.class.to_s
+        when "NilClass"
+            begin
+                return @@db.execute("DELETE FROM cache WHERE key LIKE '/%'")
+            rescue => error
+                warn "invalidateCache complete: #{error}"
+            end
+        when "Entry"
+            begin
+                archivePage = origin.archivePage.to_s
+                amount = 5
+                @@db.execute("DELETE FROM cache WHERE key LIKE '/||==||%'") if archivePage == self.getTotalPages(amount, nil).to_s
+                # origin.id and archivePage throw a bind or column index out of range error when inserted properly
+                @@db.execute("DELETE FROM cache WHERE key LIKE '/#{SQLite3::Database.quote origin.id}/%'
+                                                                OR key LIKE '/archive/#{SQLite3::Database.quote archivePage}/||==||%'
+                                                                " + (origin.tags.map{|tag| "OR key LIKE 'archive/%/"+tag+"/%'"}.join(" ")) +"
+                                                                OR key LIKE '/search/%'
+                                                                    ")
+                                                                    
+            rescue => error
+                warn "invalidateCache for entry: #{error}"
+            end
+        when "Comment"
+            begin
+                # throws a bind or column index out of range error when inserted properly as well
+                @@db.execute("DELETE FROM cache WHERE key LIKE '/#{SQLite3::Database.quote origin.replyToEntry}/%'")
+            rescue => error
+                warn "invalidateCache for comment: #{error}"
+            end
         end
+    
     end
     
     def getAdmin()

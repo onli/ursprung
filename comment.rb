@@ -98,11 +98,13 @@ class Comment
         else
             db.editComment(self)
         end
+        db.invalidateCache(self)
     end
 
     def delete()
         db = Database.new
         db.deleteComment(self)
+        db.invalidateCache(self)
     end
 
     def spam()
@@ -199,7 +201,6 @@ class Comment
 
     def avatar()
         if self.author.mail
-            require 'digest/md5'
             return "http://www.gravatar.com/avatar/#{Digest::MD5.hexdigest(self.author.mail.downcase)}?d=mm&s=40"
         else
             return nil
@@ -207,7 +208,6 @@ class Comment
     end
 
     def format()
-
         return Kramdown::Document.new(  self.body.gsub(
                                             /&gt;&gt;([0-9]*)/,
                                             '<a class="commentReference" href="#c\1">&gt;&gt;\1</a>  '
@@ -215,6 +215,5 @@ class Comment
                                         :auto_ids => false,
                                         :hard_wrap => true
                                     ).to_html
-        
     end
 end
