@@ -193,7 +193,11 @@ class Entry
         end.compact
         uris = []
         links.each do |link|
-            uris.push(URI.parse(link))
+            begin
+                uris.push(URI.parse(link))
+            rescue URI::InvalidURIError => error
+                warn "could not parse link: "+error.to_s
+            end
         end
         return uris
     end
