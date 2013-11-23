@@ -393,9 +393,9 @@ class Database
                 amount = 5
                 @@db.execute("DELETE FROM cache WHERE key LIKE '/||==||%'") if archivePage == self.getTotalPages(amount, nil).to_s
                 # origin.id and archivePage throw a bind or column index out of range error when inserted properly
-                @@db.execute("DELETE FROM cache WHERE key LIKE '/#{SQLite3::Database.quote origin.id}/%'
+                @@db.execute("DELETE FROM cache WHERE key LIKE '/#{SQLite3::Database.quote origin.id.to_s}/%'
                                                                 OR key LIKE '/archive/#{SQLite3::Database.quote archivePage}/||==||%'
-                                                                " + (origin.tags.map{|tag| "OR key LIKE 'archive/%/"+tag+"/%'"}.join(" ")) +"
+                                                                " + (origin.tags.map{|tag| "OR key LIKE 'archive/%/"+ SQLite3::Database.quote(tag) +"/%'"}.join(" ")) +"
                                                                 OR key LIKE '/search/%'
                                                                     ")
                                                                     
