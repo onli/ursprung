@@ -345,7 +345,7 @@ end
 post '/setOption' do
     protected!
     Database.new.setOption(params[:name], params[:value])
-    Database.new.invalidateCache
+    Database.new.invalidateCache(nil)   # options are normally mighty enough to invalidate everything
     loadConfiguration
     origin = session[:origin]
     # when setOption wasn't called first, like with the design, origin is old, so unset it
