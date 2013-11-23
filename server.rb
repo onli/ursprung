@@ -141,7 +141,7 @@ before do
             etag Digest::MD5.hexdigest(@cacheContent)
             content_type "text/css" if request.path_info[0,5] == "/css/"
             content_type "application/javascript" if request.path_info[0,4] == "/js/"
-            halt @cacheContent
+            halt @cacheContent if environment != "development"
         end
     end
 end
