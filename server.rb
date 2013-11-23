@@ -141,14 +141,14 @@ before do
             etag Digest::MD5.hexdigest(@cacheContent)
             content_type "text/css" if request.path_info[0,5] == "/css/"
             content_type "application/javascript" if request.path_info[0,4] == "/js/"
-            halt @cacheContent if environment != "development"
+            halt @cacheContent if ! settings.development?   # when in dev-mode, the cache becomes cumbersome
         end
     end
 end
 
 after do
     if @cacheContent == nil && request.request_method == "GET"
-        Database.new.cache("#{request.path_info}#{authorized_email}", body)
+        Database.new.cache("#{request.path_info}||==||#{authorized_email}", body)
         last_modified Date.to_s
         etag Digest::MD5.hexdigest(body.to_s)
     end
