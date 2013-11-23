@@ -282,7 +282,7 @@ snack.ready(function() {
         });
         snack.wrap('.linkButton').attach('click', function(evt) {
             var sel = getTextSelection(editor);
-            var replace = '[http:// '+sel+']';
+            var replace = '['+sel+'](http://…)';
             replaceSelection(editor, replace);
         });
         document.querySelector('.imgButton').addEventListener('click', function(evt) {
@@ -423,7 +423,7 @@ snack.ready(function() {
                             if (err) {
                                 alert("error uploading file: " + err);
                             }
-                            editor.value += "[["+res+"]]\n";
+                            editor.value += "!["+res+"]("+res+")\n";
                         });
                     });
                 });
