@@ -1,0 +1,29 @@
+<%# -*- encoding : utf-8 -*- %>
+<!DOCTYPE html>
+<html>
+    <head>
+        <%= erb :head, :locals => {:tag => nil}%>
+        <title>Subscriptions Control - <%= blogTitle %></title>
+        <link rel="alternate"  type="application/rss+xml" href="/feed" />
+        <meta name="description" content="">
+    </head>
+
+    <body>
+        <div id="content">
+        <%= erb :header, :locals => {:blogTitle => blogTitle} %>
+
+        <h2>Subscribed entries</h2>
+
+        <ol>
+        <% entries.each do |entry| %>
+            <li><form action="/unsubscribe" method="POST">
+                <input type="hidden" name="id" value="<%= entry.id %>" />
+                <span><%= entry.title %></span> <button type="submit">Unsubscribe</button>
+            </form></li>
+        <% end %>
+        </ol>
+        
+
+        </div>
+    </body>
+</html>

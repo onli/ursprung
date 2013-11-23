@@ -56,13 +56,13 @@ class Comment
                         commentAuthor.name = name
                         self.author = commentAuthor
                     end
-                    self.save
+                    self.save(request)
                     self.validTrackback = true
                 else
                     self.validTrackback = false
                 end
             else
-                self.save
+                self.save(request)
                 self.validTrackback = true
             end
         end
@@ -86,14 +86,14 @@ class Comment
         self.author = commentAuthor
     end
 
-    def save()
+    def save(request)
         db = Database.new
         if self.id == nil
             # it is a new comment
             db.addComment(self)
-            mailOwner()
+            mailOwner(request)
             if (self.status == "approved")
-                mailSubscribers()
+                mailSubscribers(request)
             end
         else
             db.editComment(self)
@@ -146,34 +146,39 @@ class Comment
         return Entry.new(self.replyToEntry)
     end
 
-    def mailOwner()
+    def mailOwner(request)
         db = Database.new
         begin
+            puts "trying to send mail to owner"
+            entry = self.entry
             Pony.mail(:to => db.getAdminMail,
                   :from => db.getOption("fromMail"),
-                  :subject => "#{db.getOption("blogTitle")}: #{self.author.name} commented on #{Entry.new(self.replyToEntry).title}",
-                  :body => "He wrote: #{self.body}"
+                  :subject => "#{db.getOption("blogTitle")}: #{self.author.name} commented on #{entry.title}",
+                  :body => "He wrote: \n\n#{self.body}\n\nLink: #{entry.link(request)}"
                   )
         rescue Errno::ECONNREFUSED => e
-            puts "Error mailing owner: #{e}"
+            warn "Error mailing owner: #{e}"
         end
     end
 
-    def mailSubscribers()
+    def mailSubscribers(request)
         db = Database.new
         fromMail = db.getOption("fromMail")
-        blogTitle = db.getOption("blogTitle")
-        if fromMail && fromMail != "" 
+        if fromMail && fromMail != ""
+            blogTitle = db.getOption("blogTitle")
+            mailDelivered = []
+            entry = self.entry
             db.getCommentsForEntry(Entry.new(self.replyToEntry)).each do |comment|
-                if comment.subscribe && comment.author.mail && comment != self
+                if comment.subscribe && comment.author.mail && comment != self && ! mailDelivered.contains?(comment.author.mail) && comment.author.mail != db.getAdminMail
                     begin
                         Pony.mail(:to => comment.author.mail,
                               :from => fromMail,
                               :subject => "#{blogTitle}: #{self.author.name} commented on #{Entry.new(self.replyToEntry).title}",
-                              :body => "He wrote: #{self.body}"
+                              :body => "He wrote: #{self.body}\n\nLink: #{entry.link(request)}\n\nLink: #{entry.link(request)}\n\nUnsubscribe: http://#{request.host_with_port}/subscriptions/#{URI.escape(comment.author.mail)}"
                               )
+                        mailDelivered.push(comment.author.mail)
                     rescue Errno::ECONNREFUSED => e
-                        puts "Error mailing subscribers: #{e}"
+                        warn "Error mailing subscribers: #{e}"
                     end
                 end
             end

@@ -450,5 +450,16 @@ class Database
         end
         return entries
     end
-    
+
+    def getEntriesSubscribed(mail)
+        entries = []
+        begin
+            @@db.execute("SELECT DISTINCT replyToEntry FROM comments where mail == ?;", mail) do  |row|
+                entries.push(Entry.new(row["replyToEntry"]))
+            end
+        rescue => error
+            warn "getEntriesSubscribed: #{error}"
+        end
+        return entries
+    end
 end

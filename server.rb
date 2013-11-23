@@ -389,6 +389,10 @@ get  %r{/([0-9]+)/([\w]+)} do |id, title|
     body erb :page, :locals => {:entry => entry, :comments => comments}
 end
 
+get '/subscriptions/:mail' do
+    body erb :subscriptions, :locals => {:mail => params[:mail], :entries => Database.new.getEntriesSubscribed(params[:mail])}
+end
+
 get "/js/:file.js" do
   content_type "application/javascript"
   body settings.assets[params[:file]+".js"].to_s
