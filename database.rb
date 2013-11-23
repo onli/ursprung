@@ -113,7 +113,7 @@ class Database
                     entries.push(entry)
                 end
             else
-                @@db.execute("SELECT id FROM entries WHERE deleted != 1 AND id IN (SELECT entryId FROM tags WHERE tag = ?) LIMIT ?,?;", tag, offset, limit) do |row|
+                @@db.execute("SELECT id FROM entries WHERE deleted != 1 AND id IN (SELECT entryId FROM tags WHERE tag = ?) ORDER BY date DESC LIMIT ?,?;", tag, offset, limit) do |row|
                     entry = Entry.new(row["id"])
                     entries.push(entry)
                 end
