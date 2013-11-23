@@ -169,6 +169,9 @@ end
 def serveIndex(page, tag)
     db = Database.new
     if db.firstUse?
+        db.setOption("secret", SecureRandom.urlsafe_base64(256))
+        db.setOption("blogTitle", "just a blog")
+        db.invalidateCache(nil)
         erb :installer
     else
         amount = 5
@@ -177,7 +180,7 @@ def serveIndex(page, tag)
         page = totalPages if page == -1
         friends = db.getFriends
         designs = Dir.new(settings.design_root).entries.reject{|design| design == "." || design == ".." }
-        design = db.getOption("design")
+        design = db.getOption("design") # TODO: necessary?
             
         body erb :index, :locals => {:entries => entries, :page => page, :totalPages => totalPages, :friends => friends,
                                 :designs => designs, :design => design, :tag => tag, :allTags => db.getAllTags}
