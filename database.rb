@@ -19,7 +19,7 @@ class Database
                 @@db.execute "CREATE TABLE IF NOT EXISTS cache(
                                 key TEXT PRIMARY KEY,
                                 value TEXT,
-                                ttl INTEGER DEFAULT (strftime('%s','now') + 604800)
+                                date INTEGER DEFAULT CURRENT_TIMESTAMP
                                 );"
                 @@db.execute "CREATE TABLE IF NOT EXISTS friends(
                                 name TEXT PRIMARY KEY,
@@ -362,7 +362,7 @@ class Database
     def cache(key, value)
         begin
             @@db.execute("INSERT OR IGNORE INTO cache(key, value) VALUES(?, ?)", key, value)
-            @@db.execute("UPDATE cache SET value = ?, ttl = (strftime('%s','now') + 604800) WHERE key = ?", value, key)
+            @@db.execute("UPDATE cache SET value = ?, date = strftime('%s','now') WHERE key = ?", value, key)
         rescue => error
             warn "cache: #{error}"
         end
@@ -371,8 +371,8 @@ class Database
     # get cache content and moment of creation
     def getCache(key)
         begin
-            cached = @@db.execute("SELECT value, ttl FROM cache WHERE key = ? AND ttl > strftime('%s','now') LIMIT 1;", key)[0]
-            return cached['value'], (cached['ttl'] - 604800)
+            cached = @@db.execute("SELECT value, date FROM cache WHERE key = ? LIMIT 1;", key)[0]
+            return cached['value'], cached['date']
         rescue => error
             warn "getCache: #{error}"
         end
@@ -398,7 +398,6 @@ class Database
                                                                 " + (origin.tags.map{|tag| "OR key LIKE 'archive/%/"+ SQLite3::Database.quote(tag) +"/%'"}.join(" ")) +"
                                                                 OR key LIKE '/search/%'
                                                                     ")
-                                                                    
             rescue => error
                 warn "invalidateCache for entry: #{error}"
             end
