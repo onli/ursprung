@@ -14,4 +14,6 @@ gem 'gsl'
 gem 'mechanize'
 gem 'kramdown'
 gem 'sprockets', '~> 2.0'
-gem 'yui-compressor'
+gem 'therubyracer'  # not necessary when on Windows or having node installed
+gem 'uglifier'
+gem 'cssminify'

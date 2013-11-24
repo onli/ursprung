@@ -14,7 +14,8 @@ require 'json'
 include ERB::Util
 require 'sinatra/browserid'
 require 'sprockets'
-require 'yui/compressor'
+require 'uglifier'
+require 'cssminify'
 
 
 enable :sessions
@@ -115,8 +116,8 @@ def loadConfiguration()
     settings.assets.append_path File.join(settings.design_default, "js") if design != "default"
     settings.assets.append_path File.join(settings.design_default, "css") if design != "default"
 
-    settings.assets.js_compressor  = YUI::JavaScriptCompressor.new
-    settings.assets.css_compressor = YUI::CssCompressor.new
+    settings.assets.js_compressor  = Uglifier.new
+    settings.assets.css_compressor = CSSminify.new
 
 end
 
