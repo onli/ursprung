@@ -32,7 +32,7 @@
                         
                         <div>
                         <span>Comments are:</span>
-                        <input class="moderationStatus" type="radio" name="moderationStatus" id="moderationStatusOpen" value="open" <%= 'checked="checked"' if entry.moderate == "open" %> />
+                        <input class="moderationStatus" type="radio" name="moderationStatus" id="moderationStatusOpen" value="open" <%= 'checked="checked"' if entry.moderate == "open" || entry.moderate == nil %> />
                         <label class="moderationStatusLabel" for="moderationStatusOpen">Open</label>
                         <input class="moderationStatus" type="radio" name="moderationStatus" id="moderationStatusModerated" value="moderated" <%= 'checked="checked"' if entry.moderate == "moderated" %> />
                         <label class="moderationStatusLabel" for="moderationStatusModerated">Moderated</label>
