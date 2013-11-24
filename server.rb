@@ -339,6 +339,7 @@ post '/addAdmin' do
     if db.firstUse? && ! authorized_email.empty?
         name = params[:name]
         db.addUser(name, authorized_email)
+        db.invalidateCache(nil)
         redirect to('/')
     else
         'Error adding admin: param missing or admin already set'
