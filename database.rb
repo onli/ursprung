@@ -277,7 +277,7 @@ class Database
                 comments.push(Comment.new(row["id"]))
             end
         rescue => error
-            warn "getCommentsForEntry #{error}"
+            warn "getCommentsForEntry #{id}: #{error}"
         end
         return comments
     end
@@ -374,7 +374,7 @@ class Database
             cached = @@db.execute("SELECT value, date FROM cache WHERE key = ? LIMIT 1;", key)[0]
             return cached['value'], cached['date']
         rescue => error
-            warn "getCache: #{error}"
+            warn "getCache: #{error} for #{key}"
         end
     end
 
@@ -407,6 +407,12 @@ class Database
                 @@db.execute("DELETE FROM cache WHERE key LIKE '/#{SQLite3::Database.quote origin.replyToEntry}/%'")
             rescue => error
                 warn "invalidateCache for comment: #{error}"
+            end
+        when "String"
+            begin
+                @@db.execute("DELETE FROM cache WHERE key LIKE ?", origin)
+            rescue => error
+                warn "invalidateCache for path: #{error}"
             end
         end
     
@@ -453,12 +459,22 @@ class Database
     def getEntriesSubscribed(mail)
         entries = []
         begin
-            @@db.execute("SELECT DISTINCT replyToEntry FROM comments where mail == ?;", mail) do  |row|
+            # the proper insertion via ? does not work, dunno why
+            @@db.execute("SELECT DISTINCT replyToEntry FROM comments WHERE mail == '#{SQLite3::Database.quote mail}' AND subscribe == 1;") do  |row|
                 entries.push(Entry.new(row["replyToEntry"]))
             end
         rescue => error
             warn "getEntriesSubscribed: #{error}"
         end
         return entries
+    end
+
+    def unsubscribe(mail, id)
+        begin
+            # the proper insertion via ? does not work, dunno why
+            return @@db.execute("UPDATE comments SET subscribe = 0 WHERE mail == '#{SQLite3::Database.quote mail}' AND replyToEntry == ?", id)
+        rescue => error
+            warn "unsubscribe: #{error}"
+        end
     end
 end

@@ -180,7 +180,7 @@ def serveIndex(page, tag)
         page = totalPages if page == -1
         friends = db.getFriends
         designs = Dir.new(settings.design_root).entries.reject{|design| design == "." || design == ".." }
-        design = db.getOption("design") # TODO: necessary?
+        design = db.getOption("design")
             
         body erb :index, :locals => {:entries => entries, :page => page, :totalPages => totalPages, :friends => friends,
                                 :designs => designs, :design => design, :tag => tag, :allTags => db.getAllTags}
@@ -393,8 +393,23 @@ get  %r{/([0-9]+)/([\w]+)} do |id, title|
 end
 
 get '/subscriptions/:mail' do
-    body erb :subscriptions, :locals => {:mail => params[:mail], :entries => Database.new.getEntriesSubscribed(params[:mail])}
+    db = Database.new
+    cipher = OpenSSL::Cipher::Cipher.new('bf-cbc').send(:decrypt)
+    cipher.key = Digest::SHA256.digest(db.getOption("secret"))
+    mail = cipher.update(params[:mail]) << cipher.final
+    body erb :subscriptions, :locals => {:mail => mail, :entries => db.getEntriesSubscribed(mail), :encryptedMail => params[:mail]}
 end
+
+post '/unsubscribe' do
+    db = Database.new
+    cipher = OpenSSL::Cipher::Cipher.new('bf-cbc').send(:decrypt)
+    cipher.key = Digest::SHA256.digest(db.getOption("secret"))
+    mail = cipher.update(u(params[:encryptedMail])) << cipher.final
+    db.unsubscribe(mail, params[:id])
+    db.invalidateCache("/subscriptions/%")
+    redirect back
+end
+
 
 get "/js/:file.js" do
   content_type "application/javascript"

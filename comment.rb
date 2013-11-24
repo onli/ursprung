@@ -79,6 +79,7 @@ class Comment
         self.replyToEntry = commentData["replyToEntry"]
         self.type = commentData["type"]
         self.status = commentData["status"]
+        self.subscribe = commentData["subscribe"]
         commentAuthor = CommentAuthor.new
         commentAuthor.name = commentData["name"]
         commentAuthor.mail = commentData["mail"]
@@ -149,7 +150,6 @@ class Comment
     def mailOwner(request)
         db = Database.new
         begin
-            puts "trying to send mail to owner"
             entry = self.entry
             Pony.mail(:to => db.getAdminMail,
                   :from => db.getOption("fromMail"),
@@ -168,13 +168,16 @@ class Comment
             blogTitle = db.getOption("blogTitle")
             mailDelivered = []
             entry = self.entry
-            db.getCommentsForEntry(Entry.new(self.replyToEntry)).each do |comment|
-                if comment.subscribe && comment.author.mail && comment != self && ! mailDelivered.contains?(comment.author.mail) && comment.author.mail != db.getAdminMail
+            db.getCommentsForEntry(self.replyToEntry).each do |comment|
+                if comment.subscribe && comment.author.mail && comment != self && ! mailDelivered.include?(comment.author.mail) && comment.author.mail != db.getAdminMail
                     begin
+                        cipher = OpenSSL::Cipher::Cipher.new('bf-cbc').send(:encrypt)
+                        cipher.key = Digest::SHA256.digest(db.getOption("secret"))
+                        encrypted = cipher.update(comment.author.mail) << cipher.final
                         Pony.mail(:to => comment.author.mail,
                               :from => fromMail,
                               :subject => "#{blogTitle}: #{self.author.name} commented on #{Entry.new(self.replyToEntry).title}",
-                              :body => "He wrote: #{self.body}\n\nLink: #{entry.link(request)}\n\nLink: #{entry.link(request)}\n\nUnsubscribe: http://#{request.host_with_port}/subscriptions/#{URI.escape(comment.author.mail)}"
+                              :body => "He wrote: #{self.body}\n\nLink: #{entry.link(request)}\n\nLink: #{entry.link(request)}\n\nUnsubscribe: http://#{request.host_with_port}/subscriptions/#{URI.escape(encrypted)}"
                               )
                         mailDelivered.push(comment.author.mail)
                     rescue Errno::ECONNREFUSED => e

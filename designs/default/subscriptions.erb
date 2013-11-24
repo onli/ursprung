@@ -18,11 +18,11 @@
         <% entries.each do |entry| %>
             <li><form action="/unsubscribe" method="POST">
                 <input type="hidden" name="id" value="<%= entry.id %>" />
+                <input type="hidden" name="encryptedMail" value="<%=h encryptedMail %>" />
                 <span><%= entry.title %></span> <button type="submit">Unsubscribe</button>
             </form></li>
         <% end %>
         </ol>
-        
 
         </div>
     </body>
