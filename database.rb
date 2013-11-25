@@ -389,12 +389,13 @@ class Database
             end
         when "Entry"
             begin
-                archivePage = origin.archivePage.to_s
+                archivePage = origin.archivePage
                 amount = 5
-                @@db.execute("DELETE FROM cache WHERE key LIKE '/||==||%'") if archivePage == self.getTotalPages(amount, nil).to_s
+                totalPages = [self.getTotalPages(amount, nil)[0], 1].max   # getTotalPages correctly reports 0 when the only entry gets deleted, but min of archivePage is 1
+                @@db.execute("DELETE FROM cache WHERE key LIKE '/||==||%'") if archivePage == totalPages
                 # origin.id and archivePage throw a bind or column index out of range error when inserted properly
                 @@db.execute("DELETE FROM cache WHERE key LIKE '/#{SQLite3::Database.quote origin.id.to_s}/%'
-                                                                OR key LIKE '/archive/#{SQLite3::Database.quote archivePage}/||==||%'
+                                                                OR key LIKE '/archive/#{SQLite3::Database.quote archivePage.to_s}/||==||%'
                                                                 " + (origin.tags.map{|tag| "OR key LIKE 'archive/%/"+ SQLite3::Database.quote(tag) +"/%'"}.join(" ")) +"
                                                                 OR key LIKE '/search/%'
                                                                     ")
