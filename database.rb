@@ -398,6 +398,7 @@ class Database
                                                                 OR key LIKE '/archive/#{SQLite3::Database.quote archivePage.to_s}/||==||%'
                                                                 " + (origin.tags.map{|tag| "OR key LIKE 'archive/%/"+ SQLite3::Database.quote(tag) +"/%'"}.join(" ")) +"
                                                                 OR key LIKE '/search/%'
+                                                                OR key LIKE '/feed/%'
                                                                     ")
             rescue => error
                 warn "invalidateCache for entry: #{error}"
@@ -405,7 +406,7 @@ class Database
         when "Comment"
             begin
                 # throws a bind or column index out of range error when inserted properly as well
-                @@db.execute("DELETE FROM cache WHERE key LIKE '/#{SQLite3::Database.quote origin.replyToEntry}/%'")
+                @@db.execute("DELETE FROM cache WHERE key LIKE '/#{SQLite3::Database.quote origin.replyToEntry}/%' OR key LIKE '/commentFeed/%'")
             rescue => error
                 warn "invalidateCache for comment: #{error}"
             end
