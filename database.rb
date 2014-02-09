@@ -454,7 +454,7 @@ class Database
         @@db.execute("SELECT docid FROM search WHERE search MATCH ?;", keyword) do |row|
             entries.push(Entry.new(row["docid"]))
         end
-        return entries
+        return entries.delete_if{|entry| entry.id == nil}
     end
 
     def getEntriesSubscribed(mail)

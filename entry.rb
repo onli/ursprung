@@ -46,13 +46,15 @@ class Entry
     def initializeFromID(id, deleted)
         db = Database.new
         entryData = db.getEntryData(id, deleted)
-        self.id = id
-        self.body = entryData["body"]
-        self.title = entryData["title"]
-        self.date = entryData["date"]
-        self.author = entryData["author"]
-        self.moderate = entryData["moderate"]
-        self.tags = entryData["tags"]
+        if entryData != nil
+            self.id = id
+            self.body = entryData["body"]
+            self.title = entryData["title"]
+            self.date = entryData["date"]
+            self.author = entryData["author"]
+            self.moderate = entryData["moderate"]
+            self.tags = entryData["tags"]
+        end
     end
 
     def save()
