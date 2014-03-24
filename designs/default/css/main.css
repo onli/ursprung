@@ -135,6 +135,7 @@ summary {
 
 .editorSubmitButtons {
     display: inline-block;
+    vertical-align: bottom;
 }
 
 .entryTagInput {
