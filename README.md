@@ -22,7 +22,7 @@ If you have ruby installed, make sure that the `bundle` gem is installed. Then, 
 
 to install the needed gems, and
 
-    bundle exec ruby server.rb
+    bundle exec ruby server.rb -e production -p PORT
 
 to start the blog.
 
