@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <%= erb :head, :locals => {:tag => nil}%>
+        <%= erb :head, :locals => {:tag => nil} %>
         <title>search for <%= keyword %> - <%= blogTitle %></title>
         <meta name="description" content="">
     </head>
@@ -13,7 +13,7 @@
             <ol>
             <% entries.each do |entry| %>
                 <li>
-                    <h3><a href="<%= <%= url_for entry.link %>"><%= entry.title %></a></h3>
+                    <h3><a href="<%= url_for entry.link %>"><%= entry.title %></a></h3>
                     <div itemprop="articleBody"><%= excerpt(stripHtml(entry.format)) %></div>
                 </li>
             <% end %>
