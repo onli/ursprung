@@ -154,7 +154,7 @@ class Comment
             Pony.mail(:to => db.getAdminMail,
                   :from => db.getOption("fromMail"),
                   :subject => "#{db.getOption("blogTitle")}: #{self.author.name} commented on #{entry.title}",
-                  :body => "He wrote: \n\n#{self.body}\n\nLink: #{entry.link(request)}"
+                  :body => "He wrote: \n\n#{self.body}\n\nLink: #{entry.link}"
                   )
         rescue Errno::ECONNREFUSED => e
             warn "Error mailing owner: #{e}"

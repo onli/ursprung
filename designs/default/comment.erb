@@ -36,7 +36,7 @@
                 </form>
             <% else %>
                 <a href="<%= url_for "/#{comment.id}/editComment" %>"><button type="submit" class="edit" title="edit">&#9998;</button></a>
-                <form action="<%= url_for "/#{comment.id}/deleteComment' %>" method="POST">
+                <form action="<%= url_for "/#{comment.id}/deleteComment" %>" method="POST">
                     <button type="submit" class="delete" title="delete comment">&#10005;</button>
                 </form>
                 <form action="<%= url_for "/#{comment.id}/spam" %>" method="POST">

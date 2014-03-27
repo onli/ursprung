@@ -325,7 +325,7 @@ end
 post %r{/([0-9]+)/addComment} do |id|
     entry = Entry.new(id.to_i)
     params[:entryId] = id
-    Comment.new(params, request)
+    comment = Comment.new(params, request)
     
     redirect url_for comment.entry.link
 end
