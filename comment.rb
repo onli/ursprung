@@ -133,7 +133,6 @@ class Comment
             end
         end
         m.take_snapshot
-        self.save
     end
 
     def isSpam?()

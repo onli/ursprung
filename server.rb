@@ -291,14 +291,16 @@ end
 post %r{/([0-9]+)/spam} do |id|
     protected!
     comment = Comment.new(id.to_i)
-    comment.spam
+    comment.spam()
     comment.delete
     "Done"
 end
 
 post %r{/([0-9]+)/ham} do |id|
     protected!
-    Comment.new(id.to_i).ham
+    comment = Comment.new(id.to_i)
+    comment.ham()
+    comment.save(request)   # ham also marks as approved, which needs to be saved
     "Done"
 end
 
