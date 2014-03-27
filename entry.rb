@@ -205,7 +205,7 @@ class Entry
     end
 
     def link()
-        return "#{self.id}/#{URI.escape(title)}"
+        return "/#{self.id}/#{URI.escape(title)}"
     end
 
     # get the number of the archive this article is listed on
