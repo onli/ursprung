@@ -25,21 +25,21 @@
     <div class="adminOptions" data-id="<%= comment.id %>">
         <% if isAdmin? %>
             <% if comment.status != "approved" %>
-                <form action="/<%= comment.id %>/ham" method="POST">
+                <form action="<%= url_for "/#{comment.id}/ham" %>" method="POST">
                     <button type="submit" title="accept comment">&#10003;</button>
                 </form>
-                <form action="/<%= comment.id %>/deleteComment" method="POST">
+                <form action="/<%= url_for "/#{comment.id}/deleteComment" %>" method="POST">
                     <button type="submit" class="delete" title="delete comment">&#10005;</button>
                 </form>
-                <form action="/<%= comment.id %>/spam" method="POST">
+                <form action="<%= url_for "/#{comment.id}/spam" %>" method="POST">
                     <button type="submit" title="mark comment as spam">spam</button>
                 </form>
             <% else %>
-                <a href="/<%= comment.id %>/editComment"><button type="submit" class="edit" title="edit">&#9998;</button></a>
-                <form action="/<%= comment.id %>/deleteComment" method="POST">
+                <a href="<%= url_for "/#{comment.id}/editComment" %>"><button type="submit" class="edit" title="edit">&#9998;</button></a>
+                <form action="<%= url_for "/#{comment.id}/deleteComment' %>" method="POST">
                     <button type="submit" class="delete" title="delete comment">&#10005;</button>
                 </form>
-                <form action="/<%= comment.id %>/spam" method="POST">
+                <form action="<%= url_for "/#{comment.id}/spam" %>" method="POST">
                     <button type="submit" title="mark comment as spam">spam</button>
                 </form>
             <% end %>

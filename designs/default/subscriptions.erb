@@ -4,7 +4,6 @@
     <head>
         <%= erb :head, :locals => {:tag => nil}%>
         <title>Subscriptions Control - <%= blogTitle %></title>
-        <link rel="alternate"  type="application/rss+xml" href="/feed" />
         <meta name="description" content="">
     </head>
 
@@ -16,7 +15,7 @@
 
         <ol>
         <% entries.each do |entry| %>
-            <li><form action="/unsubscribe" method="POST">
+            <li><form action="<%= url_for '/unsubscribe' %>" method="POST">
                 <input type="hidden" name="id" value="<%= entry.id %>" />
                 <input type="hidden" name="encryptedMail" value="<%=h encryptedMail %>" />
                 <span><%= entry.title %></span> <button type="submit">Unsubscribe</button>

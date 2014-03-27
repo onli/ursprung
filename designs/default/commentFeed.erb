@@ -7,15 +7,15 @@
    >
     <channel>
         <title>Comments</title>
-        <link>http://<%= request.host_with_port %></link>
+        <link><%= url_for '/', :full %>></link>
         <description></description>
         <generator>Blog</generator>
-        <atom:link href="http://<%= request.host_with_port %>/commentFeed" rel="self" type="application/rss+xml" />
+        <atom:link href="<%= url_for '/commentFeed', :full %>" rel="self" type="application/rss+xml" />
 
         <% comments.each do |comment| %>
             <item>
                 <title><%= comment.author.name %>: <%= comment.body[/[^ ]*/] %><%= "..." if comment.body.count(" ") > 1 %></title>
-               <link><%= comment.entry.link(request) %></link>
+               <link><%= <%= url_for comment.entry.link %></link>
 
                 <% if ! comment.body.empty? %>
                     <content:encoded>

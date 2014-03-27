@@ -1,5 +1,5 @@
 <%# -*- encoding : utf-8 -*- %>
-<form class="commentForm" <%= 'id=commentForm' if comment == nil %> action="/<%= entry.id %>/addComment" method="POST">
+<form class="commentForm" <%= 'id=commentForm' if comment == nil %> action="<%= url_for "/#{entry.id}/addComment" %>" method="POST">
     <% if comment != nil %>
         <input type="hidden" name="id" value="<%= comment.id %>"/>
     <% end %>

@@ -177,7 +177,8 @@ class Comment
                         Pony.mail(:to => comment.author.mail,
                               :from => fromMail,
                               :subject => "#{blogTitle}: #{self.author.name} commented on #{Entry.new(self.replyToEntry).title}",
-                              :body => "He wrote: #{self.body}\n\nLink: #{entry.link(request)}\n\nLink: #{entry.link(request)}\n\nUnsubscribe: http://#{request.host_with_port}/subscriptions/#{URI.escape(encrypted)}"
+                              # TODO: Use a temmplate (with url_for) for this
+                              :body => "He wrote: #{self.body}\n\nLink: #{entry.link}\n\nLink: #{entry.link}\n\nUnsubscribe: http://#{request.host_with_port}/subscriptions/#{URI.escape(encrypted)}"
                               )
                         mailDelivered.push(comment.author.mail)
                     rescue Errno::ECONNREFUSED => e

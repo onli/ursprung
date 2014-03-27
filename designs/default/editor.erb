@@ -1,5 +1,5 @@
 <%# -*- encoding : utf-8 -*- %>
-<form class="editor" action="/addEntry" method="POST">
+<form class="editor" action="<%= url_for '/addEntry' %>" method="POST">
     <label><input class="entryTitleInput" name="title" value="<%= entry.title if entry != nil %>" placeholder="Title" required></input></label>
     <textarea class="entryInput" name="body" rows=10 placeholder="Entry"><%= entry.body if entry != nil %></textarea>
     <% if entry %>

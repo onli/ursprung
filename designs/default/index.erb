@@ -4,7 +4,6 @@
     <head>
         <%= erb :head, :locals => {:tag => tag}%>
         <title><%= blogTitle %></title>
-        <link rel="alternate"  type="application/rss+xml" href="/feed" />
         <meta name="description" content="">
     </head>
 
@@ -12,7 +11,7 @@
         
         <aside id="widget">
             <% if isAdmin? %>
-                <div id="welcome">Welcome <%= authorized_email %> <form id="logout" action="/logout" method="POST"><button type="submit">Logout</button></form></div>
+                <div id="welcome">Welcome <%= authorized_email %> <form id="logout" action="<%= url_for '/logout' %>" method="POST"><button type="submit">Logout</button></form></div>
                 <%= erb :designs, :locals => {:design => design, :designs => designs} %>
             <% else %>
                 <%= render_login_button %>
@@ -38,10 +37,10 @@
 
             <nav id="browser">
                 <% if page.to_i != 1 && page.to_i != 0 %>
-                    <a id="browsePrior" rel="prev" href="/archive/<%= (page.to_i - 1)%>/<%= tag %>">older</a>
+                    <a id="browsePrior" rel="prev" href="<%= url_for '/archive/' + (page.to_i - 1).to_s %>/<%= tag %>">older</a>
                 <% end %>
                 <% if page.to_i != totalPages %>
-                    <a id="browseNext" rel="next" href="/archive/<%= (page.to_i + 1)%>/<%= tag %> ">newer</a>
+                    <a id="browseNext" rel="next" href="<%= url_for '/archive/' + (page.to_i + 1).to_s %>/<%= tag %> ">newer</a>
                 <% end %>  
             </nav>
             <footer>

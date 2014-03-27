@@ -1,6 +1,6 @@
 <%# -*- encoding : utf-8 -*- %>
 <header>
-    <h2 class="entryTitle"><a href="<%= entry.link(request) %>" itemprop="headline"><%= entry.title %></a></h2>
+    <h2 class="entryTitle"><a href="<%= url_for entry.link %>" itemprop="headline"><%= entry.title %></a></h2>
 </header>
 <div itemprop="articleBody"><%= autotitle(entry.format) %></div>
 <footer>

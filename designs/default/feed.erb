@@ -7,17 +7,17 @@
    >
     <channel>
         <title>Blog</title>
-        <link>http://<%= request.host_with_port %></link>
+        <link><%= url_for '/', :full %></link>
         <description></description>
         <generator>Blog</generator>
-        <atom:link href="http://<%= request.host_with_port %>/feed" rel="self" type="application/rss+xml" />
+        <atom:link href="<%= url_for '/feed' %>" rel="self" type="application/rss+xml" />
 
         <% entries.each do |entry| %>
             <item>
                 <title><%= entry.title %></title>
-                <link>http://<%= request.host_with_port %>/<%= entry.id %>/<%= h entry.title %></link>
+                <link><%= url_for entry.link %></link>
 
-                <comments>http://<%= request.host_with_port %>/<%= entry.id %>/<%= h entry.title %>#comments</comments>   
+                <comments><%= url_for entry.link %>#comments</comments>   
 
                 <% if ! entry.body.empty? %>
                     <content:encoded>

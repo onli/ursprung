@@ -13,7 +13,7 @@
             <ol>
             <% entries.each do |entry| %>
                 <li>
-                    <h3><a href="<%= entry.link(request) %>"><%= entry.title %></a></h3>
+                    <h3><a href="<%= <%= url_for entry.link %>"><%= entry.title %></a></h3>
                     <div itemprop="articleBody"><%= excerpt(stripHtml(entry.format)) %></div>
                 </li>
             <% end %>

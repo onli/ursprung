@@ -16,10 +16,11 @@ require 'sinatra/browserid'
 require 'sprockets'
 require 'uglifier'
 require 'cssminify'
+require 'sinatra/url_for'
 
 
 enable :sessions
-set :browserid_login_button, "/img/browserid.png"
+set :browserid_login_button, "img/browserid.png"
 
 set :static_cache_control, [:public, max_age: 31536000]
 

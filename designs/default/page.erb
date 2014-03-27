@@ -5,8 +5,8 @@
         <%= erb :head, :locals => {:tag => nil} %>
         <title><%= entry.title %> - <%= blogTitle %></title>
         <meta name="description" content="">
-        <link rel="trackback" type="application/x-www-form-urlencoded" href="http://<%= request.host_with_port %>/<%= entry.id %>/addTrackback" />
-        <link rel="pingback" href="http://<%= request.host_with_port %>/xmlrpc" />
+        <link rel="trackback" type="application/x-www-form-urlencoded" href="<%= url_for entry.id, :full %>/addTrackback" />
+        <link rel="pingback" href="<%= url_for '/xmlrpc' %>" />
     </head>
 
     <body>
@@ -21,14 +21,14 @@
                          xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/"
                          xmlns:dc="http://purl.org/dc/elements/1.1/">
                 <rdf:Description
-                         trackback:ping="http://<%= request.host_with_port %>/<%= entry.id %>/addTrackback"
+                         trackback:ping="<%= url_for '/#{entry.id}/addTrackback', :full %>"
                          dc:title="<%= entry.title %>"
-                         dc:identifier="http://<%= request.host_with_port %>/<%= entry.id %>/<%= h entry.title %>" />
+                         dc:identifier="<%= url_for "/#{entry.id}/", :full %><%= h entry.title %>" />
                 </rdf:RDF>
                 -->
 
                  <% if isAdmin? %>
-                    <form id="entryModerationToggle" action="/<%= entry.id %>/setEntryModeration" method="POST" >
+                    <form id="entryModerationToggle" action="<%= url_for "/#{entry.id}/setEntryModeration" %>" method="POST" >
                         
                         <div>
                         <span>Comments are:</span>

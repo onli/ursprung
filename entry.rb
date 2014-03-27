@@ -204,8 +204,8 @@ class Entry
         return uris
     end
 
-    def link(request)
-        return "http://#{request.host_with_port}/#{self.id}/#{URI.escape(title)}"
+    def link()
+        return "#{self.id}/#{URI.escape(title)}"
     end
 
     # get the number of the archive this article is listed on
