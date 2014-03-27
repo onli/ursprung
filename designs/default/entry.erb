@@ -6,11 +6,11 @@
 <footer>
     <span itemprop="creator"><%= entry.author %></span>, 
     <time itemprop="datePublished" datetime="<%= Time.parse(entry.date).iso8601 %>"><%= Time.parse(entry.date).strftime("%d.%m.%Y") %></time>
-    <span itemprop="keywords" class="tags"><%= entry.tags.map { |tag| '<a href="/archive/1/' + tag + '">'+ tag + '</a>' }.join(" ") if entry.tags != nil %></span>
+    <span itemprop="keywords" class="tags"><%= entry.tags.map { |tag| '<a href="<%= url_for '/archive/1/' + tag + '">'+ tag + '</a>' }.join(" ") if entry.tags != nil %></span>
     <% if isAdmin? %>
         <div class="adminOptions">
-            <a href="/<%= entry.id %>/editEntry"><button type="button" class="edit adminAction" title="edit">&#9998;</button></a>
-            <form action="/<%= entry.id %>/deleteEntry" method="POST" data-entryid="<%= entry.id %>">
+            <a href="<%= url_for "/#{entry.id}/editEntry" %>"><button type="button" class="edit adminAction" title="edit">&#9998;</button></a>
+            <form action="<%= url_for "/#{entry.id}/deleteEntry" %>" method="POST" data-entryid="<%= entry.id %>">
                 <button type="submit" class="delete adminAction" title="delete">&#10005;</button>
             </form>
         </div>
