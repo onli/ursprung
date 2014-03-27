@@ -205,7 +205,7 @@ end
 post '/addEntry' do
     protected!
     entry = Entry.new(params, request)
-    redirect "/#{entry.id}/#{URI.escape(entry.title)}"
+    redirect url_for entry.link
 end
 
 post %r{/([0-9]+)/addTrackback} do |id|
@@ -327,7 +327,7 @@ post %r{/([0-9]+)/addComment} do |id|
     params[:entryId] = id
     Comment.new(params, request)
     
-    redirect "/#{entry.id}/#{entry.title}"
+    redirect url_for comment.entry.link
 end
 
 get '/commentFeed' do
@@ -371,7 +371,7 @@ get %r{/search/([\w]+)} do |keyword|
 end
 
 get '/search' do
-    redirect '/search/'+params[:keyword]
+    redirect url_for '/search/'+params[:keyword]
 end
 
 post '/preview' do
@@ -426,5 +426,5 @@ end
 
 post '/logout' do
     logout!
-    redirect '/'
+    redirect url_for '/'
 end
