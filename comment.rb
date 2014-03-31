@@ -154,7 +154,7 @@ class Comment
             Pony.mail(:to => db.getAdminMail,
                   :from => db.getOption("fromMail"),
                   :subject => "#{db.getOption("blogTitle")}: #{self.author.name} commented on #{entry.title}",
-                  :body => "He wrote: #{self.format}\n\nLink: #{baseUrl}#{entry.link}"
+                  :body => "He wrote: #{self.format}\n\nLink: #{baseUrl[0...-1]}#{entry.link}"
                   )
         rescue Errno::ECONNREFUSED => e
             warn "Error mailing owner: #{e}"
@@ -169,7 +169,7 @@ class Comment
             mailDelivered = []
             entry = self.entry
             db.getCommentsForEntry(self.replyToEntry).each do |comment|
-                if comment.subscribe && comment.author.mail && comment != self && ! mailDelivered.include?(comment.author.mail) && comment.author.mail != db.getAdminMail
+                if comment.subscribe && comment.author.mail && comment.author.mail != "" && comment != self && ! mailDelivered.include?(comment.author.mail) && comment.author.mail != db.getAdminMail
                     begin
                         cipher = OpenSSL::Cipher::Cipher.new('bf-cbc').send(:encrypt)
                         cipher.key = Digest::SHA256.digest(db.getOption("secret"))

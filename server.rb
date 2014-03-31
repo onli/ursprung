@@ -296,7 +296,7 @@ post %r{/([0-9]+)/ham} do |id|
     protected!
     comment = Comment.new(id.to_i)
     comment.ham()
-    baseUrl = url_for '/'
+    baseUrl = url_for '/', :full
     comment.save(baseUrl)   # ham also marks as approved, which needs to be saved
     "Done"
 end
@@ -324,7 +324,7 @@ end
 post %r{/([0-9]+)/addComment} do |id|
     entry = Entry.new(id.to_i)
     params[:entryId] = id
-    baseUrl = url_for '/'
+    baseUrl = url_for '/', :full
     comment = Comment.new(params, baseUrl)
     
     redirect url_for comment.entry.link
