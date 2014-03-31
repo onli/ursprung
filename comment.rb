@@ -2,6 +2,7 @@ require 'classifier'
 require 'madeleine'
 require 'pony'
 require 'kramdown'
+require './commentauthor.rb'
 
 class Comment
     attr_accessor :author
@@ -24,7 +25,7 @@ class Comment
         when 2
             # creating comment from hash
             params = args[0]
-            request = args[1]
+            baseUrl = args[1]
             return if params[:tel] && params[:tel] != "" # the honeypot
             commentAuthor = CommentAuthor.new
             commentAuthor.name = Sanitize.clean(params[:name].strip)
@@ -49,20 +50,20 @@ class Comment
             self.subscribe = 1 if params[:subscribe] != nil
             self.type = params[:type]
             if self.type == "trackback"
-                name = getPingbackData(request)
+                name = getPingbackData()
                 if name
                     if self.body == ""
                         # it is a pingback, which needs to use the additional data
                         commentAuthor.name = name
                         self.author = commentAuthor
                     end
-                    self.save(request)
+                    self.save(baseUrl)
                     self.validTrackback = true
                 else
                     self.validTrackback = false
                 end
             else
-                self.save(request)
+                self.save(baseUrl)
                 self.validTrackback = true
             end
         end
@@ -87,14 +88,14 @@ class Comment
         self.author = commentAuthor
     end
 
-    def save(request)
+    def save(baseUrl)
         db = Database.new
         if self.id == nil
             # it is a new comment
             db.addComment(self)
-            mailOwner(request)
+            mailOwner(baseUrl)
             if (self.status == "approved")
-                mailSubscribers(request)
+                mailSubscribers(baseUrl)
             end
         else
             db.editComment(self)
@@ -146,21 +147,21 @@ class Comment
         return Entry.new(self.replyToEntry)
     end
 
-    def mailOwner(request)
+    def mailOwner(baseUrl)
         db = Database.new
         begin
             entry = self.entry
             Pony.mail(:to => db.getAdminMail,
                   :from => db.getOption("fromMail"),
                   :subject => "#{db.getOption("blogTitle")}: #{self.author.name} commented on #{entry.title}",
-                  :body => "He wrote: \n\n#{self.body}\n\nLink: #{entry.link}"
+                  :body => "He wrote: #{self.format}\n\nLink: #{baseUrl}#{entry.link}"
                   )
         rescue Errno::ECONNREFUSED => e
             warn "Error mailing owner: #{e}"
         end
     end
 
-    def mailSubscribers(request)
+    def mailSubscribers(baseUrl)
         db = Database.new
         fromMail = db.getOption("fromMail")
         if fromMail && fromMail != ""
@@ -177,7 +178,7 @@ class Comment
                               :from => fromMail,
                               :subject => "#{blogTitle}: #{self.author.name} commented on #{Entry.new(self.replyToEntry).title}",
                               # TODO: Use a temmplate (with url_for) for this
-                              :body => "He wrote: #{self.body}\n\nLink: #{entry.link}\n\nLink: #{entry.link}\n\nUnsubscribe: http://#{request.host_with_port}/subscriptions/#{URI.escape(encrypted)}"
+                              :body => "He wrote: #{self.format}\n\nLink: #{baseUrl}#{entry.link}\n\nUnsubscribe: #{baseUrl}subscriptions/#{URI.escape(encrypted)}"
                               )
                         mailDelivered.push(comment.author.mail)
                     rescue Errno::ECONNREFUSED => e
@@ -189,7 +190,7 @@ class Comment
     end
 
     # If a valid link exists, gather the data to format the pingback. Else return false
-    def getPingbackData(request)
+    def getPingbackData()
         uri = URI.parse(self.author.url)
         http = Net::HTTP.new(uri.host, uri.port)
         http_request = Net::HTTP::Get.new(uri.request_uri)
@@ -199,7 +200,7 @@ class Comment
         title = doc.title
         
         doc.css("a").map do |link|
-            if (href = link.attr("href")) && href.match(/#{self.entry.link(request)}.*/)
+            if (href = link.attr("href")) && href.match(/#{self.entry.link()}.*/)
                 return title
             end
         end.compact

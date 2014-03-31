@@ -4,7 +4,6 @@ require 'rubygems'
 require './database.rb'
 require './entry.rb'
 require './comment.rb'
-require './commentauthor.rb'
 
 require 'sinatra'
 require 'sanitize'
@@ -119,7 +118,6 @@ def loadConfiguration()
 
     settings.assets.js_compressor  = Uglifier.new
     settings.assets.css_compressor = CSSminify.new
-
 end
 
 configure do
@@ -151,8 +149,6 @@ end
 after do
     if @cacheContent == nil && request.request_method == "GET"
         Database.new.cache("#{request.path_info}||==||#{authorized_email}", body)
-        last_modified Date.to_s
-        etag Digest::MD5.hexdigest(body.to_s)
     end
 end
 
@@ -300,7 +296,8 @@ post %r{/([0-9]+)/ham} do |id|
     protected!
     comment = Comment.new(id.to_i)
     comment.ham()
-    comment.save(request)   # ham also marks as approved, which needs to be saved
+    baseUrl = url_for '/'
+    comment.save(baseUrl)   # ham also marks as approved, which needs to be saved
     "Done"
 end
 
@@ -327,7 +324,8 @@ end
 post %r{/([0-9]+)/addComment} do |id|
     entry = Entry.new(id.to_i)
     params[:entryId] = id
-    comment = Comment.new(params, request)
+    baseUrl = url_for '/'
+    comment = Comment.new(params, baseUrl)
     
     redirect url_for comment.entry.link
 end

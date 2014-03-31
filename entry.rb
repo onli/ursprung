@@ -22,7 +22,6 @@ class Entry
         when 2
             # creating entry from params 
             params = args[0]
-            request = args[1]
             self.body = params[:body]
             self.title = params[:title].strip
             self.id = params[:id] if params[:id] != nil
@@ -32,9 +31,9 @@ class Entry
             # and save in database, if not a preview
             if not params[:preview]
                 self.save
-                remainingLinks = self.sendTrackbacks(request)
+                remainingLinks = self.sendTrackbacks()
                 if remainingLinks.length >= 1
-                    self.sendPingbacks(request, remainingLinks)
+                    self.sendPingbacks(remainingLinks)
                 end
             end
         when 3
@@ -80,7 +79,7 @@ class Entry
         db.deleteEntry(self.id)
     end
 
-    def sendTrackbacks(request)
+    def sendTrackbacks()
         uris = self.links()
         if uris.length == 0
             return uris
@@ -117,7 +116,7 @@ class Entry
         end
 
         data = {"title" => self.title,
-                "url" => self.link(request),
+                "url" => self.link(),
                 "excerpt" => Sanitize.clean(self.body)[0..30].gsub(/\s\w+$/, '...'),
                 "blog_name" => Database.new.getOption("blogTitle")
                 }
@@ -142,7 +141,7 @@ class Entry
         return uris
     end
 
-    def sendPingbacks(request, remainingLinks = nil)
+    def sendPingbacks(remainingLinks = nil)
         uris = remainingLinks
         if uris == nil
             uris = self.links()
@@ -178,7 +177,7 @@ class Entry
         pingbackLinks.each do |link|
             server = XMLRPC::Client.new2(link[:server])
             begin
-                result = server.call('pingback.ping', self.link(request), link[:target].to_s)
+                result = server.call('pingback.ping', self.link(), link[:target].to_s)
             rescue Exception => error
                 puts error
             end
