@@ -197,14 +197,19 @@ class Entry
             begin
                 uris.push(URI.parse(link))
             rescue URI::InvalidURIError => error
-                warn "could not parse link: "+error.to_s
+                warn "could not parse link: " + error.to_s
             end
         end
         return uris
     end
 
     def link()
-        return "/#{self.id}/#{URI.escape(title)}"
+        begin
+            return "/#{self.id}/#{URI.escape(title)}"
+        rescue => error
+            warn "could not create link: " + error.to_s
+            return "/#{self.id}/404"
+        end
     end
 
     # get the number of the archive this article is listed on
@@ -216,7 +221,12 @@ class Entry
 
     def format()
         # NOTE: :hard_wrap will only work in future versions
-        return Kramdown::Document.new(self.body, :auto_ids => false, :hard_wrap => true).to_html
+        begin
+            return Kramdown::Document.new(self.body, :auto_ids => false, :hard_wrap => true).to_html
+        rescue  => error
+            warn "could not format entry: " + error.to_s
+            return self.body
+        end
     end
 
 end
