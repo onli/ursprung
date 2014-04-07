@@ -4,6 +4,8 @@
 snack.ready(function() {
     initEditElements();
     initDeleteElements();
+    initHamElements();
+    initSpamElements();
 
     function initEditElements() {
         ajaxify('.edit', function(res, parent) { 
@@ -49,7 +51,7 @@ snack.ready(function() {
         ajaxify('.delete', function(res, parent) {
             events = ["animationend", "webkitAnimationEnd", "oanimationend", "MSAnimationEnd"];
             events.forEach(function(event) {
-                snack.wrap(parent).addClass("fadeout").attach(event, function() {
+                snack.wrap(parent).attach(event, function() {
                     parent.removeEventListener(event, arguments.callee, false);
                     var entry = parent.cloneNode();
                     while (parent.hasChildNodes()) {
@@ -90,6 +92,36 @@ snack.ready(function() {
                     }
                 });
             });
+            snack.wrap(parent).addClass("fadeout");
+        });
+    }
+    
+    function initHamElements() {
+        ajaxify('.ham', function(res, parent) { 
+            if (navigator.userAgent.match(/.*Firefox.*/)) {
+                // detect firefox here, because in firefox you cant create an empty element and chrome can't add the form as inner/outerhtml without errors
+                var comment = document.createElement("div");
+            } else {
+                var comment = document.createElement();
+            }
+            comment.innerHTML = res;
+            comment.querySelector('article').className += ' highlight';
+            parent.parentNode.replaceChild(comment, parent);
+        });
+    }
+    
+    function initSpamElements() {
+        ajaxify('.spam', function(res, parent) { 
+            events = ["animationend", "webkitAnimationEnd", "oanimationend", "MSAnimationEnd"];
+            events.forEach(function(event) {
+                snack.wrap(parent).attach(event, function() {
+                    parent.removeEventListener(event, arguments.callee, false);
+                    while (parent.hasChildNodes()) {
+                        parent.removeChild(parent.lastChild);
+                    };
+                });
+            });
+            snack.wrap(parent).addClass("fadeout")
         });
     }
 

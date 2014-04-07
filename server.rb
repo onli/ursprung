@@ -298,7 +298,8 @@ post %r{/([0-9]+)/ham} do |id|
     comment.ham()
     baseUrl = url_for '/', :full
     comment.save(baseUrl)   # ham also marks as approved, which needs to be saved
-    "Done"
+    return "Done" if ! request.xhr?
+    erb :comment, :locals => {:comment => comment}
 end
 
 get %r{/([0-9]+)/verdict} do |id|
