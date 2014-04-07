@@ -24,7 +24,7 @@ Test trackbacks with serendipity DONE
 Test trackbacks with wordpress ODNE
 Moderation
  * Delete comment DONE
-  * Ajaxify deletion
+  * Ajaxify deletion DONE
  * Edit comment DONE
   * Ajaxify 
  * have a toggle to let comments be moderated by default DONE
@@ -40,11 +40,11 @@ Build good enough default design
 Caching DONE
 
 Have a way to include images
- * locally?
+ * locally? DONE
  * use flickr, picasa, ... instead?
 Add tags DONE
 Add custom markup language (multiple options?)
-Target Cache invalidation
+Target Cache invalidation DONE
 improve ham/spam buttons
 improve workflow of ham/spam
 Ajaxify ham/spam buttons
@@ -55,7 +55,8 @@ Improve Design:
    * All Buttons DONE
  * Focus current textarea (when editing entries) better DONE
 comment moderation list
-Improve design fallbacks
-Fix comment edit
-add option to close comments
-redesign moderate-toggle
+Improve design fallbacks DONE
+Fix comment edit DONE
+add option to close comments DONE
+redesign moderate-toggle DONE
+Implement comment restore, like for entries
