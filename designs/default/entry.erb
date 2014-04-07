@@ -10,7 +10,7 @@
     <% if isAdmin? %>
         <div class="adminOptions">
             <a href="<%= url_for "/#{entry.id}/editEntry" %>"><button type="button" class="edit adminAction" title="edit">&#9998;</button></a>
-            <form action="<%= url_for "/#{entry.id}/deleteEntry" %>" method="POST" data-entryid="<%= entry.id %>">
+            <form action="<%= url_for "/#{entry.id}/deleteEntry" %>" method="POST">
                 <button type="submit" class="delete adminAction" title="delete">&#10005;</button>
             </form>
         </div>

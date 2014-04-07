@@ -6,125 +6,92 @@ snack.ready(function() {
     initDeleteElements();
 
     function initEditElements() {
-        // if it finds no element, it finds a NodeList, resulting in an error which breaks all following js
-        if (snack.wrap('.edit')[0].addEventListener != undefined) {
-            snack.wrap('.edit').attach('click', function(evt) {
-                snack.preventDefault(evt)
+        ajaxify('.edit', function(res, parent) { 
+            if (navigator.userAgent.match(/.*Firefox.*/)) {
+                // detect firefox here, because in firefox you cant create an empty element and chrome can't add the form as inner/outerhtml without errors
+                var form = document.createElement("form");
+            } else {
+                var form = document.createElement();
+            }
+            form.innerHTML = res;
+            form.querySelector('form').className += ' highlight';
 
-                var options = {
-                    method: 'get',
-                    url: evt.target.parentNode.href,
-                }
-                snack.request(options, function(err, res){
-                    if (err) {
-                        alert('error fetching option: ' + err);
-                        return;
-                    }
-                    var parent = getParent(evt.target, 'container')
-
-                    if (navigator.userAgent.match(/.*Firefox.*/)) {
-                        // detect firefox here, because in firefox you cant create an empty element and chrome can't add the form as inner/outerhtml without errors
-                        var form = document.createElement("form");
-                    } else {
-                        var form = document.createElement();
-                    }
-                    form.innerHTML = res;
-                    form.querySelector('form').className += ' highlight';
-
-                    var cancelButton = document.createElement('button');
-                    cancelButton.innerHTML = "Cancel";
-                    cancelButton.setAttribute('type', 'button');
-                    cancelButton.className = "cancel";
-                    try {
-                        // is it an entry?
-                        form.querySelector('.editorSubmitButtons').parentNode.insertBefore(cancelButton, form.querySelector('button').parentNode);
-                    } catch (e) {
-                        var possibleOption = form.querySelector('input[type="text"]');
-                        if (possibleOption.className == "commentFormTel") {
-                            // it is a comment!
-                            form.querySelector('.commentFormSubmit').parentNode.insertBefore(cancelButton, form.querySelector('.commentFormSubmit'));
-                        } else {
-                            // now we know it is not the honeypot of the commentform, so it must be an option
-                            possibleOption.addEventListener("blur", function(evt) {
-                                if (typeof evt.relatedTarget != null || evt.relatedTarget.type == undefined || evt.relatedTarget.type != "submit") {
-                                    form.parentNode.replaceChild(parent, form);
-                                }
-                            });
+            var cancelButton = document.createElement('button');
+            cancelButton.innerHTML = "Cancel";
+            cancelButton.setAttribute('type', 'button');
+            cancelButton.className = "cancel";
+            try {
+                // is it an entry?
+                form.querySelector('.editorSubmitButtons').parentNode.insertBefore(cancelButton, form.querySelector('button').parentNode);
+            } catch (e) {
+                var possibleOption = form.querySelector('input[type="text"]');
+                if (possibleOption.className == "commentFormTel") {
+                    // it is a comment!
+                    form.querySelector('.commentFormSubmit').parentNode.insertBefore(cancelButton, form.querySelector('.commentFormSubmit'));
+                } else {
+                    // now we know it is not the honeypot of the commentform, so it must be an option
+                    possibleOption.addEventListener("blur", function(evt) {
+                        if (typeof evt.relatedTarget != null || evt.relatedTarget.type == undefined || evt.relatedTarget.type != "submit") {
+                            form.parentNode.replaceChild(parent, form);
                         }
-                    }
-                    snack.wrap(cancelButton).attach('click', function(evt) {
-                        form.parentNode.replaceChild(parent, form);
                     });
-        
-                    parent.parentNode.replaceChild(form, parent);
-                });
+                }
+            }
+            snack.wrap(cancelButton).attach('click', function(evt) {
+                form.parentNode.replaceChild(parent, form);
             });
-        }
+
+            parent.parentNode.replaceChild(form, parent); 
+        });
     }
 
     function initDeleteElements() {
-    
-        if (snack.wrap('.delete')[0].addEventListener != undefined) {
-            snack.wrap('.delete').attach('click', function(evt) {
-                snack.preventDefault(evt);
-                
-                var options = {
-                    method: 'post',
-                    url: evt.target.parentNode.action,
-                }
-                var entryId = evt.target.parentNode.dataset["entryid"];
-                snack.request(options, function(err, res) {
-                    if (err) {
-                        alert('error deleting entry: ' + err);
-                        return;
+        ajaxify('.delete', function(res, parent) {
+            events = ["animationend", "webkitAnimationEnd", "oanimationend", "MSAnimationEnd"];
+            events.forEach(function(event) {
+                snack.wrap(parent).addClass("fadeout").attach(event, function() {
+                    parent.removeEventListener(event, arguments.callee, false);
+                    var entry = parent.cloneNode();
+                    while (parent.hasChildNodes()) {
+                        parent.removeChild(parent.lastChild);
                     }
-                    var parent = getParent(evt.target, 'container')
-                    
-
-                    events = ["animationend", "webkitAnimationEnd", "oanimationend", "MSAnimationEnd"];
-                    events.forEach(function(event) {
-                        snack.wrap(parent).addClass("fadeout").attach(event, function() {
-                            parent.removeEventListener(event, arguments.callee, false);
-                            var entry = parent.cloneNode();
-                            while (parent.hasChildNodes()) {
-                                parent.removeChild(parent.lastChild);
+                    if (parent.id.contains("e")) {
+                        // restore works so far only for entries
+                        var undo = document.createElement("form");
+                        undo.action = "/" + parent.id.slice(1, parent.id.length) + "/restoreEntry"
+                        undo.method = "POST";
+                        undo.id = "undo";
+                        undo.className = "highlight";
+                        var submitButton = document.createElement("button");
+                        submitButton.type = "submit";
+                        submitButton.innerHTML = "undo";
+                        undo.appendChild(submitButton);
+                        snack.wrap(parent).removeClass("fadeout");
+                        snack.wrap(entry).removeClass("fadeout");
+                        
+                        undo.addEventListener("submit", function(evt) {
+                            snack.preventDefault(evt);
+                            var options = {
+                                method: evt.target.method,
+                                url: evt.target.action
                             }
-                            var undo = document.createElement("form");
-                            undo.action = "/" + entryId + "/restoreEntry"
-                            undo.method = "POST";
-                            undo.id = "undo";
-                            undo.className = "highlight";
-                            var submitButton = document.createElement("button");
-                            submitButton.type = "submit";
-                            submitButton.innerHTML = "undo";
-                            undo.appendChild(submitButton);
-                            snack.wrap(parent).removeClass("fadeout");
-                            snack.wrap(entry).removeClass("fadeout");
-                            
-                            undo.addEventListener("submit", function(evt) {
-                                snack.preventDefault(evt);
-                                var options = {
-                                    method: evt.target.method,
-                                    url: evt.target.action
+                            snack.request(options, function(err, res) {
+                                if (err) {
+                                    alert('error restoring entry: ' + err);
+                                    return;
                                 }
-                                snack.request(options, function(err, res) {
-                                    if (err) {
-                                        alert('error restoring entry: ' + err);
-                                        return;
-                                    }
-                                });
-                                parent.parentNode.replaceChild(entry, parent);
-                                initEditElements();
-                                initDeleteElements();
-                                
                             });
-                            parent.appendChild(undo);
+                            parent.parentNode.replaceChild(entry, parent);
+                            initEditElements();
+                            initDeleteElements();
+                            
                         });
-                    });
-                    
+                        parent.appendChild(undo);
+                    }
                 });
             });
-        }
+            
+        });
     }
 
     // editor is loaded
@@ -401,6 +368,37 @@ snack.ready(function() {
             var start = start.parentNode;
         }
         return start
+    }
+    
+    
+    // Uses Ajax to call the form- or link-target of the parent element 
+    function ajaxify(selector, callback) {
+        // if it finds no element, it finds a NodeList, resulting in an error which breaks all following js
+        if (snack.wrap(selector)[0].addEventListener != undefined) {
+            snack.wrap(selector).attach('click', function(evt) {
+                snack.preventDefault(evt);
+                callback;
+                if (evt.target.parentNode.nodeName == "A") {
+                    var options = {
+                        method: 'get',
+                        url: evt.target.parentNode.href,
+                    }
+                } else {
+                    // this is a form
+                    var options = {
+                        method: evt.target.parentNode.method,
+                        url: evt.target.parentNode.action,
+                    }
+                }
+                snack.request(options, function(err, res){
+                    if (err) {
+                        alert('ajax error: ' + err);
+                        return;
+                    }
+                    callback(res, getParent(evt.target, 'container'))
+                });
+            });
+        }
     }
 
     function uploadFiles(files) {
