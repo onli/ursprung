@@ -90,7 +90,6 @@ snack.ready(function() {
                     }
                 });
             });
-            
         });
     }
 
@@ -319,7 +318,8 @@ snack.ready(function() {
         }
         snack.wrap(".reply").attach("click", function(evt) {
             var replyToCommentInput = document.querySelector('input[name="replyToComment"]');
-            var replyToComment = evt.target.parentNode.dataset["id"];
+            var replyToCommentId = getParent(evt.target, 'container').id
+            var replyToComment = replyToCommentId.slice(1, replyToCommentId.length);
             var commentInput = document.querySelector(".commentInput");
             replyToCommentInput.value = replyToComment;
             commentInput.value += ">>" + replyToComment + "\n";
