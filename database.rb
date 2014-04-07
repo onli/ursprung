@@ -406,7 +406,7 @@ class Database
         when "Comment"
             begin
                 # throws a bind or column index out of range error when inserted properly as well
-                @@db.execute("DELETE FROM cache WHERE key LIKE '/#{SQLite3::Database.quote origin.replyToEntry}/%' OR key LIKE '/commentFeed/%'")
+                @@db.execute("DELETE FROM cache WHERE key LIKE '/#{origin.replyToEntry}/%' OR key LIKE '/commentFeed/%'")
             rescue => error
                 warn "invalidateCache for comment: #{error}"
             end
