@@ -292,14 +292,6 @@ class Database
         end
     end
 
-    def getMails()
-        begin
-            return @@db.execute("SELECT mail FROM authors;")
-        rescue => error
-            warn "getMails: #{error}"
-        end
-    end
-
     def firstUse?
         begin
             mail = @@db.execute("SELECT mail FROM authors;")
@@ -315,30 +307,6 @@ class Database
         rescue => error
             warn "addUser: #{error}"
         end
-    end
-    
-    def addFriend(friend)
-        begin
-            @@db.execute("INSERT INTO friends(name) VALUES(?);", friend.name)
-            return true
-        rescue => error
-            warn "addFried: #{error}"
-            return false
-        end
-    end
-
-    def getFriends()
-        friends = []
-        begin
-            @@db.execute("SELECT name FROM friends;") do |row|
-                friend = Friend.new()
-                friend.name = row["name"]
-                friends.push(friend)
-            end
-        rescue => error
-            warn "getFriends: #{error}"
-        end
-        return friends
     end
 
     def getOption(name)
