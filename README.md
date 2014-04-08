@@ -5,18 +5,18 @@ created as an assessed assignment for the lecture [Security in Online Social Net
 
 # Features
 
- * Frontend-Administration
- * Pingbacks and Trackbacks
+ * Write Entries with Markdown
+ * Comments, Pingbacks and Trackbacks
  * Bayesian spamfilter
+ * Frontend-Administration
  * Autotitle (for links in entries)
- * Minimal design
- * Uses a template language, fully customizable
- * Integrated design selector
+ * Support for other Designs (themeable)
+ * Minimal design as default
  * Cached
 
 # Installation
 
-If you have ruby installed, make sure that the `bundle` gem is installed. Then, run
+Download the files from the repository. If you have ruby installed, make sure that the `bundle` gem is installed. Then, run
 
     bundle install
 
@@ -29,6 +29,6 @@ to start the blog.
 
 ## Dependencies
 
- * ruby (1.9.3 or 2.0)
+ * ruby (1.9.3 or 2.0 or 2.1.1)
  * libxml2-dev 
  * libxslt1-dev
