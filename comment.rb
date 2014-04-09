@@ -1,7 +1,7 @@
 require 'classifier'
-require 'madeleine'
 require 'pony'
 require 'kramdown'
+require 'yaml'
 require './commentauthor.rb'
 
 class Comment
@@ -14,7 +14,7 @@ class Comment
     attr_accessor :replyToComment
     attr_accessor :replyToEntry
     attr_accessor :type
-    attr_accessor :status 
+    attr_accessor :status   # can be moderate or approved 
     attr_accessor :subscribe
     attr_accessor :validTrackback
 
@@ -110,30 +110,30 @@ class Comment
     end
 
     def spam()
-        m = SnapshotMadeleine.new("bayes_data") {
-            Classifier::Bayes.new "Spam", "Ham"
-        }
-        [self.body, self.author.name, self.author.mail, self.author.url].each do |commentPart|
-            begin
-                m.system.train_spam commentPart
-            rescue
-            end
-        end
-        m.take_snapshot
+        self.train "spam"
     end
     
     def ham()
+        self.train "ham"
         self.status = "approved"
-        m = SnapshotMadeleine.new("bayes_data") {
-            Classifier::Bayes.new "Spam", "Ham"
-        }
+    end
+    
+    def train(category)
+        db = Database.new
+        bayes = db.getOption("spamFilter")
+        if bayes == nil
+            bayes = Classifier::Bayes.new "Spam", "Ham"
+        else
+            bayes = YAML.load(bayes)
+        end
         [self.body, self.author.name, self.author.mail, self.author.url].each do |commentPart|
             begin
-                m.system.train_ham commentPart
-            rescue
+               bayes.train category, commentPart
+            rescue => error
+                warn "Could not learn as #{category}: #{error}"
             end
         end
-        m.take_snapshot
+        db.setOption("spamFilter", bayes.to_yaml)
     end
 
     def isSpam?()
@@ -177,7 +177,7 @@ class Comment
                         Pony.mail(:to => comment.author.mail,
                               :from => fromMail,
                               :subject => "#{blogTitle}: #{self.author.name} commented on #{Entry.new(self.replyToEntry).title}",
-                              # TODO: Use a temmplate (with url_for) for this
+                              # TODO: Use a template (with url_for) for this
                               :body => "He wrote: #{self.format}\n\nLink: #{baseUrl}#{entry.link}\n\nUnsubscribe: #{baseUrl}subscriptions/#{URI.escape(encrypted)}"
                               )
                         mailDelivered.push(comment.author.mail)
