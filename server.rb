@@ -176,11 +176,10 @@ def serveIndex(page, tag)
         entries = db.getEntries(page, amount, tag)
         totalPages, _ = db.getTotalPages(amount, tag)
         page = totalPages if page == -1
-        friends = db.getFriends
         designs = Dir.new(settings.design_root).entries.reject{|design| design == "." || design == ".." }
         design = db.getOption("design")
             
-        body erb :index, :locals => {:entries => entries, :page => page, :totalPages => totalPages, :friends => friends,
+        body erb :index, :locals => {:entries => entries, :page => page, :totalPages => totalPages,
                                 :designs => designs, :design => design, :tag => tag, :allTags => db.getAllTags}
     end
 end
