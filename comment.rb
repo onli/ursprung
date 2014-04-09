@@ -137,10 +137,9 @@ class Comment
     end
 
     def isSpam?()
-        m = SnapshotMadeleine.new("bayes_data") {
-            Classifier::Bayes.new "Spam", "Ham"
-        }
-        return (m.system.classify "#{self.author.name} #{self.author.mail} #{self.author.url} #{self.body}") == "Spam"
+        bayes = Database.new.getOption("spamFilter")
+        return true if bayes == nil # everything might be spam if we have no initialized filter
+        return (YAML.load(bayes).classify "#{self.author.name} #{self.author.mail} #{self.author.url} #{self.body}") == "Spam"
     end
 
     def entry() 
