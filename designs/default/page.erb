@@ -10,7 +10,7 @@
     </head>
 
     <body>
-        <div id="content">
+        <main>
             <%= erb :header, :locals => {:blogTitle => blogTitle} %>
 
             <article class="entry container" id="e<%= entry.id %>" itemscope itemtype="http://schema.org/BlogPosting">
@@ -63,6 +63,6 @@
             <% if entry.moderate != "closed" %>
                 <%= erb :commentForm, :locals => {:entry => entry, :comment => nil} %>
             <% end %>
-        </div>
+        </main>
     </body>
 </html>

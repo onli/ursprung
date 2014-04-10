@@ -16,7 +16,7 @@ body {
     height: 100%;
 }
 
-#content {
+main {
     margin: auto;
     margin-bottom: 1em;
     margin-top: 2em;
@@ -80,6 +80,35 @@ img, iframe, object {
 img {
     height: auto !important;
 }
+
+#message {
+    position: fixed;
+    z-index: 101;
+    top: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    line-height: 2.5;
+    overflow: hidden;
+    box-shadow: 0 0 5px black;
+    -webkit-animation: message 5000ms linear forwards;
+    animation: message 5000ms linear forwards;
+}
+
+@keyframes message {
+    0% { background-color: #8DCC14; opacity: 1;}
+    10% { background-color: #F7F7F7; opacity: 1; }
+    90% { background-color: #F7F7F7; opacity: 1; }
+    100% { background-color: #F7F7F7;opacity: 0; }
+}
+
+@-webkit-keyframes message {
+    0% { background-color: #8DCC14; opacity: 1;}
+    10% { background-color: #F7F7F7; opacity: 1; }
+    90% { background-color: #F7F7F7; opacity: 1; }
+    100% { background-color: #F7F7F7;opacity: 0; }
+}
+
 
 article {
     max-width: 50em;
@@ -344,23 +373,9 @@ summary {
     margin-left: 40em;
 }
 
-@-moz-keyframes fadeOut {
-  0% { opacity: 1;}
-  100% { opacity: 0; }
-}
 @-webkit-keyframes fadeOut {
   0% { opacity: 1;}
   100% { opacity: 0; }
-}
-@-o-keyframes fadeOut {
-  0% { opacity: 1;}
-  100% { opacity: 0; }
-}
-@-ms-keyframes fadeOut {
-    0% { filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
-        opacity: 1; }
-    100% { filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
-        opacity: 0; }
 }
 @keyframes fadeOut {
     0% { filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
@@ -371,30 +386,15 @@ summary {
 
 .fadeout {
     animation: fadeOut 300ms linear forwards;
-    -moz-animation: fadeOut 300ms linear forwards;
-    -ms-animation: fadeOut 300ms linear forwards;
-    -o-animation: fadeOut 300ms linear forwards;
     -webkit-animation: fadeOut 300ms linear forwards;
 }
 
-@-moz-keyframes fadeIn {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
-}
+
 @-webkit-keyframes fadeIn {
   0% { opacity: 0;}
   100% { opacity: 1; }
 }
-@-o-keyframes fadeIn {
-  0% { opacity: 0;}
-  100% { opacity: 1; }
-}
-@-ms-keyframes fadeIn {
-    0% { filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
-        opacity: 0; }
-    100% { filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
-        opacity: 1; }
-}
+
 @keyframes fadeIn {
     0% { filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
         opacity: 0; }
@@ -404,9 +404,6 @@ summary {
 
 .fadein {
     animation: fadeIn 300ms linear forwards;
-    -moz-animation: fadeIn 300ms linear forwards;
-    -ms-animation: fadeIn 300ms linear forwards;
-    -o-animation: fadeIn 300ms linear forwards;
     -webkit-animation: fadeIn 300ms linear forwards;
 }
 
@@ -439,29 +436,11 @@ footer #search {
 
 .highlight {
     animation: highlightBox 500ms ease-out forwards;
-    -moz-animation: highlightBox 500ms ease-out forwards;
-    -ms-animation: highlightBox 500ms ease-out forwards;
-    -o-animation: highlightBox 500ms ease-out forwards;
     -webkit-animation: highlightBox 500ms ease-out forwards;
     background-color: #8DCC14;
 }
 
-@-moz-keyframes highlightBox {
-  0% { background-color: #8DCC14;}
-  100% { background-color: #F7F7F7; }
-}
-
-@-o-keyframes highlightBox {
-  0% { background-color: #8DCC14;}
-  100% { background-color: #F7F7F7; }
-}
-
 @-webkit-keyframes highlightBox {
-  0% { background-color: #8DCC14;}
-  100% { background-color: #F7F7F7; }
-}
-
-@-ms-keyframes highlightBox {
   0% { background-color: #8DCC14;}
   100% { background-color: #F7F7F7; }
 }
@@ -480,8 +459,6 @@ footer #search {
     height: 2px;
 
     -webkit-transition: width 1s;
-    -moz-transition: width 1s;
-    -o-transition: width 1s;
     transition: width 1s;
 }
 

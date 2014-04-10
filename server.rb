@@ -18,7 +18,7 @@ require 'cssminify'
 require 'sinatra/url_for'
 
 
-enable :sessions
+use Rack::Session::Pool
 set :browserid_login_button, "img/browserid.png"
 
 set :static_cache_control, [:public, max_age: 31536000]
@@ -327,7 +327,7 @@ post %r{/([0-9]+)/addComment} do |id|
     baseUrl = url_for '/', :full
     comment = Comment.new(params, baseUrl)
     
-    redirect url_for comment.entry.link
+    redirect url_for (comment.entry.link + "#" + comment.status)
 end
 
 get '/commentFeed' do

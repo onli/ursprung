@@ -53,7 +53,7 @@ snack.ready(function() {
             events.forEach(function(event) {
                 snack.wrap(parent).attach(event, function() {
                     parent.removeEventListener(event, arguments.callee, false);
-                    var entry = parent.cloneNode();
+                    var entry = parent.cloneNode(true);
                     while (parent.hasChildNodes()) {
                         parent.removeChild(parent.lastChild);
                     }
@@ -166,7 +166,7 @@ snack.ready(function() {
         });
         // tags autocomplete
         var tagInput = document.querySelector('.entryTagInput');
-        var rawTags = document.querySelector('#tags').cloneNode();
+        var rawTags = document.querySelector('#tags').cloneNode(true);
         var tags = document.querySelector('#tags');
         var oldTagInputValue = "";
         tagInput.addEventListener('input', function(evt) {
@@ -199,7 +199,7 @@ snack.ready(function() {
                 tags.parentNode.appendChild(rawTags);
                 tags.parentNode.removeChild(tags);
                 tags =  document.querySelector('#tags');
-                rawTags = document.querySelector('#tags').cloneNode();
+                rawTags = document.querySelector('#tags').cloneNode(true );
             }
             oldTagInputValue = tagInput.value;
         });
@@ -346,7 +346,7 @@ snack.ready(function() {
         
         var replyAreas = document.querySelectorAll(".comment .adminOptions");
         for (var i=0; i < replyAreas.length; i++) {
-            replyAreas[i].appendChild(replyButton.cloneNode(replyButton.cloneNode()));
+            replyAreas[i].appendChild(replyButton.cloneNode(true));
         }
         snack.wrap(".reply").attach("click", function(evt) {
             var replyToCommentInput = document.querySelector('input[name="replyToComment"]');
@@ -365,19 +365,25 @@ snack.ready(function() {
     if (document.querySelector(".commentReference") != null) {
         snack.wrap(".commentReference").attach("mouseover", function(evt) {
             var cid = evt.target.innerHTML.substr(8);
-            var refComment = document.querySelector("#c"+cid).cloneNode();
+            var refComment = document.querySelector("#c"+cid).cloneNode(true);
             refComment.id = "refComment";
             refComment.style.left = evt.pageX + "px";
             refComment.style.top = evt.pageY + "px";
-            evt.target.parentNode.appendChild(refComment);
+            evt.target.parentNode.parentNode.appendChild(refComment);
         });
 
         snack.wrap(".commentReference").attach("mouseout", function(evt) {
             evt.target.parentNode.removeChild(evt.target.parentNode.querySelector("#refComment"));
         });
-        
     }
-        
+    
+    if (window.location.hash == "#moderate") {
+        var message = document.createElement("div");
+        message.id = "message";
+        message.className = "highlight";
+        message.innerHTML = "Comment added, will be moderated";
+        document.body.insertBefore(message, document.body.firstChild)
+    }
 
     function getTextSelection(textarea){
         var startPos = textarea.selectionStart;

@@ -18,7 +18,7 @@
             <% end %>
         </aside>
 
-        <div id="content" itemscope itemtype="http://schema.org/Blog">
+        <main itemscope itemtype="http://schema.org/Blog">
         
             <%= erb :header, :locals => {:blogTitle => blogTitle} %>
             
@@ -46,6 +46,6 @@
             <footer>
                 <%= erb :searchWidget, :locals => {:keyword => "" }%>
             </footer>
-        </div>
+        </main>
     </body>
 </html>
