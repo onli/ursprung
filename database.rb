@@ -303,7 +303,7 @@ class Database
 
     def addUser(name, mail)
         begin
-            mail = @@db.execute("INSERT INTO authors(name, mail) VALUES(?, ?);", name, mail)
+            @@db.execute("INSERT INTO authors(name, mail) VALUES(?, ?);", name, mail)
         rescue => error
             warn "addUser: #{error}"
         end
