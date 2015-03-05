@@ -26,7 +26,7 @@
         <% if isAdmin? %>
             <% if comment.status != "approved" %>
                 <form action="<%= url_for "/#{comment.id}/ham" %>" method="POST">
-                    <button type="submit" class="spamControl" title="accept comment">&#10003;</button>
+                    <button type="submit" class="ham" title="accept comment">&#10003;</button>
                 </form>
                 <form action="/<%= url_for "/#{comment.id}/deleteComment" %>" method="POST">
                     <button type="submit" class="delete" title="delete comment">&#10005;</button>
@@ -38,7 +38,7 @@
                 </form>
             <% end %>
             <form action="<%= url_for "/#{comment.id}/spam" %>" method="POST">
-                <button type="submit" class="spamControl" title="mark comment as spam">spam</button>
+                <button type="submit" class="spam" title="mark comment as spam">spam</button>
             </form>
         <% end %>
     </div>

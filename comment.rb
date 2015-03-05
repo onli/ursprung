@@ -2,7 +2,7 @@ require 'classifier'
 require 'pony'
 require 'kramdown'
 require 'yaml'
-require './commentauthor.rb'
+require_relative './commentauthor.rb'
 
 class Comment
     attr_accessor :author

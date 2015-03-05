@@ -6,7 +6,7 @@ class Database
         begin
             @@db    # create a singleton - if this class-variable is uninitialized, this will fail and can then be initialized
         rescue
-            @@db = SQLite3::Database.new "dsnblog.db"
+            @@db = SQLite3::Database.new File.join(File.dirname(__FILE__), "dsnblog.db")
             begin
                 @@db.execute "CREATE TABLE IF NOT EXISTS authors(
                                 name TEXT PRIMARY KEY,

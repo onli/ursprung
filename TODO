@@ -60,3 +60,4 @@ Fix comment edit DONE
 add option to close comments DONE
 redesign moderate-toggle DONE
 Implement comment restore, like for entries
+code highlighting (check: is that in markdown?)
