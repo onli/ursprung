@@ -4,4 +4,4 @@ require 'bundler'
 Bundler.require
 
 require './server.rb'
-run Dsnblog.new
+run Dsnblog::Dsnblog.new
