@@ -19,8 +19,9 @@ require 'sinatra/url_for'
 
 module Dsnblog
     class Dsnblog < Sinatra::Application
+        register Sinatra::BrowserID
         use Rack::Session::Pool
-        set :browserid_login_button, "img/browserid.png"
+        set :browserid_login_button, "/img/browserid.png"
 
         set :static_cache_control, [:public, max_age: 31536000]
 
@@ -352,7 +353,7 @@ module Dsnblog
             protected!
             Database.new.setOption(params[:name], params[:value])
             Database.new.invalidateCache(nil)   # options are normally mighty enough to invalidate everything
-            loadConfiguration
+            Dsnblog::loadConfiguration
             origin = session[:origin]
             # when setOption wasn't called first, like with the design, origin is old, so unset it
             session.delete(:origin)

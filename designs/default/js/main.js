@@ -8,15 +8,10 @@ snack.ready(function() {
     initSpamElements();
 
     function initEditElements() {
-        ajaxify('.edit', function(res, parent) { 
-            if (navigator.userAgent.match(/.*Firefox.*/)) {
-                // detect firefox here, because in firefox you cant create an empty element and chrome can't add the form as inner/outerhtml without errors
-                var form = document.createElement("form");
-            } else {
-                var form = document.createElement();
-            }
+        ajaxify('.edit', function(res, parent) {
+            var form = document.createElement("div");
             form.innerHTML = res;
-            form.querySelector('form').className += ' highlight';
+            form.className += ' highlight';
 
             var cancelButton = document.createElement('button');
             cancelButton.innerHTML = "Cancel";
