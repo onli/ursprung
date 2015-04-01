@@ -1,9 +1,9 @@
 require './database.rb'
-require 'net/http'
 require 'uri'
 require 'sanitize'
 require 'xmlrpc/client'
 require 'kramdown'
+require 'http'
 
 module Dsnblog
     class Entry
@@ -89,12 +89,9 @@ module Dsnblog
             # check links for trackback-urls
             trackbackLinks  = []
             uris.each do |uri|
-                http = Net::HTTP.new(uri.host, uri.port)
-                http_request = Net::HTTP::Get.new(uri.request_uri)
-
-                response = http.request(http_request)
-                headLink = Nokogiri::HTML(response.body).css("link").map do |link|
-                    if (href = link.attr("href")) && link.attr("rel") == "trackback" && href.match(/^https?:/)
+                response = HTTP.get(uri).to_s
+                headLink = Nokogiri::HTML(response).css("link").map do |link|
+                    if (href = link.attr("href")) && link.attr("rel") == "trackback" && link.match(/^https?:/)
                         href
                     end
                 end.compact
@@ -103,7 +100,7 @@ module Dsnblog
                     trackbackLinks.push(headLink[0])
                     uris.delete(uri)
                 else
-                    rdfLink = response.body.scan(/<rdf:Description[^>]*trackback:ping="([^"]*)"[^>]*dc:identifier="#{Regexp.escape(uri.to_s)}"/)
+                    rdfLink = response.scan(/<rdf:Description[^>]*trackback:ping="([^"]*)"[^>]*dc:identifier="#{Regexp.escape(uri.to_s)}"/)
                     if rdfLink.length > 0
                         trackbackLinks.push(rdfLink[0])
                         uris.delete(uri)
@@ -155,12 +152,9 @@ module Dsnblog
             # check for pingback-url
             pingbackLinks  = []
             uris.each do |uri|
-                http = Net::HTTP.new(uri.host, uri.port)
-                http_request = Net::HTTP::Get.new(uri.request_uri)
-
-                response = http.request(http_request)
-                headLink = Nokogiri::HTML(response.body).css("link").map do |link|
-                    if (href = link.attr("href")) && link.attr("rel") == "pingback" && href.match(/^https?:/)
+                response = HTTP.get(uri).to_s
+                headLink = Nokogiri::HTML(response).css("link").map do |link|
+                    if (href = link.attr("href")) && link.attr("rel") == "pingback" && link.match(/^https?:/)
                         href
                     end
                 end.compact

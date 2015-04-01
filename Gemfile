@@ -16,3 +16,4 @@ gem 'therubyracer'  # not necessary when on Windows or having node installed
 gem 'uglifier'
 gem 'cssminify'
 gem 'emk-sinatra-url-for'
+gem 'http'
