@@ -356,7 +356,7 @@ module Dsnblog
                 rescue => error
                     warn "invalidateCache complete: #{error}"
                 end
-            when "Entry"
+            when "Dsnblog::Entry"
                 begin
                     archivePage = origin.archivePage
                     amount = 5
@@ -372,7 +372,7 @@ module Dsnblog
                 rescue => error
                     warn "invalidateCache for entry: #{error}"
                 end
-            when "Comment"
+            when "Dsnblog::Comment"
                 begin
                     # throws a bind or column index out of range error when inserted properly as well
                     @@db.execute("DELETE FROM cache WHERE key LIKE '/#{origin.replyToEntry}/%' OR key LIKE '/commentFeed/%'")
