@@ -132,7 +132,7 @@ snack.ready(function() {
         snack.wrap(previewButton).attach('click', function(evt) {
             var options = {
                 method: 'post',
-                url: '/preview',
+                url: document.URL + '/preview',
                 data: {
                     body: document.querySelector('.entryInput').value,
                     title: document.querySelector('.entryTitleInput').value,
@@ -446,7 +446,7 @@ snack.ready(function() {
                     object.data = event.target.result;
                     var options = {
                         method: 'post',
-                        url: '/file',
+                        url: document.URL + '/file',
                         data: object
                     }
                     Pace.track(function() {
