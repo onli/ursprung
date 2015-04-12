@@ -75,7 +75,11 @@ module Dsnblog
                         else
                             old_link = link
                             link = link.to_s.sub("<a", "<a title=\"#{title}\"")
-                            text[old_link.to_s] = link
+                            begin
+                                text[old_link.to_s] = link
+                            rescue IndexError => ie
+                                warn "could not insert #{title}"
+                            end
                         end
                     end
                 end
