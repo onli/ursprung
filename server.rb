@@ -29,7 +29,8 @@ module Dsnblog
 
         helpers do
             include Rack::Utils
-            alias_method :h, :escape
+            alias_method :uh, :escape
+            alias_method :h, :escape_html
             alias_method :u, :unescape
 
             def isAdmin?
@@ -146,6 +147,7 @@ module Dsnblog
                     etag Digest::MD5.hexdigest(@cacheContent)
                     content_type "text/css" if request.path_info[0,5] == "/css/"
                     content_type "application/javascript" if request.path_info[0,4] == "/js/"
+                    content_type "application/rss+xml" if request.path_info[0,5] == "/feed"
                     halt @cacheContent if ! settings.development?   # when in dev-mode, the cache becomes cumbersome
                 end
             end
