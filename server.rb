@@ -75,7 +75,7 @@ module Dsnblog
                         else
                             old_link = link
                             link = link.to_s.sub("<a", "<a title=\"#{title}\"")
-                            text = text.sub(old_link, link);
+                            text[old_link.to_s] = link
                         end
                     end
                 end
