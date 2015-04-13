@@ -120,20 +120,13 @@ module Dsnblog
                     }
                     
             trackbackLinks.each do |link|
-                uri = URI.parse(link.to_s.strip)
-                req = Net::HTTP::Post.new("#{uri.path}?#{uri.query}")
-                req.set_form_data(data)
-
-                http = Net::HTTP.new(uri.host, uri.port)
-                http.open_timeout = 40
-                http.read_timeout = 20
                 begin
-                    response = http.request(req)
-                    doc = Nokogiri::XML(response.body)
+                    response = HTTP.post(link.to_s.strip, :form => data)
+                    doc = Nokogiri::XML(response.to_s)
                     error = doc.xpath("/response/error")
-                    uris.delete(uri)  if error == 0
-                rescue Exception => error
-                    warn error
+                    uris.delete(uri) if error == 0
+                rescue Exception => e
+                    warn e
                 end
             end
             return uris
