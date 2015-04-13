@@ -32,10 +32,12 @@ module Dsnblog
                 # and save in database, if not a preview
                 if not params[:preview]
                     self.save
-                    remainingLinks = self.sendTrackbacks()
-                    if remainingLinks.length >= 1
-                        self.sendPingbacks(remainingLinks)
-                    end
+                    Dsnblog::pool.process {
+                        remainingLinks = self.sendTrackbacks()
+                        if remainingLinks.length >= 1
+                            self.sendPingbacks(remainingLinks)
+                        end
+                    }
                 end
             when 3
                 # get the entry from the recycler

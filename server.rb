@@ -16,6 +16,7 @@ require 'sprockets'
 require 'uglifier'
 require 'cssminify'
 require 'sinatra/url_for'
+require 'thread/pool'
 
 module Dsnblog
     class Dsnblog < Sinatra::Application
@@ -28,6 +29,8 @@ module Dsnblog
         set :assets, Sprockets::Environment.new
 
         class << self; attr_accessor :baseUrl end
+        class << self; attr_accessor :pool end
+        @pool = Thread.pool(2)
 
         helpers do
             include Rack::Utils
