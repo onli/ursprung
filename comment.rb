@@ -140,7 +140,12 @@ module Dsnblog
         def isSpam?()
             bayes = Database.new.getOption("spamFilter")
             return true if bayes == nil # everything might be spam if we have no initialized filter
-            return (YAML.load(bayes).classify "#{self.author.name} #{self.author.mail} #{self.author.url} #{self.body}") == "Spam"
+            begin
+                return (YAML.load(bayes).classify "#{self.author.name} #{self.author.mail} #{self.author.url} #{self.body}") == "Spam"
+            rescue NoMethodError => nme
+                # added to not die on trackbacks here
+                return true
+            end
         end
 
         def entry() 
@@ -192,11 +197,8 @@ module Dsnblog
         # If a valid link exists, gather the data to format the pingback. Else return false
         def getPingbackData()
             uri = URI.parse(self.author.url)
-            http = Net::HTTP.new(uri.host, uri.port)
-            http_request = Net::HTTP::Get.new(uri.request_uri)
-
-            response = http.request(http_request)
-            doc = Nokogiri::HTML(response.body)
+            response = HTTP.get(uri).to_s
+            doc = Nokogiri::HTML(response)
             title = doc.title
             
             doc.css("a").map do |link|

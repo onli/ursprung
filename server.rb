@@ -27,6 +27,8 @@ module Dsnblog
 
         set :assets, Sprockets::Environment.new
 
+        class << self; attr_accessor :baseUrl end
+
         helpers do
             include Rack::Utils
             alias_method :uh, :escape
@@ -151,6 +153,7 @@ module Dsnblog
                     halt @cacheContent if ! settings.development?   # when in dev-mode, the cache becomes cumbersome
                 end
             end
+            Dsnblog::baseUrl = url('/', :full)
         end
 
         after do

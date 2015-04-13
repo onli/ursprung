@@ -91,7 +91,7 @@ module Dsnblog
             uris.each do |uri|
                 response = HTTP.get(uri).to_s
                 headLink = Nokogiri::HTML(response).css("link").map do |link|
-                    if (href = link.attr("href")) && link.attr("rel") == "trackback" && link.match(/^https?:/)
+                    if (href = link.attr("href")) && link.attr("rel") == "trackback" && href.match(/^https?:/)
                         href
                     end
                 end.compact
@@ -114,7 +114,7 @@ module Dsnblog
             end
 
             data = {"title" => self.title,
-                    "url" => self.link(),
+                    "url" => Dsnblog::baseUrl + self.link(),
                     "excerpt" => Sanitize.clean(self.body)[0..30].gsub(/\s\w+$/, '...'),
                     "blog_name" => Database.new.getOption("blogTitle")
                     }
@@ -133,7 +133,7 @@ module Dsnblog
                     error = doc.xpath("/response/error")
                     uris.delete(uri)  if error == 0
                 rescue Exception => error
-                    puts error
+                    warn error
                 end
             end
             return uris
@@ -154,7 +154,7 @@ module Dsnblog
             uris.each do |uri|
                 response = HTTP.get(uri).to_s
                 headLink = Nokogiri::HTML(response).css("link").map do |link|
-                    if (href = link.attr("href")) && link.attr("rel") == "pingback" && link.match(/^https?:/)
+                    if (href = link.attr("href")) && link.attr("rel") == "pingback" && href.match(/^https?:/)
                         href
                     end
                 end.compact
@@ -172,9 +172,9 @@ module Dsnblog
             pingbackLinks.each do |link|
                 server = XMLRPC::Client.new2(link[:server])
                 begin
-                    result = server.call('pingback.ping', self.link(), link[:target].to_s)
+                    result = server.call('pingback.ping', Dsnblog::baseUrl + self.link(), link[:target].to_s)
                 rescue Exception => error
-                    puts error
+                    warn error
                 end
             end
             

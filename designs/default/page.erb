@@ -5,8 +5,8 @@
         <%= erb :head, :locals => {:tag => nil} %>
         <title><%= entry.title %> - <%= blogTitle %></title>
         <meta name="description" content="">
-        <link rel="trackback" type="application/x-www-form-urlencoded" href="<%= url_for entry.id, :full %>/addTrackback" />
-        <link rel="pingback" href="<%= url_for '/xmlrpc' %>" />
+        <link rel="trackback" type="application/x-www-form-urlencoded" href="<%= url_for "/#{entry.id}/addTrackback", :full %>" />
+        <link rel="pingback" href="<%= url_for '/xmlrpc', :full %>" />
     </head>
 
     <body>
@@ -21,7 +21,7 @@
                          xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/"
                          xmlns:dc="http://purl.org/dc/elements/1.1/">
                 <rdf:Description
-                         trackback:ping="<%= url_for '/#{entry.id}/addTrackback', :full %>"
+                         trackback:ping="<%= url_for "/#{entry.id}/addTrackback", :full %>"
                          dc:title="<%= entry.title %>"
                          dc:identifier="<%= url_for "/#{entry.id}/", :full %><%= uh entry.title %>" />
                 </rdf:RDF>
