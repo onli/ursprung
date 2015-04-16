@@ -368,6 +368,7 @@ module Dsnblog
                                                                     " + (origin.tags.map{|tag| "OR key LIKE 'archive/%/"+ SQLite3::Database.quote(tag) +"/%'"}.join(" ")) +"
                                                                     OR key LIKE '/search/%'
                                                                     OR key LIKE '/feed/%'
+                                                                    OR key LIKE '||==||'
                                                                         ")
                 rescue => error
                     warn "invalidateCache for entry: #{error}"
