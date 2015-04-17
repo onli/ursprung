@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 gem 'sanitize'
 gem 'sinatra'
-gem 'sinatra-browserid', :git => 'https://github.com/sch1zo/sinatra-browserid'
+gem 'sinatra-browserid', :git => 'https://github.com/onli/sinatra-browserid'
 gem 'nokogiri'
 gem 'puma'
 gem 'sqlite3'
