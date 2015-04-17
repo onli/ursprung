@@ -26,7 +26,6 @@ module Dsnblog
             when 2
                 # creating comment from hash
                 params = args[0]
-                baseUrl = args[1]
                 return if params[:tel] && params[:tel] != "" # the honeypot
                 commentAuthor = CommentAuthor.new
                 commentAuthor.name = Sanitize.clean(params[:name].strip)
@@ -58,13 +57,13 @@ module Dsnblog
                             commentAuthor.name = name
                             self.author = commentAuthor
                         end
-                        self.save(baseUrl)
+                        self.save()
                         self.validTrackback = true
                     else
                         self.validTrackback = false
                     end
                 else
-                    self.save(baseUrl)
+                    self.save()
                     self.validTrackback = true
                 end
             end
@@ -89,14 +88,14 @@ module Dsnblog
             self.author = commentAuthor
         end
 
-        def save(baseUrl)
+        def save()
             db = Database.new
             if self.id == nil
                 # it is a new comment
                 db.addComment(self)
-                mailOwner(baseUrl)
+                mailOwner()
                 if (self.status == "approved")
-                    mailSubscribers(baseUrl)
+                    mailSubscribers()
                 end
             else
                 db.editComment(self)
@@ -152,21 +151,21 @@ module Dsnblog
             return Entry.new(self.replyToEntry)
         end
 
-        def mailOwner(baseUrl)
+        def mailOwner()
             db = Database.new
             begin
                 entry = self.entry
                 Pony.mail(:to => db.getAdminMail,
                       :from => db.getOption("fromMail"),
                       :subject => "#{db.getOption("blogTitle")}: #{self.author.name} commented on #{entry.title}",
-                      :body => "He wrote: #{self.format}\n\nLink: #{baseUrl[0...-1]}#{entry.link}"
+                      :body => "He wrote: #{self.format}\n\nLink: #{Dsnblog::baseUrl}#{entry.link}"
                       )
             rescue Errno::ECONNREFUSED => e
                 warn "Error mailing owner: #{e}"
             end
         end
 
-        def mailSubscribers(baseUrl)
+        def mailSubscribers()
             db = Database.new
             fromMail = db.getOption("fromMail")
             if fromMail && fromMail != ""
@@ -183,7 +182,7 @@ module Dsnblog
                                   :from => fromMail,
                                   :subject => "#{blogTitle}: #{self.author.name} commented on #{Entry.new(self.replyToEntry).title}",
                                   # TODO: Use a template (with url_for) for this
-                                  :body => "He wrote: #{self.format}\n\nLink: #{baseUrl}#{entry.link}\n\nUnsubscribe: #{baseUrl}subscriptions/#{URI.escape(encrypted)}"
+                                  :body => "He wrote: #{self.format}\n\nLink: #{Dsnblog::baseUrl}#{entry.link}\n\nUnsubscribe: #{Dsnblog::baseUrl}subscriptions/#{URI.escape(encrypted)}"
                                   )
                             mailDelivered.push(comment.author.mail)
                         rescue Errno::ECONNREFUSED => e

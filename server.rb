@@ -309,7 +309,7 @@ module Dsnblog
             comment = Comment.new(id.to_i)
             comment.ham()
             baseUrl = url_for '/', :full
-            comment.save(baseUrl)   # ham also marks as approved, which needs to be saved
+            comment.save()   # ham also marks as approved, which needs to be saved
             return "Done" if ! request.xhr?
             erb :comment, :locals => {:comment => comment}
         end
@@ -337,8 +337,8 @@ module Dsnblog
         post %r{/([0-9]+)/addComment} do |id|
             entry = Entry.new(id.to_i)
             params[:entryId] = id
-            baseUrl = url_for '/', :full
-            comment = Comment.new(params, baseUrl)
+
+            comment = Comment.new(params, :new)
             
             redirect url_for (comment.entry.link + "#" + comment.status)
         end
