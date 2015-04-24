@@ -22,7 +22,7 @@ module Dsnblog
     class Dsnblog < Sinatra::Application
         register Sinatra::BrowserID
         use Rack::Session::Pool
-        set :browserid_login_button, "/img/browserid.png"
+        set :browserid_login_button, Proc.new { url "/img/browserid.png" } 
 
         set :static_cache_control, [:public, max_age: 31536000]
 
