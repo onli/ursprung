@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+        <meta name="viewport" content="width=device-width">
+        <link rel="stylesheet" href="page.css">
+        <title>ursprung - a blog, small and complete</title>
+        <meta name="description" content="">
+        <link rel="stylesheet" href="public/zenburn.css">
+        <link href='http://fonts.googleapis.com/css?family=Vollkorn|Ubuntu|Ubuntu+Mono' rel='stylesheet' type='text/css'>
+    </head>
+    <body>
+        <a href='https://github.com/onli/dsnblog' id="ribbon">Fork me on GitHub</a>
+        <main>
+            <section id="header">
+                <header>
+                    <div>
+                        <h1>ursprung</h1>
+                        <h2>A blog, small and complete</h2>
+                        <a href="public/ursprung-index_tiny.png"><img src="public/ursprung-index_tiny.png" alt="ursprung index example photo" /></a>
+                    </div>
+                </header>
+            </section>
+            <section id="features">
+                <h2>Features</h2>
+                <dl>
+                    <dt>Frontend Administration</dt>
+                    <dd>There is no backend. As soon as you are logged in, an editor and other control elements appear on the normal blog. Making it as easy as possible to just start writing.
+                    <a href="public/ursprung-editor_tiny.png"><img src="public/ursprung-editor_tiny.png" alt="logged in example" /></a>
+                    </dd>
+                    <dt>Caching</dt>
+                    <dd>Blogs generating their pages dynamically break down under many visitors. Static site generator solve that, but… they are static. Ursprung generates pages dynamically, but then caches the generated page, generating less work and faster response times for all following visitors.</dd>
+                    <dt>Comments, Trackbacks and Pingbacks</dt>
+                    <dd>User feedback is what makes a blog a blog. Comments, Trackacks and Pingbacks are fully supported.<br /><br />
+
+                    Comments authors have their gravatar, can cite each other and have access to markdown syntax. Trackbacks and Pingbacks work, autodiscovery is set up, and the implementation was tested with the classical blogengines Wordpress and Serendipity.
+                    </dd>
+                    <dt>Markdown</dt>
+                    <dd>Format your entries with HTML, or use the nice <a href="http://kramdown.gettalong.org/" title="Home | kramdown">Kramdown</a> implementation of Markdown.</dd>
+                    <dt>Against Spam: Bayes filter and honeypot</dt>
+                    <dd>Spam sucks. An integrated bayes filter helps you fight it, and the honeypot helps prevent it.</dd>
+                    <dt>Themeable</dt>
+                    <dd>The default design is not even bad - it is minimalistic while trying to be not too plain. But if you don't like it, writing your own is fully supported. Use the default templates and just change the CSS, or overwrite the templates as well to customize ursprung totally.
+
+                    <a href="public/ursprung-red_tiny.png"><img src="public/ursprung-red_tiny.png" alt="ursprung in red" /></a>
+                    </dd>
+                    <dt>Ruby, Sinatra, SQLite, Persona - and free</dt>
+                    <dd><a href="https://www.ruby-lang.org/en/" title="Ruby Programming Language">Ruby</a> and <a href="http://sinatrarb.com/" title="Sinatra">Sinatra</a> are a perfect base for a small blog like this, modern but proven. <a href="https://sqlite.org/" title="SQLite Home Page">SQLite</a> as a database in a file is easy to manage, and its read performance is more than good enough for all but the highest traffic blogs. <a href="https://login.persona.org/" title="Mozilla Persona: A better Way to sign in">Persona</a> takes care of the login, saving us from dealing with passwords.<br />
+
+                    Ursprung's license is the <a href="https://www.gnu.org/licenses/agpl-3.0.html">AGPL</a>.</dd>
+                </dl>
+            </section>
+            <section id="howto">
+                <h2>Install it</h2>
+                The easiest way to install is to clone the git repo, install the dependencies with <a href="http://bundler.io/" title="Bundler: The best way to manage a Ruby application's gems">Bundler</a> and then start the server. Make sure you have <a href="https://rvm.io/" title="RVM: Ruby Version Manager - Documentation">Ruby installed</a> first.
+                
+                <pre><code class="bash hljs">git <span class="hljs-attribute">clone</span> <span class="hljs-string">https://github.com/onli/dsnblog.git</span> <span class="hljs-attribute">ursprung</span>
+cd <span class="hljs-attribute">ursprung</span>
+bundle <span class="hljs-attribute">install</span>
+rackup <span class="hljs-attribute">-E</span> <span class="hljs-string">testing</span> <span class="hljs-attribute">-p</span> <span class="hljs-number">9292</span></code></pre>
+            </section>
+        </main>
+
+    <script src="public/zepto.min.js"></script> 
+    <script src="public/magnifiq.min.js"></script>
+    <script>$(document).ready(function() {
+        $('img').magnificPopup({type:'image'});
+    });
+    </script>
+    </body>
+</html>
