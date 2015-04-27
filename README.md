@@ -1,7 +1,6 @@
-A small blogengine, using ruby, sinatra, browserid.
+A small blogengine using ruby, sinatra, sqlite and browserid.
 
-Originally, this was a basic, pre-alpha implementation of a distributed social network blog system,
-created as an assessed assignment for the lecture [Security in Online Social Networks](http://www.uni-siegen.de/fb5/itsec/lehre/ss12/sec-osn-ss12/index.html), Siegen, summer semester 2012.
+![ursprung example](https://onli.github.io/ursprung/public/ursprung-index_tiny.png)
 
 # Features
 
@@ -29,6 +28,6 @@ to start the blog.
 
 ## Dependencies
 
- * ruby (1.9.3 or 2.0 or 2.1.1)
+ * ruby >= 2.0
  * libxml2-dev 
  * libxslt1-dev
