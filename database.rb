@@ -1,13 +1,13 @@
 require 'sqlite3'
 
-module Dsnblog
+module Ursprung
     class Database
 
         def initialize
             begin
                 @@db    # create a singleton - if this class-variable is uninitialized, this will fail and can then be initialized
             rescue
-                @@db = SQLite3::Database.new File.join(File.dirname(__FILE__), "dsnblog.db")
+                @@db = SQLite3::Database.new File.join(File.dirname(__FILE__), "blog.db")
                 begin
                     @@db.execute "CREATE TABLE IF NOT EXISTS authors(
                                     name TEXT PRIMARY KEY,
@@ -356,7 +356,7 @@ module Dsnblog
                 rescue => error
                     warn "invalidateCache complete: #{error}"
                 end
-            when "Dsnblog::Entry"
+            when "Ursprung::Entry"
                 begin
                     archivePage = origin.archivePage
                     amount = 5
@@ -373,7 +373,7 @@ module Dsnblog
                 rescue => error
                     warn "invalidateCache for entry: #{error}"
                 end
-            when "Dsnblog::Comment"
+            when "Ursprung::Comment"
                 begin
                     # throws a bind or column index out of range error when inserted properly as well
                     @@db.execute("DELETE FROM cache WHERE key LIKE '/#{origin.replyToEntry}/%' OR key LIKE '/commentFeed/%'")

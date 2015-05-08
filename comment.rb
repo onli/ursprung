@@ -4,7 +4,7 @@ require 'kramdown'
 require 'yaml'
 require_relative './commentauthor.rb'
 
-module Dsnblog
+module Ursprung
     class Comment
         attr_accessor :author
         attr_accessor :body
@@ -158,7 +158,7 @@ module Dsnblog
                 Pony.mail(:to => db.getAdminMail,
                       :from => db.getOption("fromMail"),
                       :subject => "#{db.getOption("blogTitle")}: #{self.author.name} commented on #{entry.title}",
-                      :body => "He wrote: #{self.format}\n\nLink: #{Dsnblog::baseUrl}#{entry.link}"
+                      :body => "He wrote: #{self.format}\n\nLink: #{Ursprung::baseUrl}#{entry.link}"
                       )
             rescue Errno::ECONNREFUSED => e
                 warn "Error mailing owner: #{e}"
@@ -182,7 +182,7 @@ module Dsnblog
                                   :from => fromMail,
                                   :subject => "#{blogTitle}: #{self.author.name} commented on #{Entry.new(self.replyToEntry).title}",
                                   # TODO: Use a template (with url_for) for this
-                                  :body => "He wrote: #{self.format}\n\nLink: #{Dsnblog::baseUrl}#{entry.link}\n\nUnsubscribe: #{Dsnblog::baseUrl}subscriptions/#{URI.escape(encrypted)}"
+                                  :body => "He wrote: #{self.format}\n\nLink: #{Ursprung::baseUrl}#{entry.link}\n\nUnsubscribe: #{Ursprung::baseUrl}subscriptions/#{URI.escape(encrypted)}"
                                   )
                             mailDelivered.push(comment.author.mail)
                         rescue Errno::ECONNREFUSED => e

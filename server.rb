@@ -18,8 +18,8 @@ require 'cssminify'
 require 'sinatra/url_for'
 require 'thread/pool'
 
-module Dsnblog
-    class Dsnblog < Sinatra::Application
+module Ursprung
+    class Ursprung < Sinatra::Application
         register Sinatra::BrowserID
         use Rack::Session::Pool
         set :browserid_login_button, Proc.new { url "/img/browserid.png" } 
@@ -156,7 +156,7 @@ module Dsnblog
                     halt @cacheContent if ! settings.development?   # when in dev-mode, the cache becomes cumbersome
                 end
             end
-            Dsnblog::baseUrl = url('/', :full)
+            Ursprung::baseUrl = url('/', :full)
         end
 
         after do
@@ -365,7 +365,7 @@ module Dsnblog
             protected!
             Database.new.setOption(params[:name], params[:value])
             Database.new.invalidateCache(nil)   # options are normally mighty enough to invalidate everything
-            Dsnblog::loadConfiguration
+            Ursprung::loadConfiguration
             origin = session[:origin]
             # when setOption wasn't called first, like with the design, origin is old, so unset it
             session.delete(:origin)

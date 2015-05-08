@@ -5,7 +5,7 @@ require 'xmlrpc/client'
 require 'kramdown'
 require 'http'
 
-module Dsnblog
+module Ursprung
     class Entry
 
         attr_accessor :id
@@ -32,7 +32,7 @@ module Dsnblog
                 # and save in database, if not a preview
                 if not params[:preview]
                     self.save
-                    Dsnblog::pool.process {
+                    Ursprung::pool.process {
                         remainingLinks = self.sendTrackbacks()
                         if remainingLinks.length >= 1
                             self.sendPingbacks(remainingLinks)
@@ -116,7 +116,7 @@ module Dsnblog
             end
 
             data = {"title" => self.title,
-                    "url" => Dsnblog::baseUrl + self.link(),
+                    "url" => Ursprung::baseUrl + self.link(),
                     "excerpt" => Sanitize.clean(self.body)[0..30].gsub(/\s\w+$/, '...'),
                     "blog_name" => Database.new.getOption("blogTitle")
                     }
@@ -167,7 +167,7 @@ module Dsnblog
             pingbackLinks.each do |link|
                 server = XMLRPC::Client.new2(link[:server])
                 begin
-                    result = server.call('pingback.ping', Dsnblog::baseUrl + self.link(), link[:target].to_s)
+                    result = server.call('pingback.ping', Ursprung::baseUrl + self.link(), link[:target].to_s)
                 rescue Exception => error
                     warn error
                 end
