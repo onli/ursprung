@@ -37,6 +37,7 @@ module Ursprung
                         if remainingLinks.length >= 1
                             self.sendPingbacks(remainingLinks)
                         end
+                        self.pingHub
                     }
                 end
             when 3
@@ -173,6 +174,10 @@ module Ursprung
                 end
             end
             
+        end
+        
+        def pingHub()
+            HTTP.post("https://pubsubhubbub.superfeedr.com/", :form => {:hub.mode => "publish", :hub.url => "#{Ursprung::baseUrl}feed"})
         end
 
         # get list of links 

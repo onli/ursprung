@@ -10,6 +10,7 @@
         <description></description>
         <generator>dsnblog</generator>
         <atom:link href="<%= url_for '/feed', :full %>" rel="self" type="application/rss+xml" />
+        <atom:link rel="hub" href="https://pubsubhubbub.superfeedr.com/" />
         <% entries.each do |entry| %>
             <item>
                 <title><%= entry.title %></title>
