@@ -366,8 +366,8 @@ module Ursprung
                     @@db.execute("DELETE FROM cache WHERE key LIKE '/#{SQLite3::Database.quote origin.id.to_s}/%'
                                                                     OR key LIKE '/archive/#{SQLite3::Database.quote archivePage.to_s}/||==||%'
                                                                     " + (origin.tags.map{|tag| "OR key LIKE 'archive/%/"+ SQLite3::Database.quote(tag) +"/%'"}.join(" ")) +"
-                                                                    OR key LIKE '/search/%'
-                                                                    OR key LIKE '/feed/%'
+                                                                    OR key LIKE '/search%'
+                                                                    OR key LIKE '/feed%'
                                                                     OR key LIKE '||==||'
                                                                         ")
                 rescue => error
