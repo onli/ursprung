@@ -177,7 +177,7 @@ module Ursprung
         end
         
         def pingHub()
-            HTTP.post("https://pubsubhubbub.superfeedr.com/", :form => {:hub.mode => "publish", :hub.url => "#{Ursprung::baseUrl}feed"})
+            HTTP.post("https://pubsubhubbub.superfeedr.com/", :form => {:'hub.mode' => "publish", :'hub.url' => "#{Ursprung::baseUrl}feed"})
         end
 
         # get list of links 
