@@ -274,7 +274,7 @@ module Ursprung
                 target = target + "_" if target.scan(".").size <= 1
             end
             File.new(target, "w+").write(filedata)
-            target.gsub(settings.public_folder, "").gsub(" ", "+")
+            request.script_name + target.gsub(settings.public_folder, "").gsub(" ", "+")
         end
 
         get %r{/([0-9]+)/editEntry} do |id|
