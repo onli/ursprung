@@ -454,7 +454,7 @@ snack.ready(function() {
                             if (err) {
                                 alert("error uploading file: " + err);
                             }
-                            editor.value += "!["+res+"]("+res+")\n";
+                            replaceSelection(editor, "!["+res+"]("+res+")\n");
                         });
                     });
                 });
