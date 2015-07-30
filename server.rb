@@ -213,7 +213,7 @@ module Ursprung
         post '/addEntry' do
             protected!
             entry = Entry.new(params, request)
-            redirect url_for entry.link
+            redirect url_for entry.link + '#new'
         end
 
         post %r{/([0-9]+)/addTrackback} do |id|

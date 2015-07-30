@@ -6,6 +6,7 @@ snack.ready(function() {
     initDeleteElements();
     initHamElements();
     initSpamElements();
+    var indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
 
     function initEditElements() {
         ajaxify('.edit', function(res, parent) {
@@ -228,6 +229,26 @@ snack.ready(function() {
                 snack.preventDefault(evt);
             }
         });
+
+        // editor cache
+        document.querySelector('.entryInput').addEventListener("keypress", function(evt) {
+            evt.target.removeEventListener(evt.type, arguments.callee);
+            setInterval(function() {
+                            cache("editor", evt.target.value)  
+                            cache("title",  document.querySelector('.entryTitleInput').value)  
+                        },
+                        5000);
+        });
+        getCached("editor", function(res) {
+            if (res != undefined) {
+                document.querySelector('.entryInput').value = res;
+            }
+        });
+        getCached("title", function(res) {
+            if (res != undefined) {
+                document.querySelector('.entryTitleInput').value = res;
+            }
+        });
     }
 
     // markup-buttons
@@ -380,6 +401,10 @@ snack.ready(function() {
         document.body.insertBefore(message, document.body.firstChild)
     }
 
+    if (window.location.hash == "#new") {
+        eraseEditorCache();
+    }
+
     function getTextSelection(textarea){
         var startPos = textarea.selectionStart;
         var endPos = textarea.selectionEnd;        
@@ -461,6 +486,33 @@ snack.ready(function() {
                 reader.readAsDataURL(f); 
             })(f);
         }
+    }
+
+    function eraseEditorCache() {
+        cache("editor", null);
+        cache("title", null);
+    }
+
+    function cache(id, data) {
+        var request = indexedDB.open("cache", 1);
+        request.onupgradeneeded = function (event) {
+            event.target.result.createObjectStore("cache");
+        };
+        request.onsuccess = function(event) {
+            event.target.result.transaction(["cache"], 'readwrite').objectStore("cache").put(data, id);
+        };
+    }
+
+    function getCached(id, success) {
+        var request = indexedDB.open("cache", 1);
+        request.onupgradeneeded = function (event) {
+            event.target.result.createObjectStore("cache");
+        };
+        request.onsuccess = function(event) {
+            event.target.result.transaction(["cache"], 'readwrite').objectStore("cache").get(id).onsuccess = function (event) {
+                success(event.target.result);
+            };
+        };
     }
     
 });
