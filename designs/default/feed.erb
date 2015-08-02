@@ -21,7 +21,7 @@
                         <%= h entry.format %>
                     </content:encoded>
                 <% end %>
-                <guid isPermaLink="false"><%= url_for '/', :full %>_<%= entry.id %></guid>
+                <guid isPermaLink="true"><%= url_for '/', :full %>_<%= entry.id %></guid>
                 <pubDate><%= Time.parse(entry.date).rfc2822 %></pubDate>
             </item>
         <% end %>
