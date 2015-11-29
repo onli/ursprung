@@ -166,18 +166,18 @@ module Ursprung
         end
 
         get '/' do
-            serveIndex(-1, nil)
+            serveIndex()
         end
 
         get %r{/archive/([0-9]+)/([\w]+)} do |page, tag|
-            serveIndex(page.to_i, tag)
+            serveIndex(page: page.to_i, tag: tag)
         end
 
         get %r{/archive/([0-9]+)} do |page|
-            serveIndex(page.to_i, nil)
+            serveIndex(page: page.to_i)
         end
 
-        def serveIndex(page, tag)
+        def serveIndex(page: -1, tag: nil)
             db = Database.new
             if db.firstUse?
                 db.setOption("secret", SecureRandom.urlsafe_base64(256))
@@ -185,27 +185,27 @@ module Ursprung
                 db.invalidateCache(nil)
                 erb :installer
             else
-                amount = 5
-                entries = db.getEntries(page, amount, tag)
-                totalPages, _ = db.getTotalPages(amount, tag)
+                limit = 5
+                totalPages, _ = db.getTotalPages(limit, tag)
                 page = totalPages if page == -1
+                entries = db.getEntries(page: page, limit: 5, tag: tag)
                 designs = Dir.new(settings.design_root).entries.reject{|design| design == "." || design == ".." }
                 design = db.getOption("design")
                     
-                body erb :index, :locals => {:entries => entries, :page => page, :totalPages => totalPages,
-                                        :designs => designs, :design => design, :tag => tag, :allTags => db.getAllTags}
+                body erb :index, :locals => {:entries => entries, :page => page, :totalPages => totalPages, :designs => designs, :design => design, :tag => tag, :allTags => db.getAllTags}
             end
         end
 
         get %r{/feed/([\w]+)} do |tag|
-            entries = Database.new.getEntries(-1, 10, tag)
+            totalPages, _ = Database.new.getTotalPages(limit, tag)
+            entries = Database.new.getEntries(page: -1, limit: 10, tag: tag)
             headers "Content-Type"   => "application/rss+xml"
             body erb :feed, :locals => {:entries => entries}
         end
 
 
         get '/feed' do
-            entries = Database.new.getEntries(-1, 10, nil)
+            entries = Database.new.getEntries(page: -1, limit: 10, tag: nil)
             headers "Content-Type"   => "application/rss+xml"
             body erb :feed, :locals => {:entries => entries}
         end

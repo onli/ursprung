@@ -2,127 +2,172 @@ require 'sqlite3'
 
 module Ursprung
     class Database
-
+        attr_accessor :NOTAG
+        attr_accessor :databaseFile
+        
         def initialize
             begin
+                self.NOTAG = 'notag_ursprung'.freeze
                 @@db    # create a singleton - if this class-variable is uninitialized, this will fail and can then be initialized
             rescue
-                @@db = SQLite3::Database.new File.join(File.dirname(__FILE__), "blog.db")
-                begin
-                    @@db.execute "CREATE TABLE IF NOT EXISTS authors(
-                                    name TEXT PRIMARY KEY,
-                                    mail TEXT UNIQUE
-                                    );"
-                    @@db.execute "CREATE TABLE IF NOT EXISTS options(
-                                    name TEXT PRIMARY KEY,
-                                    value TEXT
-                                    );"
-                    @@db.execute "CREATE TABLE IF NOT EXISTS cache(
-                                    key TEXT PRIMARY KEY,
-                                    value TEXT,
-                                    date INTEGER DEFAULT CURRENT_TIMESTAMP
-                                    );"
-                    @@db.execute "CREATE TABLE IF NOT EXISTS friends(
-                                    name TEXT PRIMARY KEY,
-                                    url TEXT
-                                    );"
-                    @@db.execute "CREATE TABLE IF NOT EXISTS comments(
-                                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                    replyToEntry INTEGER,
-                                    replyToComment INTEGER,
-                                    name TEXT,
-                                    mail TEXT,
-                                    url TEXT,
-                                    body TEXT,
-                                    title TEXT,
-                                    type TEXT DEFAULT 'comment',
-                                    status TEXT DEFAULT 'approved',
-                                    subscribe INTEGER DEFAULT 0,
-                                    date INTEGER DEFAULT CURRENT_TIMESTAMP,
-                                    FOREIGN KEY (replyToEntry) REFERENCES entries(id) ON DELETE CASCADE,
-                                    FOREIGN KEY (replyToComment) REFERENCES comments(id) 
-                                    );"
-                    @@db.execute "CREATE TABLE IF NOT EXISTS entries(
-                                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                    body TEXT,
-                                    title TEXT,
-                                    author TEXT,
-                                    moderate TEXT,
-                                    date INTEGER DEFAULT CURRENT_TIMESTAMP,
-                                    deleted INTEGER DEFAULT 0,
-                                    FOREIGN KEY (author) REFERENCES authors(name) ON UPDATE CASCADE
-                                    );"
-                    @@db.execute "CREATE TABLE IF NOT EXISTS tags(
-                                    tag TEXT,
-                                    entryId INTEGER,
-                                    FOREIGN KEY (entryId) REFERENCES entries(id) ON UPDATE CASCADE ON DELETE CASCADE
-                    );"
-                    @@db.execute "CREATE INDEX IF NOT EXISTS tags_tag_index ON tags(tag)"
-                    @@db.execute "CREATE TABLE IF NOT EXISTS entries_recycler
-                                    AS
-                                    SELECT * from entries WHERE id == -1;"
-                    @@db.execute "CREATE TABLE IF NOT EXISTS tags_recycler
-                                    AS
-                                    SELECT * from tags WHERE entryId == -1;"
-                    begin
-                        @@db.execute 'CREATE VIRTUAL TABLE search
-                                        USING fts4(content="entries", body, title);'
-                    rescue => error
-                        # if not exists should work here, but doesn't, so this always throws an error if table exists
-                        warn "Creating search-table: #{error}"
-                    end
-                    @@db.execute 'CREATE TRIGGER IF NOT EXISTS entries_ai AFTER INSERT ON entries BEGIN
-                                    INSERT INTO search(docid, body, title) VALUES(new.rowid, new.body, new.title);
-                                END;'
-                    @@db.execute 'CREATE TRIGGER IF NOT EXISTS entries_au AFTER UPDATE ON entries BEGIN
-                                    INSERT INTO search(docid, body, title) VALUES(new.rowid, new.body, new.title);
-                                END;'
-                    @@db.execute 'CREATE TRIGGER IF NOT EXISTS entries_bd BEFORE DELETE ON entries BEGIN
-                                    DELETE FROM search WHERE docid=old.rowid;
-                                END;'
-                    @@db.execute 'CREATE TRIGGER IF NOT EXISTS entries_bu BEFORE UPDATE ON entries BEGIN
-                                    DELETE FROM search WHERE docid=old.rowid;
-                                END;'
-                    @@db.execute "PRAGMA foreign_keys = ON;"
-                    @@db.results_as_hash = true
-                rescue => error
-                    warn "error creating tables: #{error}"
-                end
+                self.databaseFile = File.join(File.dirname(__FILE__), "blog.db")
+                self.setupDB
             end
         end
 
-        def getEntries(page, amount, tag)
-            entries = []
-            totalPages, totalEntries = self.getTotalPages(amount, tag)
-            totalPages = totalPages <= 0 ? 1 : totalPages
-            case page
-                when -1 then
-                    # on frontpage, we have no real index
-                    offset = 0
-                    limit = amount
-                when totalPages - 1 then
-                    offset = amount
-                    limit = (totalEntries - ((totalPages - 2) * amount)) - amount
-                else
-                    offset = totalEntries - (amount * page)
-                    limit = amount
-            end
+        def setupDB
+            @@db = SQLite3::Database.new self.databaseFile
             begin
-                if tag == nil
-                    @@db.execute("SELECT id FROM entries WHERE deleted != 1 ORDER BY date DESC LIMIT ?,?;", offset, limit) do |row|
-                        entry = Entry.new(row["id"])
-                        entries.push(entry)
+                @@db.execute "CREATE TABLE IF NOT EXISTS authors(
+                                name TEXT PRIMARY KEY,
+                                mail TEXT UNIQUE
+                                );"
+                @@db.execute "CREATE TABLE IF NOT EXISTS options(
+                                name TEXT PRIMARY KEY,
+                                value TEXT
+                                );"
+                @@db.execute "CREATE TABLE IF NOT EXISTS cache(
+                                key TEXT PRIMARY KEY,
+                                value TEXT,
+                                date INTEGER DEFAULT CURRENT_TIMESTAMP
+                                );"
+                @@db.execute "CREATE TABLE IF NOT EXISTS friends(
+                                name TEXT PRIMARY KEY,
+                                url TEXT
+                                );"
+                @@db.execute "CREATE TABLE IF NOT EXISTS comments(
+                                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                replyToEntry INTEGER,
+                                replyToComment INTEGER,
+                                name TEXT,
+                                mail TEXT,
+                                url TEXT,
+                                body TEXT,
+                                title TEXT,
+                                type TEXT DEFAULT 'comment',
+                                status TEXT DEFAULT 'approved',
+                                subscribe INTEGER DEFAULT 0,
+                                date INTEGER DEFAULT CURRENT_TIMESTAMP,
+                                FOREIGN KEY (replyToEntry) REFERENCES entries(id) ON DELETE CASCADE,
+                                FOREIGN KEY (replyToComment) REFERENCES comments(id) 
+                                );"
+                @@db.execute "CREATE TABLE IF NOT EXISTS entries(
+                                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                body TEXT,
+                                title TEXT,
+                                author TEXT,
+                                moderate TEXT,
+                                date INTEGER DEFAULT CURRENT_TIMESTAMP,
+                                deleted INTEGER DEFAULT 0,
+                                paginated INTEGER DEFAULT 0,
+                                FOREIGN KEY (author) REFERENCES authors(name) ON UPDATE CASCADE
+                                );"
+                @@db.execute "CREATE TABLE IF NOT EXISTS tags(
+                                tag TEXT,
+                                entryId INTEGER,
+                                FOREIGN KEY (entryId) REFERENCES entries(id) ON UPDATE CASCADE ON DELETE CASCADE
+                );"
+                @@db.execute "CREATE INDEX IF NOT EXISTS tags_tag_index ON tags(tag)"
+                @@db.execute "CREATE TABLE IF NOT EXISTS entries_recycler
+                                AS
+                                SELECT * from entries WHERE id == -1;"
+                @@db.execute "CREATE TABLE IF NOT EXISTS tags_recycler
+                                AS
+                                SELECT * from tags WHERE entryId == -1;"
+                @@db.execute "CREATE TABLE IF NOT EXISTS pagination(
+                                page INTEGER,
+                                tag TEXT,
+                                startDate INTEGER,
+                                PRIMARY KEY(page, tag));"
+                begin
+                    @@db.execute 'CREATE VIRTUAL TABLE search
+                                    USING fts4(content="entries", body, title);'
+                rescue => error
+                    # if not exists should work here, but doesn't, so this always throws an error if table exists
+                    warn "Creating search-table: #{error}"
+                end
+                @@db.execute 'CREATE TRIGGER IF NOT EXISTS entries_ai AFTER INSERT ON entries BEGIN
+                                INSERT INTO search(docid, body, title) VALUES(new.rowid, new.body, new.title);
+                            END;'
+                @@db.execute 'CREATE TRIGGER IF NOT EXISTS entries_au AFTER UPDATE ON entries BEGIN
+                                INSERT INTO search(docid, body, title) VALUES(new.rowid, new.body, new.title);
+                            END;'
+                @@db.execute 'CREATE TRIGGER IF NOT EXISTS entries_bd BEFORE DELETE ON entries BEGIN
+                                DELETE FROM search WHERE docid=old.rowid;
+                            END;'
+                @@db.execute 'CREATE TRIGGER IF NOT EXISTS entries_bu BEFORE UPDATE ON entries BEGIN
+                                DELETE FROM search WHERE docid=old.rowid;
+                            END;'
+                @@db.execute "PRAGMA foreign_keys = ON;"
+                @@db.results_as_hash = true
+            rescue => error
+                warn "error creating tables: #{error}"
+            end
+        end
+
+        def getEntries(page:, limit:, tag:)
+            entries = []
+            begin
+                if page == -1
+                    totalPages, _ = self.getTotalPages(limit, tag)
+                    page = totalPages
+                end
+                if page == 1
+                    @@db.execute("SELECT id FROM entries WHERE deleted != 1 AND date <= (SELECT startDate FROM pagination WHERE page = ?) ORDER BY date DESC LIMIT ?;", page, limit) do |row|
+                        entries << Entry.new(row["id"])
                     end
                 else
-                    @@db.execute("SELECT id FROM entries WHERE deleted != 1 AND id IN (SELECT entryId FROM tags WHERE tag = ?) ORDER BY date DESC LIMIT ?,?;", tag, offset, limit) do |row|
-                        entry = Entry.new(row["id"])
-                        entries.push(entry)
+                    @@db.execute("SELECT id FROM entries WHERE deleted != 1 AND date <= (SELECT startDate FROM pagination WHERE page = ?) AND date > (SELECT startDate FROM pagination WHERE page = ?) ORDER BY date DESC LIMIT ?;", page, page - 1, limit) do |row|
+                        entries << Entry.new(row["id"])
                     end
                 end
             rescue => error
                 warn "getEntries: #{error}"
             end
             return entries
+        end
+
+        # TODO: Drop this method and modify the pagination only as much as needed
+        def rebuildPagination()
+            begin
+                @@db.execute("DELETE FROM pagination")
+                @@db.execute("UPDATE entries SET paginated = 0")
+                @@db.execute("SELECT id FROM entries WHERE deleted != 1 ORDER BY date ASC") do |row|
+                    self.addToPagination(entry: Entry.new(row['id']))
+                end
+            rescue => error
+                warn "rebuild pagination: #{error}"
+            end
+        end
+
+        # Add the page to the precomputed mapping of page to entry date, to enable the no offset pagination
+        # This also has to take care of shrinking the buffer (the second archive page, n -1), so that all other archive pages remain stable
+        def addToPagination(entry:)
+            limit = 5
+            # the tag can't just be nil, because in sqlite3 INSERT OR REPLACE on shared primary keys detects ('abc', NULL) and ('abc', NULL) not as a conflict
+            tags = entry.tags.empty? ? [self.NOTAG] : (entry.tags << self.NOTAG)
+            tags.each do |tag|
+                totalPages, totalEntries = self.getTotalPages(limit, tag)
+                totalEntries += 1   # the current entry is not already counted by that function
+                page = (totalEntries > 1 && totalEntries % limit == 1) ? totalPages + 1 : totalPages
+                # start date of n is now entry.date
+                @@db.execute("INSERT OR REPLACE INTO pagination(page, tag, startDate) VALUES(?, ?, ?)", page, tag, entry.date)
+
+                if totalEntries > limit
+                    # now the start second archive page, the shrinking and growing buffer, has to be set as well
+                    tagSQL = tag == self.NOTAG ? "" : "AND id IN (SELECT entryId FROM tags WHERE tag = '#{SQLite3::Database.quote(tag)}')"
+                    bufferStart = @@db.execute("SELECT date FROM entries WHERE date < (SELECT startDate FROM pagination WHERE page = ? AND tag = ?) #{tagSQL} ORDER BY date DESC LIMIT ?", page, tag, limit).last['date']
+                    @@db.execute("INSERT OR REPLACE INTO pagination(page, tag, startDate) VALUES(?, ?, ?)", page - 1, tag, bufferStart)
+
+                    if (totalEntries > (limit * 2)) && (totalEntries % limit == 1)
+                        # if we have more than two pages and the buffer just overgrew, we can set it back to 1 and move the full amount of entries to a stable page
+                        bufferEnd = @@db.execute("SELECT date FROM entries WHERE date < (SELECT startDate FROM pagination WHERE page = ? AND tag = ?) #{tagSQL} ORDER BY date DESC LIMIT ?", page - 1, tag, 1).last['date']
+                        # this will never be changed again
+                        @@db.execute("INSERT OR REPLACE INTO pagination(page, tag, startDate) VALUES(?, ?, ?)", page - 2, tag, bufferEnd)
+                    end
+                end
+            end
+            @@db.execute("UPDATE entries SET paginated = 1 WHERE id = ?", entry.id)
         end
 
         def getAllTags()
@@ -137,17 +182,23 @@ module Ursprung
             end
         end
 
-        def getTotalPages(amount, tag)
+        def getTotalPages(limit, tag)
+            tag = self.NOTAG if tag == nil
+            totalPages = 1
+            totalEntries = 0
             begin
-                if tag == nil
-                    totalEntries = @@db.execute("SELECT COUNT(id) from entries")[0]["COUNT(id)"]
-                else
-                    totalEntries = @@db.execute("SELECT COUNT(DISTINCT entryId) from tags WHERE tag = ?", tag)[0]["COUNT(DISTINCT entryId)"]
-                end
+                totalPages = @@db.execute("SELECT MAX(page) from pagination WHERE tag = ?", tag)[0]["MAX(page)"]
+                totalPages = 1 if totalPages.nil?
             rescue => error
-                warn "getEntries count: #{error}"
+                warn "getTotalPages count pages: #{error}"
             end
-            totalPages = (totalEntries.to_f / amount).ceil;
+
+            begin
+                tagSQL = tag == self.NOTAG ? '' : "AND id IN (SELECT entryId FROM tags WHERE tag = '#{SQLite3::Database.quote(tag)}')"
+                totalEntries = @@db.execute("SELECT COUNT(id) from entries WHERE paginated = 1 #{tagSQL}")[0]["COUNT(id)"]
+            rescue => error
+                warn "getTotalPages count entries: #{error}"
+            end
             return totalPages, totalEntries
         end
 
@@ -183,6 +234,7 @@ module Ursprung
                 entry.tags.each do |tag|
                     @@db.execute("INSERT INTO tags(tag, entryId) VALUES(?, ?);", tag, entry.id)
                 end
+                self.rebuildPagination
             rescue => error
                 warn "editEntry: #{error}"
                 return false
@@ -202,6 +254,9 @@ module Ursprung
         def deleteEntrySoft(id)
             begin
                 @@db.execute("UPDATE entries SET deleted = 1 WHERE id == ?;", id)
+                Ursprung::pool.process {
+                    self.rebuildPagination
+                }
             rescue => error
                 warn "deleteEntrySoft: #{error}"
             end
@@ -359,9 +414,6 @@ module Ursprung
             when "Ursprung::Entry"
                 begin
                     archivePage = origin.archivePage
-                    amount = 5
-                    totalPages = [self.getTotalPages(amount, nil)[0], 1].max   # getTotalPages correctly reports 0 when the only entry gets deleted, but min of archivePage is 1
-                    @@db.execute("DELETE FROM cache WHERE key LIKE '/||==||%'") if archivePage == totalPages
                     # origin.id and archivePage throw a bind or column index out of range error when inserted properly
                     @@db.execute("DELETE FROM cache WHERE key LIKE '/#{SQLite3::Database.quote origin.id.to_s}/%'
                                                                     OR key LIKE '/archive/#{SQLite3::Database.quote archivePage.to_s}/||==||%'
@@ -369,6 +421,7 @@ module Ursprung
                                                                     OR key LIKE '/search%'
                                                                     OR key LIKE '/feed%'
                                                                     OR key LIKE '||==||%'
+                                                                    OR key LIKE '/||==||%'
                                                                         ")
                 rescue => error
                     warn "invalidateCache for entry: #{error}"

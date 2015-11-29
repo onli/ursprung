@@ -54,7 +54,7 @@
             <% end %>
 
             <nav id="browser">
-                <% if page.to_i != 1 && page.to_i != 0 %>
+                <% if page.to_i > 1 %>
                     <a id="browsePrior" rel="prev" href="<%= url_for '/archive/' + (page.to_i - 1).to_s %>/<%= tag %>">older</a>
                 <% end %>
                 <% if page.to_i != totalPages %>

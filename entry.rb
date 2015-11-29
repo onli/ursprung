@@ -4,10 +4,11 @@ require 'sanitize'
 require 'xmlrpc/client'
 require 'kramdown'
 require 'http'
+require 'detach'
 
 module Ursprung
     class Entry
-
+    
         attr_accessor :id
         attr_accessor :body
         attr_accessor :title
@@ -65,6 +66,7 @@ module Ursprung
             if self.id == nil
                 id = db.addEntry(self)
                 initializeFromID(id, false)   # to get data added by the database, like the date
+                db.addToPagination(entry: self)
             else
                 db.editEntry(self)
                 initializeFromID(self.id, false)
@@ -209,9 +211,9 @@ module Ursprung
 
         # get the number of the archive this article is listed on
         def archivePage()
-            amount = 5
+            limit = 5
             position = Database.new.getAllEntryIds().index({ "id" => self.id.to_f, 0 => self.id.to_f })
-            return (position.to_f / amount).ceil
+            return (position.to_f / limit).ceil
         end
 
         def format()
@@ -223,6 +225,5 @@ module Ursprung
                 return self.body
             end
         end
-
     end
 end
