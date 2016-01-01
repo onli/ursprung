@@ -4,7 +4,6 @@ require 'sanitize'
 require 'xmlrpc/client'
 require 'kramdown'
 require 'http'
-require 'detach'
 
 module Ursprung
     class Entry
