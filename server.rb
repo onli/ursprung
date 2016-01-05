@@ -17,6 +17,7 @@ require 'uglifier'
 require 'cssminify'
 require 'sinatra/url_for'
 require 'thread/pool'
+require 'rack/contrib/try_static'
 
 module Ursprung
     class Ursprung < Sinatra::Application
@@ -118,7 +119,8 @@ module Ursprung
         def self.loadConfiguration()
             design = Database.new.getOption("design")
             settings.views = File.join(settings.design_root, design)
-            settings.public_folder = File.join(settings.views, 'public')
+            use Rack::TryStatic, :root => File.join(settings.views, 'public'), :urls => %w[/]   # first look in the designs public folder
+            settings.public_folder = 'public'   # and otherwise in the global one, where also all the uploads are
             settings.assets.clear_paths     # js/css files else stay the same after a design switch
 
             settings.assets.append_path File.join(settings.views, "js")
@@ -380,7 +382,10 @@ module Ursprung
         end
 
         get %r{/search/([\w]+)} do |keyword|
-            body erb :search, :locals => {:entries => Database.new.searchEntries(keyword), :keyword => keyword}
+            db = Database.new
+            designs = Dir.new(settings.design_root).entries.reject{|design| design == "." || design == ".." }
+            design = db.getOption("design")
+            body erb :search, :locals => {:entries => db.searchEntries(keyword), :keyword => keyword, :designs => designs, :design => design}
         end
 
         get '/search' do
@@ -403,9 +408,12 @@ module Ursprung
 
         # A Page (entry with comments)
         get  %r{/([0-9]+)/([\w]+)} do |id, title|
+            db = Database.new
             entry = Entry.new(id.to_i)
-            comments = Database.new.getCommentsForEntry(id)
-            body erb :page, :locals => {:entry => entry, :comments => comments}
+            comments = db.getCommentsForEntry(id)
+            designs = Dir.new(settings.design_root).entries.reject{|design| design == "." || design == ".." }
+            design = db.getOption("design")
+            body erb :page, :locals => {:entry => entry, :comments => comments, :designs => designs, :design => design}
         end
 
         get '/subscriptions/:mail' do
