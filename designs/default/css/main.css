@@ -36,6 +36,7 @@ a:visited {
 
 label {
     display: block;
+    cursor: pointer;
 }
 
 input, textarea, button {
@@ -109,6 +110,11 @@ img {
     100% { background-color: #F7F7F7;opacity: 0; }
 }
 
+main > section > ul,
+main > section > ol {
+  list-style: none;
+  padding: 0;
+}
 
 article {
     max-width: 50em;
@@ -123,13 +129,18 @@ summary {
 }
 
 #widget {
-    float: right;
-    position: relative;
-    right: 3em;
+    position: fixed;
+    right: 1em;
+    top: 1em;
+    text-align: left;
 }
 
 #title a:visited {
     color: #3B5998;
+}
+
+#title {
+    text-align: center;
 }
 
 #title h1 {

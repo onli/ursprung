@@ -8,7 +8,7 @@
     </head>
     <body>
         <div id="content">
-            <%= erb :header, :locals => {:blogTitle => blogTitle} %>
+            <%= erb :header, :locals => {:blogTitle => blogTitle, :design => design, :designs => designs} %>
             <h2>Searchresults for <%= erb :searchWidget, :locals => {:keyword => keyword }%></h2>
             <ol>
             <% entries.each do |entry| %>

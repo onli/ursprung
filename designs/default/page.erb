@@ -10,8 +10,8 @@
     </head>
 
     <body>
+        <%= erb :header, :locals => {:blogTitle => blogTitle, :design => design, :designs => designs} %>
         <main>
-            <%= erb :header, :locals => {:blogTitle => blogTitle} %>
 
             <article class="entry container" id="e<%= entry.id %>" itemscope itemtype="http://schema.org/BlogPosting">
                 <%= erb :entry, :locals => {:entry => entry} %>
