@@ -1,0 +1,3 @@
+The original ursprung design
+Author: Malte Paskuda
+License: AGPL v3, see ursprungs LICENSE file

@@ -392,6 +392,12 @@ snack.ready(function() {
             evt.target.parentNode.removeChild(evt.target.parentNode.querySelector("#refComment"));
         });
     }
+
+    if (document.querySelector(".designinfo") != null) {
+        ajaxify('.designinfo', function(res, parent) {
+            alert(res);
+        });
+    }
     
     if (window.location.hash == "#moderate") {
         var message = document.createElement("div");
@@ -436,10 +442,15 @@ snack.ready(function() {
             snack.wrap(selector).attach('click', function(evt) {
                 snack.preventDefault(evt);
                 callback;
-                if (evt.target.parentNode.nodeName == "A") {
+                if (evt.target.parentNode.nodeName == "A" || evt.target.nodeName == "A") {
+                    if (evt.target.nodeName == "A") {
+                        var url = evt.target.href;
+                    } else {
+                        var url = evt.target.parentNode.href;
+                    }
                     var options = {
                         method: 'get',
-                        url: evt.target.parentNode.href,
+                        url: url,
                     }
                 } else {
                     // this is a form

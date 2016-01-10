@@ -434,6 +434,11 @@ module Ursprung
             redirect back
         end
 
+        get %r{/designinfo/([\w]+)} do |availableDesign|
+            target = File.join(settings.design_root, availableDesign.gsub("..", ""), 'about.txt')
+            body File.new(target).read
+        end
+
 
         get "/js/:file.js" do
           content_type "application/javascript"

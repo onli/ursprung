@@ -4,7 +4,7 @@
     <form action="<%= url_for '/setOption' %>" method="post">
         <input type="hidden" name="name" value="design"/>
         <% designs.each do |availableDesign| %>
-            <label><input type="radio" name="value" value="<%= availableDesign %>" <%= "checked" if availableDesign == design %> /> <%= availableDesign %></label>
+            <label><input type="radio" name="value" value="<%= availableDesign %>" <%= "checked" if availableDesign == design %> /> <%= availableDesign %> (<a href="<%= url_for '/designinfo/' + availableDesign %>" class="designinfo">info</a>)</label>
         <% end %>
         <button type="submit">OK</button>
     </form>
