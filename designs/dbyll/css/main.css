@@ -1,0 +1,217 @@
+input, textarea, button {
+    font-family: inherit;
+    font-size: inherit;
+}
+
+textarea {
+    /* textarea-borders else might differ from input-boxes in chrome */
+    -moz-appearance: textfield;
+    -webkit-appearance: textfield;
+}
+
+label {
+    display: block;
+    cursor: pointer;
+}
+
+button::-moz-focus-inner {
+    /* makes buttons  have the same size in chrome and ff */
+    border:0;padding:0;margin:0;
+}
+
+#message {
+    position: fixed;
+    z-index: 101;
+    top: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    line-height: 2.5;
+    overflow: hidden;
+    box-shadow: 0 0 5px black;
+    -webkit-animation: message 5000ms linear forwards;
+    animation: message 5000ms linear forwards;
+}
+
+@keyframes message {
+    0% { background-color: #8DCC14; opacity: 1;}
+    10% { background-color: #F7F7F7; opacity: 1; }
+    90% { background-color: #F7F7F7; opacity: 1; }
+    100% { background-color: #F7F7F7;opacity: 0; }
+}
+
+@-webkit-keyframes message {
+    0% { background-color: #8DCC14; opacity: 1;}
+    10% { background-color: #F7F7F7; opacity: 1; }
+    90% { background-color: #F7F7F7; opacity: 1; }
+    100% { background-color: #F7F7F7;opacity: 0; }
+}
+
+.editor {
+    width: 50em;
+    max-width: 95%;
+    text-align: right;
+}
+
+.entryTitleInput {
+    margin-top: 1em;
+    margin-bottom: 1em;
+    width: 100%;
+    max-width: 100%;
+}
+.entryInput {
+    width: 100%;
+    max-width: 100%;
+    margin-top: 0;
+}
+
+.editorSubmitButtons {
+    display: inline-block;
+    vertical-align: bottom;
+}
+
+.entryTagInput {
+    float: left;
+    max-width: 100%;
+}
+
+.entryPublish, #previewButton {
+    width: 5em;
+    display: block;
+}
+
+.cancel {
+    width: 5em;
+    margin-right: 0.5em;
+}
+
+#preview {
+    border: 1px dashed rgba(0, 0, 0, .3);
+    opacity: 0.8;
+    margin-top: 1em;
+    padding-left: 0.2em;
+    padding-right: 0.2em;
+    text-align: left;
+}
+
+.markupButton {
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    margin-right: 2px;
+    display: inline-block;
+    font-size: 18px;
+    font-family: serif;
+    margin-bottom: 0;
+}
+
+.boldButton {
+    font-weight: bold;
+}
+
+.italicButton {
+    font-style: italic;
+}
+
+.imgButtonInput {
+    position: absolute;
+    left: -9999em
+}
+
+.buttonBar {
+    display: block;
+    text-align: left;
+}
+
+#welcome, #designs {
+    font-size: 0.9em;
+}
+
+.avatar {
+    float: left;
+    margin-right: 0.5em;
+}
+
+#widget {
+    position: fixed;
+    right: 1em;
+    top: 1em;
+    text-align: left;
+    color: #2C3E50;
+    display: block !important;
+}
+
+#widget a {
+    color: #428BCA;
+}
+
+.moderationStatusLabel,
+button {
+    cursor: pointer;
+    margin-left: 0;
+    margin-top: 2px;
+    display: inline-block;
+}
+
+.adminOptions form {
+    display: inline-block;
+}
+
+#refComment .adminOptions {
+    display: none;
+    visibility: hidden;
+}
+
+.comment_moderate .commentBody, .comment_moderate footer  {
+    opacity: 0.7;
+}
+
+.commentForm {
+    margin-top: 2em;
+}
+
+.commentForm > input,
+.commentFormMail > input {
+    width: 22em;    
+}
+
+.commentForm > input {
+    display: block;
+}
+
+.commentFormTel {
+    display: none !important;
+    visibility: hidden;
+}
+
+.commentInput {
+    width: 33em;
+    min-height: 8em;
+}
+
+.commentFormSubmit {
+    margin-left: 28em;
+    min-width: 5em;
+    margin-bottom: 1em;
+}
+
+.cancel + .commentFormSubmit {
+    margin-left: 22.5em;
+}
+
+#subscribe {
+    display: inline;
+    margin-left: 1em;
+}
+
+#subscribe span {
+    font-size: 90%;
+}
+
+#subscribe span,
+#subscribe input {
+    vertical-align: text-bottom;
+} 
+
+#logout {
+    display: inline-block;
+}
