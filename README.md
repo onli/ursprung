@@ -12,6 +12,7 @@ A small blogengine using ruby, sinatra, sqlite and browserid.
  * Support for other Designs (themeable)
  * Minimal design as default
  * Cached
+ * Support for and shipping with some themes of [the classless project](https://github.com/websitesfortrello/classless/)
 
 # Installation
 
