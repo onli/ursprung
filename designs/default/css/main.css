@@ -480,3 +480,8 @@ footer #search {
 #logout {
     display: inline-block;
 }
+
+td, th {
+    border: 1px solid #e5e3da;
+    background: white;
+}
