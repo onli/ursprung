@@ -23,7 +23,6 @@ module Ursprung
     class Ursprung < Sinatra::Application
         register Sinatra::BrowserID
         use Rack::Session::Pool
-        set :browserid_login_button, Proc.new { url "/img/browserid.png" } 
 
         set :static_cache_control, [:public, max_age: 31536000]
 
@@ -177,6 +176,10 @@ module Ursprung
 
         get %r{/archive/([0-9]+)} do |page|
             serveIndex(page: page.to_i)
+        end
+        
+        get %r{/archive/([\w]+)} do |tag|
+            serveIndex(page: -1, tag: tag)
         end
 
         def serveIndex(page: -1, tag: nil)

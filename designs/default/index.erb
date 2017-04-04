@@ -32,10 +32,10 @@
 
             <nav id="browser">
                 <% if page.to_i > 1 %>
-                    <a id="browsePrior" rel="prev" href="<%= url_for '/archive/' + (page.to_i - 1).to_s %>/<%= tag %>">older</a>
+                    <a id="browsePrior" rel="prev" href="<%= url '/archive/' + (page.to_i - 1).to_s %><%= '/' + tag if tag %>">older</a>
                 <% end %>
                 <% if page.to_i != totalPages %>
-                    <a id="browseNext" rel="next" href="<%= url_for '/archive/' + (page.to_i + 1).to_s %>/<%= tag %> ">newer</a>
+                    <a id="browseNext" rel="next" href="<%= url '/archive/' + (page.to_i + 1).to_s %><%= '/' + tag if tag %> ">newer</a>
                 <% end %>  
             </nav>
             <footer>
