@@ -59,7 +59,6 @@ module Ursprung
                                 moderate TEXT,
                                 date INTEGER DEFAULT CURRENT_TIMESTAMP,
                                 deleted INTEGER DEFAULT 0,
-                                paginated INTEGER DEFAULT 0,
                                 FOREIGN KEY (author) REFERENCES authors(name) ON UPDATE CASCADE
                                 );"
                 @@db.execute "CREATE TABLE IF NOT EXISTS tags(
@@ -74,11 +73,6 @@ module Ursprung
                 @@db.execute "CREATE TABLE IF NOT EXISTS tags_recycler
                                 AS
                                 SELECT * from tags WHERE entryId == -1;"
-                @@db.execute "CREATE TABLE IF NOT EXISTS pagination(
-                                page INTEGER,
-                                tag TEXT,
-                                startDate INTEGER,
-                                PRIMARY KEY(page, tag));"
                 begin
                     @@db.execute 'CREATE VIRTUAL TABLE search
                                     USING fts4(content="entries", body, title);'
@@ -107,67 +101,34 @@ module Ursprung
 
         def getEntries(page:, limit:, tag:)
             entries = []
+            totalPages, totalEntries = self.getTotalPages(limit, tag)
+            totalPages = totalPages <= 0 ? 1 : totalPages
+            case page
+            when -1 then
+                # on frontpage, we have no real index
+                offset = 0
+            when totalPages - 1 then
+                offset = limit
+                limit = (totalEntries - ((totalPages - 2) * limit)) - limit
+            else
+                offset = totalEntries - (limit * page)
+            end
             begin
-                if page == -1
-                    totalPages, _ = self.getTotalPages(limit, tag)
-                    page = totalPages
-                end
-                if page == 1
-                    @@db.execute("SELECT id FROM entries WHERE deleted != 1 AND date <= (SELECT startDate FROM pagination WHERE page = ?) ORDER BY date DESC LIMIT ?;", page, limit) do |row|
-                        entries << Entry.new(row["id"])
+                if tag == nil
+                    @@db.execute("SELECT id FROM entries WHERE deleted != 1 ORDER BY date DESC LIMIT ?,?;", offset, limit) do |row|
+                        entry = Entry.new(row["id"])
+                        entries.push(entry)
                     end
                 else
-                    @@db.execute("SELECT id FROM entries WHERE deleted != 1 AND date <= (SELECT startDate FROM pagination WHERE page = ?) AND date > (SELECT startDate FROM pagination WHERE page = ?) ORDER BY date DESC LIMIT ?;", page, page - 1, limit) do |row|
-                        entries << Entry.new(row["id"])
+                    @@db.execute("SELECT id FROM entries WHERE deleted != 1 AND id IN (SELECT entryId FROM tags WHERE tag = ?) ORDER BY date DESC LIMIT ?,?;", tag, offset, limit) do |row|
+                        entry = Entry.new(row["id"])
+                        entries.push(entry)
                     end
                 end
             rescue => error
                 warn "getEntries: #{error}"
             end
             return entries
-        end
-
-        # TODO: Drop this method and modify the pagination only as much as needed
-        def rebuildPagination()
-            begin
-                @@db.execute("DELETE FROM pagination")
-                @@db.execute("UPDATE entries SET paginated = 0")
-                @@db.execute("SELECT id FROM entries WHERE deleted != 1 ORDER BY date ASC") do |row|
-                    self.addToPagination(entry: Entry.new(row['id']))
-                end
-            rescue => error
-                warn "rebuild pagination: #{error}"
-            end
-        end
-
-        # Add the page to the precomputed mapping of page to entry date, to enable the no offset pagination
-        # This also has to take care of shrinking the buffer (the second archive page, n -1), so that all other archive pages remain stable
-        def addToPagination(entry:)
-            limit = 5
-            # the tag can't just be nil, because in sqlite3 INSERT OR REPLACE on shared primary keys detects ('abc', NULL) and ('abc', NULL) not as a conflict
-            tags = entry.tags.empty? ? [self.NOTAG] : (entry.tags << self.NOTAG)
-            tags.each do |tag|
-                totalPages, totalEntries = self.getTotalPages(limit, tag)
-                totalEntries += 1   # the current entry is not already counted by that function
-                page = (totalEntries > 1 && totalEntries % limit == 1) ? totalPages + 1 : totalPages
-                # start date of n is now entry.date
-                @@db.execute("INSERT OR REPLACE INTO pagination(page, tag, startDate) VALUES(?, ?, ?)", page, tag, entry.date)
-
-                if totalEntries > limit
-                    # now the start second archive page, the shrinking and growing buffer, has to be set as well
-                    tagSQL = tag == self.NOTAG ? "" : "AND id IN (SELECT entryId FROM tags WHERE tag = '#{SQLite3::Database.quote(tag)}')"
-                    bufferStart = @@db.execute("SELECT date FROM entries WHERE date < (SELECT startDate FROM pagination WHERE page = ? AND tag = ?) #{tagSQL} ORDER BY date DESC LIMIT ?", page, tag, limit).last['date']
-                    @@db.execute("INSERT OR REPLACE INTO pagination(page, tag, startDate) VALUES(?, ?, ?)", page - 1, tag, bufferStart)
-
-                    if (totalEntries > (limit * 2)) && (totalEntries % limit == 1)
-                        # if we have more than two pages and the buffer just overgrew, we can set it back to 1 and move the full amount of entries to a stable page
-                        bufferEnd = @@db.execute("SELECT date FROM entries WHERE date < (SELECT startDate FROM pagination WHERE page = ? AND tag = ?) #{tagSQL} ORDER BY date DESC LIMIT ?", page - 1, tag, 1).last['date']
-                        # this will never be changed again
-                        @@db.execute("INSERT OR REPLACE INTO pagination(page, tag, startDate) VALUES(?, ?, ?)", page - 2, tag, bufferEnd)
-                    end
-                end
-            end
-            @@db.execute("UPDATE entries SET paginated = 1 WHERE id = ?", entry.id)
         end
 
         def getAllTags()
@@ -187,15 +148,9 @@ module Ursprung
             totalPages = 1
             totalEntries = 0
             begin
-                totalPages = @@db.execute("SELECT MAX(page) from pagination WHERE tag = ?", tag)[0]["MAX(page)"]
-                totalPages = 1 if totalPages.nil?
-            rescue => error
-                warn "getTotalPages count pages: #{error}"
-            end
-
-            begin
-                tagSQL = tag == self.NOTAG ? '' : "AND id IN (SELECT entryId FROM tags WHERE tag = '#{SQLite3::Database.quote(tag)}')"
-                totalEntries = @@db.execute("SELECT COUNT(id) from entries WHERE paginated = 1 #{tagSQL}")[0]["COUNT(id)"]
+                tagSQL = tag == self.NOTAG ? '' : "WHERE id IN (SELECT entryId FROM tags WHERE tag = '#{SQLite3::Database.quote(tag)}')"
+                totalEntries = @@db.execute("SELECT COUNT(id) from entries #{tagSQL}")[0]["COUNT(id)"]
+                totalPages = (totalEntries.to_f / limit).ceil
             rescue => error
                 warn "getTotalPages count entries: #{error}"
             end
