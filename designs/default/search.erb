@@ -7,17 +7,21 @@
         <meta name="description" content="">
     </head>
     <body>
-        <div id="content">
+        <main itemscope itemtype="http://schema.org/Blog">
             <%= erb :header, :locals => {:blogTitle => blogTitle, :design => design, :designs => designs} %>
+            <section>
             <h2>Searchresults for <%= erb :searchWidget, :locals => {:keyword => keyword }%></h2>
             <ol>
             <% entries.each do |entry| %>
                 <li>
-                    <h3><a href="<%= url_for entry.link %>"><%= entry.title %></a></h3>
-                    <div itemprop="articleBody"><%= excerpt(stripHtml(entry.format)) %></div>
+                    <article class="entry container" id="e<%= entry.id %>" itemscope itemtype="http://schema.org/BlogPosting">
+                        <h3><a href="<%= url_for entry.link %>"><%= entry.title %></a></h3>
+                        <div itemprop="articleBody"><%= excerpt(stripHtml(entry.format)) %></div>
+                    </article>
                 </li>
             <% end %>
-            </li>
+            </ol>
+            </section>
         </div>
         
     </body>
