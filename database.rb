@@ -189,7 +189,6 @@ module Ursprung
                 entry.tags.each do |tag|
                     @@db.execute("INSERT INTO tags(tag, entryId) VALUES(?, ?);", tag, entry.id)
                 end
-                self.rebuildPagination
             rescue => error
                 warn "editEntry: #{error}"
                 return false
@@ -209,9 +208,6 @@ module Ursprung
         def deleteEntrySoft(id)
             begin
                 @@db.execute("UPDATE entries SET deleted = 1 WHERE id == ?;", id)
-                Ursprung::pool.process {
-                    self.rebuildPagination
-                }
             rescue => error
                 warn "deleteEntrySoft: #{error}"
             end
