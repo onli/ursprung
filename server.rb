@@ -145,25 +145,7 @@ module Ursprung
         ####
 
         before do
-            @cacheContent = nil
-            if request.request_method == "GET"
-                @cacheContent, cacheCreation = Database.new.getCache("#{request.path_info}||==||#{authorized_email}")
-                if @cacheContent != nil
-                    last_modified cacheCreation
-                    etag Digest::MD5.hexdigest(@cacheContent)
-                    content_type "text/css" if request.path_info[0,5] == "/css/"
-                    content_type "application/javascript" if request.path_info[0,4] == "/js/"
-                    content_type "application/rss+xml" if request.path_info[0,5] == "/feed"
-                    halt @cacheContent if ! settings.development?   # when in dev-mode, the cache becomes cumbersome
-                end
-            end
             Ursprung::baseUrl = url('/', :full)
-        end
-
-        after do
-            if @cacheContent == nil && request.request_method == "GET"
-                Database.new.cache("#{request.path_info}||==||#{authorized_email}", body)
-            end
         end
 
         get '/' do
