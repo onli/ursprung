@@ -65,7 +65,6 @@ module Ursprung
             if self.id == nil
                 id = db.addEntry(self)
                 initializeFromID(id, false)   # to get data added by the database, like the date
-                db.addToPagination(entry: self)
             else
                 db.editEntry(self)
                 initializeFromID(self.id, false)
