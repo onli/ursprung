@@ -297,6 +297,9 @@ module Ursprung
             comment.ham()
             baseUrl = url_for '/', :full
             comment.save()   # ham also marks as approved, which needs to be saved
+            Ursprung::pool.process {
+                comment.mailSubscribers()
+            }
             return "Done" if ! request.xhr?
             erb :comment, :locals => {:comment => comment}
         end

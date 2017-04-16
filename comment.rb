@@ -93,10 +93,12 @@ module Ursprung
             if self.id == nil
                 # it is a new comment
                 db.addComment(self)
-                mailOwner()
-                if (self.status == "approved")
-                    mailSubscribers()
-                end
+                Ursprung::pool.process {
+                    mailOwner()
+                    if (self.status == "approved")
+                        mailSubscribers()
+                    end
+                }
             else
                 db.editComment(self)
             end
