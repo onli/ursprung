@@ -389,7 +389,7 @@ snack.ready(function() {
         });
 
         snack.wrap(".commentReference").attach("mouseout", function(evt) {
-            evt.target.parentNode.removeChild(evt.target.parentNode.querySelector("#refComment"));
+            evt.target.parentNode.parentNode.removeChild(evt.target.parentNode.parentNode.querySelector("#refComment"));
         });
     }
 
