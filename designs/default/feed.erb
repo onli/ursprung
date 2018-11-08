@@ -13,9 +13,9 @@
         <atom:link rel="hub" href="https://pubsubhubbub.superfeedr.com/" />
         <% entries.each do |entry| %>
             <item>
-                <title><%= entry.title %></title>
-                <link><%= url_for entry.link, :full%></link>
-                <comments><%= url_for entry.link, :full %>#comments</comments>   
+                <title><%= h entry.title %></title>
+                <link><%= url(entry.link.gsub('&', '_'), :full) %></link>
+                <comments><%= url(entry.link.gsub('&', '_'), :full) %>#comments</comments>  
                 <% if ! entry.body.empty? %>
                     <content:encoded>
                         <%= h entry.format %>
