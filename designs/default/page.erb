@@ -7,6 +7,7 @@
         <meta name="description" content="">
         <link rel="trackback" type="application/x-www-form-urlencoded" href="<%= url_for "/#{entry.id}/addTrackback", :full %>" />
         <link rel="pingback" href="<%= url_for '/xmlrpc', :full %>" />
+        <link rel="canonical" href="<%= url(entry.link.gsub('&', '_'), :full) %>" />
     </head>
 
     <body>
