@@ -45,49 +45,47 @@ snack.ready(function() {
 
     function initDeleteElements() {
         ajaxify('.delete', function(res, parent) {
-            events = ["animationend", "webkitAnimationEnd", "oanimationend", "MSAnimationEnd"];
-            events.forEach(function(event) {
-                snack.wrap(parent).attach(event, function() {
-                    parent.removeEventListener(event, arguments.callee, false);
-                    var entry = parent.cloneNode(true);
-                    while (parent.hasChildNodes()) {
-                        parent.removeChild(parent.lastChild);
-                    }
-                    if (parent.id.contains("e")) {
-                        // restore works so far only for entries
-                        var undo = document.createElement("form");
-                        undo.action = "/" + parent.id.slice(1, parent.id.length) + "/restoreEntry"
-                        undo.method = "POST";
-                        undo.id = "undo";
-                        undo.className = "highlight";
-                        var submitButton = document.createElement("button");
-                        submitButton.type = "submit";
-                        submitButton.innerHTML = "undo";
-                        undo.appendChild(submitButton);
-                        snack.wrap(parent).removeClass("fadeout");
-                        snack.wrap(entry).removeClass("fadeout");
-                        
-                        undo.addEventListener("submit", function(evt) {
-                            snack.preventDefault(evt);
-                            var options = {
-                                method: evt.target.method,
-                                url: evt.target.action
+            snack.wrap(parent).attach("animationend", function() {
+                parent.removeEventListener("animationend", arguments.callee, false);
+                var entry = parent.innerHTML;
+                while (parent.hasChildNodes()) {
+                    parent.removeChild(parent.lastChild);
+                }
+                if (parent.id.includes("e")) {
+                    // restore works so far only for entries
+                    var undo = document.createElement("form");
+                    undo.action = "/" + parent.id.slice(1, parent.id.length) + "/restoreEntry"
+                    undo.method = "POST";
+                    undo.id = "undo";
+                    undo.className = "highlight";
+                    var submitButton = document.createElement("button");
+                    submitButton.type = "submit";
+                    submitButton.innerHTML = "undo";
+                    undo.appendChild(submitButton);
+                    snack.wrap(parent).removeClass("fadeout");
+                    
+                    undo.addEventListener("submit", function(evt) {
+                        snack.preventDefault(evt);
+                        var options = {
+                            method: evt.target.method,
+                            url: evt.target.action
+                        }
+                        snack.request(options, function(err, res) {
+                            if (err) {
+                                alert('error restoring entry: ' + err);
+                                return;
                             }
-                            snack.request(options, function(err, res) {
-                                if (err) {
-                                    alert('error restoring entry: ' + err);
-                                    return;
-                                }
-                            });
-                            parent.parentNode.replaceChild(entry, parent);
-                            initEditElements();
-                            initDeleteElements();
-                            
                         });
-                        parent.appendChild(undo);
-                    }
-                });
+                        parent.innerHTML = entry;
+                        snack.wrap(parent).removeClass("fadeout");
+                        initEditElements();
+                        initDeleteElements();
+                        
+                    });
+                    parent.appendChild(undo);
+                }
             });
+            
             snack.wrap(parent).addClass("fadeout");
         });
     }
