@@ -1,6 +1,6 @@
 <%# -*- encoding : utf-8 -*- %>
 <header>
-    <h1 class="entryTitle"><a href="<%= url_for entry.link %>" itemprop="headline"><%= entry.title %></a></h1>
+    <h1 class="entryTitle"><a href="<%= url entry.link %>" itemprop="headline"><%= entry.title %></a></h1>
 </header>
 <div itemprop="articleBody"><%= autotitle(entry.format) %></div>
 <footer>
@@ -9,8 +9,8 @@
     <span itemprop="keywords" class="tags"><%= entry.tags.map { |tag| "<a href='#{url '/archive/'}#{tag}'>#{tag}</a>"}.join(" ") if entry.tags != nil %></span>
     <% if isAdmin? %>
         <div class="adminOptions">
-            <a href="<%= url_for "/#{entry.id}/editEntry" %>"><button type="button" class="edit adminAction" title="edit">&#9998;</button></a>
-            <form action="<%= url_for "/#{entry.id}/deleteEntry" %>" method="POST">
+            <a href="<%= url "/#{entry.id}/editEntry" %>"><button type="button" class="edit adminAction" title="edit">&#9998;</button></a>
+            <form action="<%= url "/#{entry.id}/deleteEntry" %>" method="POST">
                 <button type="submit" class="delete adminAction" title="delete">&#10005;</button>
             </form>
         </div>

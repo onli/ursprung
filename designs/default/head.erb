@@ -4,19 +4,16 @@
 
 <meta name="viewport" content="width=device-width">
 
-<link rel="stylesheet" href="<%= url_for '/css/main.css' %>">
-<link rel="stylesheet" href="<%= url_for '/css/style.css' %>">
-<link rel="alternate"  type="application/rss+xml" href="<%= url_for '/feed' %>" title="<%= blogTitle %> Feed">
+<link rel="stylesheet" href="<%= url '/css/main.css' %>">
+<link rel="stylesheet" href="<%= url '/css/style.css' %>">
+<link rel="alternate"  type="application/rss+xml" href="<%= url '/feed' %>" title="<%= blogTitle %> Feed">
 <% if tag != nil %>
-    <link rel="alternate"  type="application/rss+xml" href="<%= url_for '/feed' + tag %>" title="<%= blogTitle %> <%= tag %> Feed">
+    <link rel="alternate"  type="application/rss+xml" href="<%= url '/feed' + tag %>" title="<%= blogTitle %> <%= tag %> Feed">
 <% end %>
-<link rel="alternate"  type="application/rss+xml" href="<%= url_for '/commentFeed' %>" title="<%= blogTitle %> Comment Feed">
+<link rel="alternate"  type="application/rss+xml" href="<%= url '/commentFeed' %>" title="<%= blogTitle %> Comment Feed">
 <script>
 paceOptions = {
   startOnPageLoad: false
 }
 </script>
-<script src="<%= url_for '/js/main.js' %>" defer></script>
-<!--[if lt IE 9]>
-<script src="<%= url_for '/js/html5shiv.js' %>"></script>
-<![endif]-->
+<script src="<%= url '/js/main.js' %>" defer></script>

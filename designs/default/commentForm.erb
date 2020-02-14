@@ -1,5 +1,5 @@
 <%# -*- encoding : utf-8 -*- %>
-<form class="commentForm" <%= 'id=commentForm' if comment == nil %> action="<%= url_for "/#{entry.id}/addComment" %>" method="POST">
+<form class="commentForm" <%= 'id=commentForm' if comment == nil %> action="<%= url "/#{entry.id}/addComment" %>" method="POST">
     <% if comment != nil %>
         <input type="hidden" name="id" value="<%= comment.id %>"/>
     <% end %>
@@ -7,7 +7,7 @@
         
     <input name="name" value="<%= (comment.author.name if comment != nil) or blogOwner if isAdmin? %>" placeholder="Name" />
     <div class="commentFormMail"><input name="mail" type="email" value="<%= (comment.author.mail if comment != nil) or authorized_email  %>" placeholder="Email" /><label class="container" id="subscribe"><input type="checkbox" name="subscribe" checked /><span>Subscribe</span> <% if isAdmin? %>
-        <a href="<%= url_for '/setOption/fromMail' %>" class="adminAction"><button class="edit" title="edit">&#9998;</button></a>
+        <a href="<%= url '/setOption/fromMail' %>" class="adminAction"><button class="edit" title="edit">&#9998;</button></a>
     <% end %></label></div>
     <input class="commentFormUrl" name="url" type="url" value="<%= comment.author.url if comment != nil %>" placeholder="Homepage" />
     <input class="commentFormTel" name="tel" type="text" value="" placeholder="do you really want that?" />

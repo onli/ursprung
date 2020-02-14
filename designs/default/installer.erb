@@ -9,7 +9,7 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width">
 
-        <link rel="stylesheet" href="<%= url_for '/css/main.css' %>">
+        <link rel="stylesheet" href="<%= url '/css/main.css' %>">
     </head>
 
     <body>
@@ -32,16 +32,16 @@
                             });
                         }
                     </script>
-                    <form name="_browserid_assert" action="<%= url_for '/_browserid_assert' %>" method="post">
+                    <form name="_browserid_assert" action="<%= url '/_browserid_assert' %>" method="post">
                         <input type="hidden" name="redirect" value="<%= request.url %>">
                         <input type="hidden" name="assertion" value="">
                     </form>
-                    <a href="#"><img src="<%= url_for '/img/browserid.png' %>" id="browserid_login_button" border=0 onClick="_browserid_login()" /></a>
+                    <a href="#"><img src="<%= url '/img/browserid.png' %>" id="browserid_login_button" border=0 onClick="_browserid_login()" /></a>
                 </p>
                 <p>The mail address used will be marked as being admin.</p>
             <% else %>
                 <h2>Step 2/2</h2>
-                <form method="POST" action="<%= url_for '/addAdmin' %>">
+                <form method="POST" action="<%= url '/addAdmin' %>">
                     <label>Displayname: <input name="name" type="text" required></input></label>
                     <button type="submit">OK</button>
                     <p>This name will be shown as your author name</p>

@@ -1,12 +1,12 @@
 <%# -*- encoding : utf-8 -*- %>
 <header id="title" class="container" role="banner">
-    <h1><a href="<%= url_for '/' %>"><%= blogTitle %></a></h1>
+    <h1><a href="<%= url '/' %>"><%= blogTitle %></a></h1>
     <% if isAdmin? %>
-        <a href="<%= url_for '/setOption/blogTitle' %>" class="adminAction"><button class="edit" title="edit">&#9998;</button></a>
+        <a href="<%= url '/setOption/blogTitle' %>" class="adminAction"><button class="edit" title="edit">&#9998;</button></a>
     <% end %>
     <aside id="widget">
             <% if isAdmin? %>
-                <div id="welcome">Welcome <%= authorized_email %> <form id="logout" action="<%= url_for '/logout' %>" method="POST"><button type="submit">Logout</button></form></div>
+                <div id="welcome">Welcome <%= authorized_email %> <form id="logout" action="<%= url '/logout' %>" method="POST"><button type="submit">Logout</button></form></div>
                 <%= erb :designs, :locals => {:design => design, :designs => designs} %>
             <% else %>
                 <%= render_login_button %>

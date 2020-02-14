@@ -15,8 +15,8 @@
             <% entries.each do |entry| %>
                 <li>
                     <article class="entry container" id="e<%= entry.id %>" itemscope itemtype="http://schema.org/BlogPosting">
-                        <h3><a href="<%= url_for entry.link %>"><%= entry.title %></a></h3>
-                        <div itemprop="articleBody"><%= excerpt(stripHtml(entry.format)) %></div>
+                        <h3><a href="<%= url entry.link %>"><%= entry.title %></a></h3>
+                        <div itemprop="articleBody"><%= excerpt(h (entry.format)) %></div>
                     </article>
                 </li>
             <% end %>

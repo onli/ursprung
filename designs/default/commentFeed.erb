@@ -7,10 +7,10 @@
    >
     <channel>
         <title>Comments</title>
-        <link><%= url_for '/', :full %>></link>
+        <link><%= url '/', :full %>></link>
         <description></description>
         <generator>Blog</generator>
-        <atom:link href="<%= url_for '/commentFeed', :full %>" rel="self" type="application/rss+xml" />
+        <atom:link href="<%= url '/commentFeed', :full %>" rel="self" type="application/rss+xml" />
 
         <% comments.each do |comment| %>
             <item>

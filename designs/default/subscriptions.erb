@@ -15,7 +15,7 @@
 
         <ol>
         <% entries.each do |entry| %>
-            <li><form action="<%= url_for '/unsubscribe' %>" method="POST">
+            <li><form action="<%= url '/unsubscribe' %>" method="POST">
                 <input type="hidden" name="id" value="<%= entry.id %>" />
                 <input type="hidden" name="encryptedMail" value="<%=h encryptedMail %>" />
                 <span><%= entry.title %></span> <button type="submit">Unsubscribe</button>

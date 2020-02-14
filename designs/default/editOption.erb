@@ -1,5 +1,5 @@
 <%# -*- encoding : utf-8 -*- %>
-<form action="<%= url_for '/setOption' %>" method="POST">
+<form action="<%= url '/setOption' %>" method="POST">
     <input type="hidden" name="name" value="<%= name %>" />
     <input type="text" name="value" placeholder="<%= name %>" value="<%= value %>"/>
     <button type="submit" class="save">OK</button>

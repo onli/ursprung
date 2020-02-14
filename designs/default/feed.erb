@@ -6,10 +6,10 @@
    >
     <channel>
         <title><%= blogTitle %></title>
-        <link><%= url_for '/', :full %></link>
+        <link><%= url '/', :full %></link>
         <description></description>
         <generator>dsnblog</generator>
-        <atom:link href="<%= url_for '/feed', :full %>" rel="self" type="application/rss+xml" />
+        <atom:link href="<%= url '/feed', :full %>" rel="self" type="application/rss+xml" />
         <atom:link rel="hub" href="https://pubsubhubbub.superfeedr.com/" />
         <% entries.each do |entry| %>
             <item>
@@ -21,7 +21,7 @@
                         <%= h entry.format %>
                     </content:encoded>
                 <% end %>
-                <guid isPermaLink="true"><%= url_for entry.link, :full%></guid>
+                <guid isPermaLink="true"><%= url entry.link, :full%></guid>
                 <pubDate><%= Time.parse(entry.date).rfc2822 %></pubDate>
             </item>
         <% end %>
