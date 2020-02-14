@@ -1,4 +1,3 @@
 A design ported by the classless-project (https://github.com/websitesfortrello/classless/)
 Author: Original by İsmail Demirbilek
 License: MIT License (see LICENSE)
-
