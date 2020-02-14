@@ -59,7 +59,7 @@ module Ursprung
 
             def autotitle(text)
                 db = Database.new
-                Nokogiri::HTML(text).css("a").map do |link|
+                Oga.parse_html(text).css("a").map do |link|
                     if (href = link.attr("href")) && link.attr("title") == nil && href.match(/^https?:/)
                         if ((title, _ = db.getCache(href)) == nil)
                             require 'mechanize'  # TODO: Replace to something not using mechanize (-> nokogiri)
