@@ -18,25 +18,7 @@
             <% if ! authorized? %>
                 <h2>Step 1/2</h2>
                 <p>Please sign in:
-                    <script src="<%= settings.browserid_url %>/include.js" type="text/javascript"></script>
-                    <script type="text/javascript">
-                        function _browserid_login() {
-                            navigator.id.getVerifiedEmail(function(assertion) {
-                            if (assertion) {
-                                document.forms._browserid_assert.assertion.value = assertion;
-                                document.forms._browserid_assert.submit();
-                            } else {
-                                // TODO: handle failure case?
-                                console.log("browserid login failure");
-                            }
-                            });
-                        }
-                    </script>
-                    <form name="_browserid_assert" action="<%= url '/_browserid_assert' %>" method="post">
-                        <input type="hidden" name="redirect" value="<%= request.url %>">
-                        <input type="hidden" name="assertion" value="">
-                    </form>
-                    <a href="#"><img src="<%= url '/img/browserid.png' %>" id="browserid_login_button" border=0 onClick="_browserid_login()" /></a>
+                <%= render_login_button %>
                 </p>
                 <p>The mail address used will be marked as being admin.</p>
             <% else %>
