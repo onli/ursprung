@@ -6,16 +6,10 @@ require_relative 'entry.rb'
 require_relative 'comment.rb'
 
 require 'sinatra/base'
-require 'sanitize'
-require 'htmlentities'
 require 'xmlrpc/marshal'
 require 'json'
 include ERB::Util
 require 'sinatra/browserid'
-require 'sprockets'
-require 'uglifier'
-require 'cssminify'
-require 'sinatra/url_for'
 require 'thread/pool'
 require 'rack/contrib/try_static'
 
@@ -25,8 +19,6 @@ module Ursprung
         use Rack::Session::Pool
 
         set :static_cache_control, [:public, max_age: 31536000]
-
-        set :assets, Sprockets::Environment.new
 
         class << self; attr_accessor :baseUrl end
         class << self; attr_accessor :pool end
@@ -40,7 +32,7 @@ module Ursprung
 
             def isAdmin?
                 if authorized?
-                    if Database.new.getAdminMail == authorized_email
+                    if normalize_email(Database.new.getAdminMail) == authorized_email
                         return true
                     end
                 end
@@ -70,7 +62,7 @@ module Ursprung
                 Nokogiri::HTML(text).css("a").map do |link|
                     if (href = link.attr("href")) && link.attr("title") == nil && href.match(/^https?:/)
                         if ((title, _ = db.getCache(href)) == nil)
-                            require 'mechanize'
+                            require 'mechanize'  # TODO: Replace to something not using mechanize (-> nokogiri)
                             agent = Mechanize.new
                             begin
                                 title = agent.get(href).title
@@ -101,14 +93,6 @@ module Ursprung
                 end
             end
 
-            def stripHtml(text)
-                Sanitize.clean(text)
-            end
-
-            def htmlentities(text)
-                return HTMLEntities.new.encode(text)
-            end
-
             def find_template(views, name, engine, &block)
                 super(views, name, engine, &block) if File.exists?(File.join(views, name.to_s + ".erb"))
                 super(settings.design_default, name, engine, &block)
@@ -120,16 +104,6 @@ module Ursprung
             settings.views = File.join(settings.design_root, design)
             use Rack::TryStatic, :root => File.join(settings.views, 'public'), :urls => %w[/]   # first look in the designs public folder
             settings.public_folder = 'public'   # and otherwise in the global one, where also all the uploads are
-            settings.assets.clear_paths     # js/css files else stay the same after a design switch
-
-            settings.assets.append_path File.join(settings.views, "js")
-            settings.assets.append_path File.join(settings.views, "css")
-
-            settings.assets.append_path File.join(settings.design_default, "js") if design != "default"
-            settings.assets.append_path File.join(settings.design_default, "css") if design != "default"
-
-            settings.assets.js_compressor  = Uglifier.new
-            settings.assets.css_compressor = CSSminify.new
         end
 
         configure do
@@ -430,12 +404,12 @@ module Ursprung
 
         get "/js/:file.js" do
           content_type "application/javascript"
-          body settings.assets[params[:file]+".js"].to_s
+          body File.read(settings.views + '/js/' + params[:file] + ".js").to_s
         end
 
         get "/css/:file.css" do
           content_type "text/css"
-          body settings.assets[params[:file]+".css"].to_s
+          body File.read(settings.views + '/css/' + params[:file] + ".css").to_s
         end
 
         post '/logout' do
