@@ -3,3 +3,4 @@ bayes_data/
 designs/default/public/upload/*
 Gemfile.lock
 update-js.sh
+vendor/
