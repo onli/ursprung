@@ -12,6 +12,7 @@ include ERB::Util
 require 'sinatra/browserid'
 require 'thread/pool'
 require 'rack/contrib/try_static'
+require "open-uri"
 
 module Ursprung
     class Ursprung < Sinatra::Application
@@ -62,25 +63,27 @@ module Ursprung
             def autotitle(text)
                 db = Database.new
                 Oga.parse_html(text).css("a").map do |link|
-                    if (href = link.attr("href")) && link.attr("title") == nil && href.match(/^https?:/)
+                    if (href = link.attr("href").value) && link.attr("title") == nil && href.match(/^https?:/)
                         if ((title, _ = db.getCache(href)) == nil)
-                            require 'mechanize'  # TODO: Replace to something not using mechanize (-> nokogiri)
-                            agent = Mechanize.new
                             begin
-                                title = agent.get(href).title
+                                page = URI.parse(URI.escape(href)).read
+                                parsed_page = Oga.parse_html(page)
+                                title = parsed_page.css('title').first.text
                             rescue Exception => error
+                                warn error.to_s
                                 title = ""
                             end
                             db.cache(href, title)
-                        else
-                            old_link = link
-                            link = link.to_s.sub("<a", "<a title=\"#{title}\"")
-                            begin
-                                text[old_link.to_s] = link
-                            rescue IndexError => ie
-                                warn "could not insert #{title}"
-                            end
                         end
+
+                        old_link = link.to_xml
+                        link = link.to_xml.sub("<a", "<a title=\"#{title}\"")
+                        begin
+                            text[old_link] = link
+                        rescue IndexError => ie
+                            warn "could not insert #{title}: " + ie.to_s
+                        end
+                        
                     end
                 end
                 return text
