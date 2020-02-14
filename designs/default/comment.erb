@@ -11,12 +11,12 @@
         </div>
         <footer>
             <% if comment.author.url != "" %>
-                <a href="<%= comment.author.url %>" itemprop="creator"><%= comment.author.name %></a>
+                <a href="<%= comment.author.url %>" itemprop="creator"><%=h comment.author.name %></a>
             <% else %>
-                <span itemprop="creator"><%= comment.author.name %></span>
+                <span itemprop="creator"><%=h comment.author.name %></span>
             <% end %>
             <% if comment.author.mail != "" && isAdmin? %>
-                (<a href="mailto:<%= comment.author.mail %>"><%= comment.author.mail %></a>)
+                (<a href="mailto:<%= comment.author.mail %>"><%=h comment.author.mail %></a>)
             <% end %>,
             <time itemprop="datePublished" datetime="<%= Time.parse(comment.date).iso8601 %>"><%= Time.parse(comment.date).strftime("%d.%m.%Y") %></time>
         </footer>
@@ -28,7 +28,7 @@
                 <form action="<%= url "/#{comment.id}/ham" %>" method="POST">
                     <button type="submit" class="ham" title="accept comment">&#10003;</button>
                 </form>
-                <form action="/<%= url "/#{comment.id}/deleteComment" %>" method="POST">
+                <form action="<%= url "/#{comment.id}/deleteComment" %>" method="POST">
                     <button type="submit" class="delete" title="delete comment">&#10005;</button>
                 </form>
             <% else %>
