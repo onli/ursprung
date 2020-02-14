@@ -8,10 +8,9 @@ A small blogengine using ruby, sinatra, sqlite and [Portier](https://portier.git
  * Comments, Pingbacks and Trackbacks
  * Bayesian spamfilter
  * Frontend-Administration
- * Autotitle (for links in entries)
+ * Autotitle (for links in entries, cached)
  * Support for other Designs (themeable)
  * Minimal design as default
- * Cached
  * Support for and shipping with some themes of [the classless project](https://github.com/websitesfortrello/classless/)
 
 # Installation
