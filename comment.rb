@@ -1,6 +1,7 @@
 require 'classifier'
 require 'pony'
 require 'kramdown'
+require 'htmlentities'
 require 'yaml'
 require_relative './commentauthor.rb'
 
@@ -28,10 +29,10 @@ module Ursprung
                 params = args[0]
                 return if params[:tel] && params[:tel] != "" # the honeypot
                 commentAuthor = CommentAuthor.new
-                commentAuthor.name = Sanitize.clean(params[:name].strip)
+                commentAuthor.name = params[:name].strip
                 commentAuthor.name = "Anonymous" if commentAuthor.name == ""
-                commentAuthor.mail = Sanitize.clean(params[:mail].strip)
-                commentAuthor.url = Sanitize.clean(params[:url].strip)
+                commentAuthor.mail = params[:mail].strip
+                commentAuthor.url = params[:url].strip
                 begin
                     self.replyToComment = params[:replyToComment].empty? ? nil : params[:replyToComment]
                 rescue
