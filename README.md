@@ -1,4 +1,4 @@
-A small blogengine using ruby, sinatra, sqlite and browserid.
+A small blogengine using ruby, sinatra, sqlite and [Portier](https://portier.github.io/).
 
 ![ursprung example](https://onli.github.io/ursprung/public/ursprung-index_tiny.png)
 
@@ -30,5 +30,3 @@ to start the blog.
 ## Dependencies
 
  * ruby >= 2.0
- * libxml2-dev 
- * libxslt1-dev
