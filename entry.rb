@@ -1,9 +1,9 @@
 require './database.rb'
 require 'uri'
-require 'sanitize'
 require 'xmlrpc/client'
 require 'kramdown'
 require 'http'
+require 'strings'
 
 module Ursprung
     class Entry
@@ -92,9 +92,9 @@ module Ursprung
             # check links for trackback-urls
             trackbackLinks  = []
             uris.each do |uri|
-                response = HTTP.get(uri).to_s
-                headLink = Nokogiri::HTML(response).css("link").map do |link|
-                    if (href = link.attr("href")) && link.attr("rel") == "trackback" && href.match(/^https?:/)
+                response = uri.read
+                headLink = Oga.parse_html(response).css("link").map do |link|
+                    if (href = link.attr("href").value) && link.attr("rel").value == "trackback" && href.match(/^https?:/)
                         href
                     end
                 end.compact
@@ -116,16 +116,20 @@ module Ursprung
                 return uris
             end
 
+            puts self.format
+
+            puts 'generating trackback payload'
             data = {"title" => self.title,
                     "url" => Ursprung::baseUrl + self.link(),
-                    "excerpt" => Sanitize.clean(self.body)[0..30].gsub(/\s\w+$/, '...'),
+                    "excerpt" => Strings.truncate(self.format.gsub(/<\/?[^>]*>/, ' ').gsub(/\n\n+/, '\n').gsub(/^\n|\n$/, ' ').strip.split.join(" "), 30),
                     "blog_name" => Database.new.getOption("blogTitle")
                     }
+            p data
                     
             trackbackLinks.each do |link|
                 begin
                     response = HTTP.post(link.to_s.strip, :form => data)
-                    doc = Nokogiri::XML(response.to_s)
+                    doc = Oga.parse_xml(response.to_s)
                     error = doc.xpath("/response/error")
                     uris.delete(uri) if error == 0
                 rescue Exception => e
@@ -148,9 +152,9 @@ module Ursprung
             # check for pingback-url
             pingbackLinks  = []
             uris.each do |uri|
-                response = HTTP.get(uri).to_s
-                headLink = Nokogiri::HTML(response).css("link").map do |link|
-                    if (href = link.attr("href")) && link.attr("rel") == "pingback" && href.match(/^https?:/)
+                response = uri.read
+                headLink = Oga.parse_html(response).css("link").map do |link|
+                    if (href = link.attr("href").value) && link.attr("rel").value == "pingback" && href.match(/^https?:/)
                         href
                     end
                 end.compact
@@ -182,15 +186,15 @@ module Ursprung
 
         # get list of links 
         def links()
-            links = Nokogiri::HTML(self.format).css("a").map do |link|
-                if (href = link.attr("href")) && href.match(/^https?:/)
+            links = Oga.parse_html(self.format).css("a").map do |link|
+                if (href = link.attr("href").value) && href.match(/^https?:/)
                     href
                 end
             end.compact
             uris = []
             links.each do |link|
                 begin
-                    uris.push(URI.parse(link))
+                    uris.push(URI.parse(URI.escape(link)))
                 rescue URI::InvalidURIError => error
                     warn "could not parse link: " + error.to_s
                 end

@@ -200,11 +200,11 @@ module Ursprung
         def getPingbackData()
             uri = URI.parse(self.author.url)
             response = HTTP.get(uri).to_s
-            doc = Nokogiri::HTML(response)
-            title = doc.title
+            doc = Oga.parse_html(response)
+            title = doc.css('title').first.text
             
             doc.css("a").map do |link|
-                if (href = link.attr("href")) && href.match(/#{self.entry.link()}.*/)
+                if (href = link.attr("href").value) && href.match(/#{self.entry.link()}.*/)
                     return title
                 end
             end.compact

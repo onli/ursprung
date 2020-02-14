@@ -7,7 +7,11 @@
             <img class="avatar" src="<%= comment.avatar %>" />
         <% end %>
         <div class="commentBody" itemprop="commentText">
-            <%= comment.format %><%='...' if comment.type == 'trackback' %>
+            <% if comment.type == 'trackback' %>
+                <%= comment.body %>
+            <% else %>
+                <%= comment.format %>
+            <% end %>
         </div>
         <footer>
             <% if comment.author.url != "" %>
