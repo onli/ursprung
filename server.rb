@@ -20,6 +20,8 @@ module Ursprung
 
         set :static_cache_control, [:public, max_age: 31536000]
 
+        set :assets, Sprockets::Environment.new
+
         class << self; attr_accessor :baseUrl end
         class << self; attr_accessor :pool end
         @pool = Thread.pool(2)
@@ -104,6 +106,13 @@ module Ursprung
             settings.views = File.join(settings.design_root, design)
             use Rack::TryStatic, :root => File.join(settings.views, 'public'), :urls => %w[/]   # first look in the designs public folder
             settings.public_folder = 'public'   # and otherwise in the global one, where also all the uploads are
+            settings.assets.clear_paths     # js/css files else stay the same after a design switch
+
+            settings.assets.append_path File.join(settings.views, "js")
+            settings.assets.append_path File.join(settings.views, "css")
+
+            settings.assets.append_path File.join(settings.design_default, "js") if design != "default"
+            settings.assets.append_path File.join(settings.design_default, "css") if design != "default"
         end
 
         configure do
@@ -369,7 +378,7 @@ module Ursprung
         end
 
         # A Page (entry with comments)
-        get  %r{/([0-9]+)/([\w]+)} do |id, title|
+        get  %r{/([0-9]+)/(.+)} do |id, title|
             db = Database.new
             entry = Entry.new(id.to_i)
             comments = db.getCommentsForEntry(id)
@@ -402,14 +411,14 @@ module Ursprung
         end
 
 
-        get "/js/:file.js" do
+         get "/js/:file.js" do
           content_type "application/javascript"
-          body File.read(settings.views + '/js/' + params[:file] + ".js").to_s
+          body settings.assets[params[:file]+".js"].to_s
         end
 
         get "/css/:file.css" do
           content_type "text/css"
-          body File.read(settings.views + '/css/' + params[:file] + ".css").to_s
+          body settings.assets[params[:file]+".css"].to_s
         end
 
         post '/logout' do
