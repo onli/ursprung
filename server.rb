@@ -17,7 +17,6 @@ require "open-uri"
 module Ursprung
     class Ursprung < Sinatra::Application
         register Sinatra::BrowserID
-        use Rack::Session::Pool
 
         set :static_cache_control, [:public, max_age: 31536000]
 
