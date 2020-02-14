@@ -174,7 +174,7 @@ module Ursprung
         post '/addEntry' do
             protected!
             entry = Entry.new(params, request)
-            redirect url_for entry.link + '#new'
+            redirect url entry.link + '#new'
         end
 
         post %r{/([0-9]+)/addTrackback} do |id|
@@ -269,7 +269,7 @@ module Ursprung
             protected!
             comment = Comment.new(id.to_i)
             comment.ham()
-            baseUrl = url_for '/', :full
+            baseUrl = url '/', :full
             comment.save()   # ham also marks as approved, which needs to be saved
             Ursprung::pool.process {
                 comment.mailSubscribers()
@@ -304,7 +304,7 @@ module Ursprung
 
             comment = Comment.new(params, :new)
             
-            redirect url_for (comment.entry.link + "#" + comment.status)
+            redirect url (comment.entry.link + "#" + comment.status)
         end
 
         get '/commentFeed' do
@@ -351,7 +351,7 @@ module Ursprung
         end
 
         get '/search' do
-            redirect url_for '/search/'+params[:keyword]
+            redirect url '/search/'+params[:keyword]
         end
 
         post '/preview' do
@@ -414,7 +414,7 @@ module Ursprung
 
         post '/logout' do
             logout!
-            redirect url_for '/'
+            redirect url '/'
         end
     end
 end
