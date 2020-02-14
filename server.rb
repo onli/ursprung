@@ -423,6 +423,10 @@ module Ursprung
           body settings.assets[params[:file]+".css"].to_s
         end
 
+        get '/login' do
+            body erb :login
+        end
+
         post '/logout' do
             logout!
             redirect url '/'

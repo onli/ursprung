@@ -5,11 +5,10 @@
         <a href="<%= url '/setOption/blogTitle' %>" class="adminAction"><button class="edit" title="edit">&#9998;</button></a>
     <% end %>
     <aside id="widget">
+            <%= erb :searchWidget, :locals => {:keyword => "" }%>
             <% if isAdmin? %>
                 <div id="welcome">Welcome <%= authorized_email %> <form id="logout" action="<%= url '/logout' %>" method="POST"><button type="submit">Logout</button></form></div>
                 <%= erb :designs, :locals => {:design => design, :designs => designs} %>
-            <% else %>
-                <%= render_login_button %>
             <% end %>
         </aside>
 </header>

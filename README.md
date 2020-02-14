@@ -26,6 +26,8 @@ to install the needed gems, and
 
 to start the blog.
 
+To log in after the instalallation, visit `/login`.
+
 
 ## Dependencies
 
