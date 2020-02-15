@@ -89,12 +89,7 @@ module Ursprung
             end
 
             def excerpt (text, length = 200)
-                if text.length >= length
-                        splitFullString = text[0, length].split(/\s/)
-                        splitFullString[0, splitFullString.length-1].join(" ") + '...'
-                else
-                        text
-                end
+                Strings.truncate(text, length)
             end
 
             def find_template(views, name, engine, &block)
