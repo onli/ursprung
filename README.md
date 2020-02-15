@@ -1,15 +1,15 @@
-A small blogengine using ruby, sinatra, sqlite and [Portier](https://portier.github.io/).
+A small blogengine built with Ruby, Sinatra, SQLite and [Portier](https://portier.github.io/).
 
 ![ursprung example](https://onli.github.io/ursprung/public/ursprung-index_tiny.png)
 
 # Features
 
- * Write Entries with Markdown
+ * Write entries with Markdown
  * Comments, Pingbacks and Trackbacks
  * Bayesian spamfilter
- * Frontend-Administration
+ * Frontend administration
  * Autotitle (for links in entries, cached)
- * Support for other Designs (themeable)
+ * Support for other designs (themeable)
  * Minimal design as default
  * Support for and shipping with some themes of [the classless project](https://github.com/websitesfortrello/classless/)
 
