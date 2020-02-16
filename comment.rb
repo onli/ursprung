@@ -1,4 +1,4 @@
-require 'classifier'
+require 'classifier-reborn'
 require 'pony'
 require 'kramdown'
 require 'htmlentities'
@@ -47,7 +47,7 @@ module Ursprung
                 self.author = commentAuthor
                 self.id = params[:id]
                 self.status = "approved"
-                self.status = "moderate" if self.isSpam? || self.entry.moderate == "moderate"
+                self.status = "moderate" if self.isSpam? || self.entry.moderate == "moderated"
                 self.subscribe = 1 if params[:subscribe] != nil
                 self.type = params[:type]
                 if self.type == "trackback"
@@ -125,7 +125,10 @@ module Ursprung
             db = Database.new
             bayes = db.getOption("spamFilter")
             if bayes == nil
-                bayes = Classifier::Bayes.new "Spam", "Ham"
+                bayes = ClassifierReborn::Bayes.new "Spam", "Ham"
+                # we add some minimal initial training data, because if there is none in one of the categories it always returns "ham"
+                bayes.train "spam", "casino gold viagra"
+                bayes.train "ham", "a valid comment"
             else
                 bayes = YAML.load(bayes)
             end

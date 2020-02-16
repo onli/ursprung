@@ -13,7 +13,7 @@ module Ursprung
         attr_accessor :title
         attr_accessor :date
         attr_accessor :author
-        attr_accessor :moderate
+        attr_accessor :moderate   # 'open', 'moderated', 'closed' 
         attr_accessor :tags
 
         def initialize(*args)
