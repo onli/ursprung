@@ -92,6 +92,26 @@ module Ursprung
                 Strings.truncate(text, length)
             end
 
+           def stripHtml(text)
+                fragment = Oga.parse_html(text)
+                stripped = ''
+                block = false
+                fragment.each_node do |element|
+                    if element.class == Oga::XML::Text && block == false 
+                        stripped += element.text
+                    end
+                    if element.class != Oga::XML::Text
+                        if element.name == 'script'
+                            block = true
+                        end
+                        if element.name != 'script'
+                            block = false
+                        end
+                    end
+                end
+                return stripped
+            end
+
             def find_template(views, name, engine, &block)
                 super(views, name, engine, &block) if File.exists?(File.join(views, name.to_s + ".erb"))
                 super(settings.design_default, name, engine, &block)
