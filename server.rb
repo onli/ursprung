@@ -112,6 +112,10 @@ module Ursprung
                 return stripped
             end
 
+            def firstImage(text)
+                Oga.parse_html(text).css('img').first&.to_xml || ''
+            end
+
             def find_template(views, name, engine, &block)
                 super(views, name, engine, &block) if File.exists?(File.join(views, name.to_s + ".erb"))
                 super(settings.design_default, name, engine, &block)
