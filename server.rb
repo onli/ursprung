@@ -117,7 +117,7 @@ module Ursprung
             end
 
             def find_template(views, name, engine, &block)
-                super(views, name, engine, &block) if File.exists?(File.join(views, name.to_s + ".erb"))
+                super(views, name, engine, &block) if File.exist?(File.join(views, name.to_s + ".erb"))
                 super(settings.design_default, name, engine, &block)
             end
         end

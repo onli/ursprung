@@ -115,12 +115,12 @@ module Ursprung
             end
             begin
                 if tag == nil
-                    @@db.execute("SELECT id FROM entries WHERE deleted != 1 ORDER BY date DESC LIMIT ?,?;", offset, limit) do |row|
+                    @@db.execute("SELECT id FROM entries WHERE deleted != 1 ORDER BY date DESC LIMIT ?,?;", [offset, limit]) do |row|
                         entry = Entry.new(row["id"])
                         entries.push(entry)
                     end
                 else
-                    @@db.execute("SELECT id FROM entries WHERE deleted != 1 AND id IN (SELECT entryId FROM tags WHERE tag = ?) ORDER BY date DESC LIMIT ?,?;", tag, offset, limit) do |row|
+                    @@db.execute("SELECT id FROM entries WHERE deleted != 1 AND id IN (SELECT entryId FROM tags WHERE tag = ?) ORDER BY date DESC LIMIT ?,?;", [tag, offset, limit]) do |row|
                         entry = Entry.new(row["id"])
                         entries.push(entry)
                     end
@@ -167,14 +167,14 @@ module Ursprung
 
         def addEntry(entry)
             begin
-                @@db.execute("INSERT INTO entries(title, body, author) VALUES(?, ?, ?);", entry.title, entry.body, entry.author)
+                @@db.execute("INSERT INTO entries(title, body, author) VALUES(?, ?, ?);", [entry.title, entry.body, entry.author])
             rescue => error
                 warn "addEntry1: #{error}"
             end
             id = @@db.last_insert_row_id()
             begin
                 entry.tags.each do |tag|
-                    @@db.execute("INSERT INTO tags(tag, entryId) VALUES(?, ?);", tag, id)
+                    @@db.execute("INSERT INTO tags(tag, entryId) VALUES(?, ?);", [tag, id])
                 end
             rescue => error
                 warn "addEntry2: #{error}"
@@ -184,10 +184,10 @@ module Ursprung
 
         def editEntry(entry)
             begin
-                @@db.execute("UPDATE entries SET title = ?, body = ?, deleted = 0 WHERE id = ?;", entry.title, entry.body, entry.id)
-                @@db.execute("DELETE FROM tags WHERE entryId = ?;", entry.id)
+                @@db.execute("UPDATE entries SET title = ?, body = ?, deleted = 0 WHERE id = ?;", [entry.title, entry.body, entry.id])
+                @@db.execute("DELETE FROM tags WHERE entryId = ?;", [entry.id])
                 entry.tags.each do |tag|
-                    @@db.execute("INSERT INTO tags(tag, entryId) VALUES(?, ?);", tag, entry.id)
+                    @@db.execute("INSERT INTO tags(tag, entryId) VALUES(?, ?);", [tag, entry.id])
                 end
             rescue => error
                 warn "editEntry: #{error}"
@@ -198,8 +198,8 @@ module Ursprung
 
         def deleteEntry(id)
             begin
-                @@db.execute("DELETE FROM entries WHERE id = ?", id)
-                @@db.execute("DELETE FROM tags WHERE entryId = ?;", id)
+                @@db.execute("DELETE FROM entries WHERE id = ?", [id])
+                @@db.execute("DELETE FROM tags WHERE entryId = ?;", [id])
             rescue => error
                 warn "deleteEntry: #{error}"
             end
@@ -207,7 +207,7 @@ module Ursprung
 
         def deleteEntrySoft(id)
             begin
-                @@db.execute("UPDATE entries SET deleted = 1 WHERE id == ?;", id)
+                @@db.execute("UPDATE entries SET deleted = 1 WHERE id == ?;", [id])
             rescue => error
                 warn "deleteEntrySoft: #{error}"
             end
@@ -224,12 +224,12 @@ module Ursprung
         def getEntryData(id, deleted)
             begin
                 if deleted
-                    entryData = @@db.execute("SELECT title, body, author, date, moderate FROM entries WHERE id == ?;", id)[0]
+                    entryData = @@db.execute("SELECT title, body, author, date, moderate FROM entries WHERE id == ?;", [id])[0]
                 else
-                    entryData = @@db.execute("SELECT title, body, author, date, moderate FROM entries WHERE id == ? AND deleted != 1;", id)[0]
+                    entryData = @@db.execute("SELECT title, body, author, date, moderate FROM entries WHERE id == ? AND deleted != 1;", [id])[0]
                 end
                 tags = []
-                @@db.execute("SELECT tag FROM tags WHERE entryId == ?;", id) do |row|
+                @@db.execute("SELECT tag FROM tags WHERE entryId == ?;", [id]) do |row|
                     tags.push(row["tag"])
                 end
                 entryData["tags"] = tags
@@ -241,7 +241,7 @@ module Ursprung
 
         def setEntryModeration(id, value)
             begin
-                return @@db.execute("UPDATE entries SET moderate = ? WHERE id = ?;", value, id)
+                return @@db.execute("UPDATE entries SET moderate = ? WHERE id = ?;", [value, id])
             rescue => error
                 warn "setEntryModeration: #{error}"
             end
@@ -251,8 +251,8 @@ module Ursprung
             begin
                 @@db.execute("INSERT INTO comments(replyToEntry, replyToComment, body, type, status, title, name, mail, url, subscribe)
                                 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
-                                comment.replyToEntry, comment.replyToComment, comment.body, comment.type, comment.status,
-                                comment.title, comment.author.name, comment.author.mail, comment.author.url, comment.subscribe)
+                                [comment.replyToEntry, comment.replyToComment, comment.body, comment.type, comment.status,
+                                comment.title, comment.author.name, comment.author.mail, comment.author.url, comment.subscribe])
             rescue => error
                 warn "addComment: #{error}"
             end
@@ -261,7 +261,7 @@ module Ursprung
         def editComment(comment)
             begin
                 @@db.execute("UPDATE comments SET title = ?, body = ?, name = ?, url = ?, mail = ?, replyToComment = ?, status = ?, subscribe = ? WHERE id = ?;",
-                            comment.title, comment.body, comment.author.name, comment.author.url, comment.author.mail, comment.replyToComment, comment.status, comment.subscribe, comment.id)
+                            [comment.title, comment.body, comment.author.name, comment.author.url, comment.author.mail, comment.replyToComment, comment.status, comment.subscribe, comment.id])
             rescue => error
                 warn "editComment: #{error}"
                 return false
@@ -271,7 +271,7 @@ module Ursprung
 
         def deleteComment(comment)
             begin
-                @@db.execute("DELETE FROM comments WHERE id = ?", comment.id)
+                @@db.execute("DELETE FROM comments WHERE id = ?", [comment.id])
             rescue => error
                 warn "deleteComment: #{error}"
             end
@@ -280,7 +280,7 @@ module Ursprung
         def getCommentsForEntry(id)
             comments = []
             begin
-                @@db.execute("SELECT comments.id FROM comments WHERE replyToEntry == ?;", id) do  |row|
+                @@db.execute("SELECT comments.id FROM comments WHERE replyToEntry == ?;", [id]) do  |row|
                     comments.push(Comment.new(row["id"]))
                 end
             rescue => error
@@ -293,7 +293,7 @@ module Ursprung
             begin
                 return @@db.execute("SELECT name, url, mail, body, title, replyToComment, replyToEntry, date, status, subscribe, type
                                     FROM comments
-                                    WHERE comments.id == ?;", id)[0]
+                                    WHERE comments.id == ?;", [id])[0]
             rescue => error
                 warn "getCommentData #{error}"
             end
@@ -310,7 +310,7 @@ module Ursprung
 
         def addUser(name, mail)
             begin
-                @@db.execute("INSERT INTO authors(name, mail) VALUES(?, ?);", name, mail)
+                @@db.execute("INSERT INTO authors(name, mail) VALUES(?, ?);", [name, mail])
             rescue => error
                 warn "addUser: #{error}"
             end
@@ -318,7 +318,7 @@ module Ursprung
 
         def getOption(name)
             begin
-                return @@db.execute("SELECT value FROM options WHERE name = ? LIMIT 1;", name)[0]['value']
+                return @@db.execute("SELECT value FROM options WHERE name = ? LIMIT 1;", [name])[0]['value']
             rescue => error
                 warn "getOption: #{error}"
                 return "default" if name == "design"
@@ -327,8 +327,8 @@ module Ursprung
 
         def setOption(name, value)
             begin
-                @@db.execute("INSERT OR IGNORE INTO options(name, value) VALUES(?, ?)", name, value)
-                @@db.execute("UPDATE options SET value = ? WHERE name = ?", value, name)
+                @@db.execute("INSERT OR IGNORE INTO options(name, value) VALUES(?, ?)", [name, value])
+                @@db.execute("UPDATE options SET value = ? WHERE name = ?", [value, name])
             rescue => error
                 warn "setOption: #{error}"
             end
@@ -336,8 +336,8 @@ module Ursprung
 
         def cache(key, value)
             begin
-                @@db.execute("INSERT OR IGNORE INTO cache(key, value) VALUES(?, ?)", key, value)
-                @@db.execute("UPDATE cache SET value = ?, date = strftime('%s','now') WHERE key = ?", value, key)
+                @@db.execute("INSERT OR IGNORE INTO cache(key, value) VALUES(?, ?)", [key, value])
+                @@db.execute("UPDATE cache SET value = ?, date = strftime('%s','now') WHERE key = ?", [value, key])
             rescue => error
                 warn "cache: #{error}"
             end
@@ -346,7 +346,7 @@ module Ursprung
         # get cache content and moment of creation
         def getCache(key)
             begin
-                cached = @@db.execute("SELECT value, date FROM cache WHERE key = ? LIMIT 1;", key)[0]
+                cached = @@db.execute("SELECT value, date FROM cache WHERE key = ? LIMIT 1;", [key])[0]
                 return cached['value'], cached['date']
             rescue => error
                 warn "getCache: #{error} for #{key}"
@@ -386,7 +386,7 @@ module Ursprung
                 end
             when "String"
                 begin
-                    @@db.execute("DELETE FROM cache WHERE key LIKE ?", origin)
+                    @@db.execute("DELETE FROM cache WHERE key LIKE ?", [origin])
                 rescue => error
                     warn "invalidateCache for path: #{error}"
                 end
@@ -405,7 +405,7 @@ module Ursprung
         def getAdminMail()
             begin
                 admin = self.getAdmin()
-                return @@db.execute("SELECT mail FROM authors WHERE name = ? LIMIT 1;", admin)[0]['mail']
+                return @@db.execute("SELECT mail FROM authors WHERE name = ? LIMIT 1;", [admin])[0]['mail']
             rescue => error
                 warn "getAdminMail: #{error}"
             end
@@ -415,7 +415,7 @@ module Ursprung
         def getComments(amount)
             comments = []
             begin
-                @@db.execute("SELECT comments.id FROM comments ORDER BY date DESC LIMIT ?;", amount) do  |row|
+                @@db.execute("SELECT comments.id FROM comments ORDER BY date DESC LIMIT ?;", [amount]) do  |row|
                     comments.push(Comment.new(row["id"]))
                 end
             rescue => error
@@ -426,7 +426,7 @@ module Ursprung
 
         def searchEntries(keyword)
             entries = []
-            @@db.execute("SELECT docid FROM search WHERE search MATCH ?;", keyword) do |row|
+            @@db.execute("SELECT docid FROM search WHERE search MATCH ?;", [keyword]) do |row|
                 entries.push(Entry.new(row["docid"]))
             end
             return entries.delete_if{|entry| entry.id == nil}
